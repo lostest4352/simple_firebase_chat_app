@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_firebase1/pages/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -63,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 25,
+                  height: 5,
                 ),
 
                 // Password textfield
@@ -135,23 +136,48 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
 
                 // Google sign in button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        
-                      },
+                      onTap: () {},
                       child: SizedBox(
                         height: 40,
                         child: Image.asset('assets/images/google.png'),
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
 
+                // Not a member? Register now
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Not a member?'),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return RegisterPage();
+                        },));
+                      },
+                      child: const Text(
+                        "Register now",
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

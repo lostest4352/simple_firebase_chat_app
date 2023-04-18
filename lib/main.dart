@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_firebase1/pages/home_page.dart';
 import 'package:simple_firebase1/pages/login_page.dart';
+import 'package:simple_firebase1/pages/register_page.dart';
 
 void main() async {
   if (Platform.isAndroid) {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Simple App',
       theme: ThemeData.dark(),
-      home: LoginPage(),
+      home: RegisterPage(),
     );
   }
 }

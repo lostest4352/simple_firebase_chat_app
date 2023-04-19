@@ -13,10 +13,14 @@ class HomePage extends StatelessWidget {
         title: const Text('Chat App'),
         actions: [
           IconButton(
+            enableFeedback: true,
             onPressed: () {
               FirebaseAuth.instance.signOut();
             },
-            icon: const Icon(Icons.logout),
+            icon: const Icon(
+              Icons.logout,
+              semanticLabel: 'Logout',
+            ),
           ),
         ],
       ),

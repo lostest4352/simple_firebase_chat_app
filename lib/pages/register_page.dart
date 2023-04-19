@@ -15,6 +15,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
 
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
+
   // Create account and register the user
   void registerUser() async {
     // show loading circle
@@ -59,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
           builder: (context) {
             return AlertDialog(
               backgroundColor: Colors.blue,
-              title: Text(e.message.toString()),
+              title: Text(e.code),
             );
           },
         );

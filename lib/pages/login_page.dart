@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_firebase1/pages/forgot_password.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -13,6 +14,13 @@ class _LoginPageState extends State<LoginPage> {
   bool showPassword = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   // sign in user
   void signUserIn() async {
@@ -33,7 +41,6 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text,
       );
       Navigator.pop(context);
-      
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       return showDialog(
@@ -41,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context) {
           return AlertDialog(
             backgroundColor: Colors.blue,
-            title: Text(e.message.toString()),
+            title: Text(e.code),
           );
         },
       );
@@ -130,8 +137,22 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Text('Forgot Password?'),
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return const ForgotPasswordPage();
+                            },
+                          ));
+                        },
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

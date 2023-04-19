@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/pages/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  final VoidCallback? onClicked;
+  const RegisterPage({required this.onClicked, super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -13,6 +14,58 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
+
+  // Create account and register the user
+  void registerUser() async {
+    // show loading circle
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // check if password is confirmed
+    if (passwordController.text != passwordConfirmController.text) {
+      Navigator.pop(context);
+      // show error message. password don't match
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            backgroundColor: Colors.blue,
+            title: Text(
+              "Passwords don't match!",
+              
+            ),
+          );
+        },
+      );
+      return;
+    } else {
+      // try registering the user
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        Navigator.pop(context);
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: Colors.blue,
+              title: Text(e.message.toString()),
+            );
+          },
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,22 +161,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
 
-                // Forgot password?
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Text('Forgot Password?'),
-                    ],
-                  ),
-                ),
                 const SizedBox(
-                  height: 10,
+                  height: 2,
                 ),
 
                 ElevatedButton(
@@ -133,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     textStyle: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  onPressed: () {},
+                  onPressed: registerUser,
                   child: const Text(
                     'Register',
                   ),
@@ -188,11 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: 4,
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return LoginPage();
-                        },));
-                      },
+                      onTap: widget.onClicked,
                       child: const Text(
                         "Sign In",
                         style: TextStyle(

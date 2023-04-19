@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/pages/register_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final VoidCallback? onClicked;
+  const LoginPage({required this.onClicked, super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -12,6 +13,40 @@ class _LoginPageState extends State<LoginPage> {
   bool showPassword = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  // sign in user
+  void signUserIn() async {
+    // show loading circle
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // try sign in
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      Navigator.pop(context);
+      
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.blue,
+            title: Text(e.message.toString()),
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                     textStyle: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  onPressed: () {},
+                  onPressed: signUserIn,
                   child: const Text(
                     'Login',
                   ),
@@ -166,11 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                       width: 4,
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return RegisterPage();
-                        },));
-                      },
+                      onTap: widget.onClicked,
                       child: const Text(
                         "Register now",
                         style: TextStyle(

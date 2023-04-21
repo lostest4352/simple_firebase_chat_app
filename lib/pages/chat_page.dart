@@ -30,7 +30,6 @@ class _ChatPageState extends State<ChatPage> {
                 child: ListView.builder(
                   reverse: true,
                   itemCount: message.length,
-                  
                   itemBuilder: (context, index) {
                     // return Text('data');
                     return Padding(
@@ -55,7 +54,6 @@ class _ChatPageState extends State<ChatPage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(5),
                                         child: Text(
-                                          
                                           reverseMessage[index],
                                           style: const TextStyle(fontSize: 18),
                                         ),
@@ -86,9 +84,12 @@ class _ChatPageState extends State<ChatPage> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           FocusManager.instance.primaryFocus?.unfocus();
-                          context
-                              .read<ChatProvider>()
-                              .insertMessage(chatController.text);
+                          if (chatController.text.trim() != '') {
+                            context
+                                .read<ChatProvider>()
+                                .insertMessage(chatController.text);
+                          }
+
                           chatController.clear();
                         },
                         icon: const Icon(Icons.send),

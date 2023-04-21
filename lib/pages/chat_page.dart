@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -12,6 +14,10 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> message = context.watch<ChatProvider>().message;
+
+    var reverseMessage = message.reversed.toList();
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -23,7 +29,8 @@ class _ChatPageState extends State<ChatPage> {
               child: Center(
                 child: ListView.builder(
                   reverse: true,
-                  itemCount: 1,
+                  itemCount: message.length,
+                  
                   itemBuilder: (context, index) {
                     // return Text('data');
                     return Padding(
@@ -31,34 +38,35 @@ class _ChatPageState extends State<ChatPage> {
                         vertical: 20,
                         horizontal: 20,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 40),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          // mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Expanded(
-                              child: Wrap(
-                                children: [
-                                  Container(
-                                    // margin: const EdgeInsets.symmetric(vertical: 2),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.blue,
-                                    ),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(5),
-                                      child: Text(
-                                        'At the bottom of the chat detail screen, we need to add a messaging section that will contain a text editor and a button to send the message',
-                                        style: TextStyle(fontSize: 18),
+                      child: Consumer(
+                        builder: (context, value, child) {
+                          return Row(
+                            // mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Wrap(
+                                  alignment: WrapAlignment.end,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.blue,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Text(
+                                          
+                                          reverseMessage[index],
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          );
+                        },
                       ),
                     );
                   },
@@ -76,7 +84,13 @@ class _ChatPageState extends State<ChatPage> {
                     decoration: InputDecoration(
                       hintText: 'Enter your message',
                       suffixIcon: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          context
+                              .read<ChatProvider>()
+                              .insertMessage(chatController.text);
+                          chatController.clear();
+                        },
                         icon: const Icon(Icons.send),
                       ),
                     ),

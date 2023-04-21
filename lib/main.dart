@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_options.dart';
 import 'package:simple_firebase1/pages/auth_page.dart';
 import 'package:simple_firebase1/pages/chat_page.dart';
+import 'package:simple_firebase1/provider/chat_provider.dart';
 
 void main() async {
   if (Platform.isAndroid) {
@@ -30,11 +32,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Simple App',
-      theme: ThemeData.dark(),
-      home: ChatPage(),
+    return ChangeNotifierProvider(
+      create: (context) {
+        return ChatProvider();
+      },
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Simple App',
+          theme: ThemeData.dark(),
+          home: ChatPage(),
+        );
+      },
     );
   }
 }

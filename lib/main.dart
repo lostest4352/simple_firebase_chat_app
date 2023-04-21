@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_firebase1/firebase_options.dart';
 import 'package:simple_firebase1/pages/auth_page.dart';
+import 'package:simple_firebase1/pages/chat_page.dart';
 
 void main() async {
   if (Platform.isAndroid) {
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Simple App',
       theme: ThemeData.dark(),
-      home: AuthPage(),
+      home: ChatPage(),
     );
   }
 }

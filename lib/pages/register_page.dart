@@ -46,7 +46,6 @@ class _RegisterPageState extends State<RegisterPage> {
             backgroundColor: Colors.blue,
             title: Text(
               "Passwords don't match!",
-              
             ),
           );
         },
@@ -118,6 +117,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextField(
+                    // Remove focus when click outside textfield
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
                     controller: emailController,
                     decoration: const InputDecoration(
                       hintText: 'Enter your email',
@@ -133,6 +136,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextField(
+                    // Remove focus when click outside textfield
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
                     controller: passwordController,
                     obscureText: !showPassword,
                     decoration: InputDecoration(
@@ -154,6 +161,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextField(
+                    // Remove focus when click outside textfield
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
                     controller: passwordConfirmController,
                     obscureText: !showPassword,
                     decoration: InputDecoration(

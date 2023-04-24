@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_firebase1/components/chat_text_field.dart';
+import 'package:simple_firebase1/pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -16,7 +18,51 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     List<String> message = context.watch<ChatProvider>().message;
 
-    var reverseMessage = message.reversed.toList();
+    final reverseMessage = message.reversed.toList();
+
+    // int index = int.fromEnvironment(reverseMessage.toString());
+
+    void deleteOrEditMessage(int index, String content) {
+      showModalBottomSheet(
+        isScrollControlled: true,
+        isDismissible: true,
+        context: context,
+        builder: (context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<ChatProvider>().deleteMessages(index);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Delete'),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return EditPage(
+                            index: index,
+                          );
+                        },
+                      ),
+                    );
+                    // Navigator.pop(context);
+                  },
+                  child: const Text('Edit message'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -53,9 +99,20 @@ class _ChatPageState extends State<ChatPage> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(5),
-                                        child: Text(
-                                          reverseMessage[index],
-                                          style: const TextStyle(fontSize: 18),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            deleteOrEditMessage(
+                                              // reverseIndex,
+
+                                              message.length - index - 1,
+                                              chatController.text,
+                                            );
+                                          },
+                                          child: Text(
+                                            reverseMessage[index],
+                                            style:
+                                                const TextStyle(fontSize: 18),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -74,27 +131,10 @@ class _ChatPageState extends State<ChatPage> {
             Row(
               children: [
                 Flexible(
-                  child: TextField(
-                    controller: chatController,
-                    onTapOutside: (event) {
-                      FocusManager.instance.primaryFocus?.unfocus();
+                  child: Consumer(
+                    builder: (context, value, child) {
+                      return const ChatTextField();
                     },
-                    decoration: InputDecoration(
-                      hintText: 'Enter your message',
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          if (chatController.text.trim() != '') {
-                            context
-                                .read<ChatProvider>()
-                                .insertMessage(chatController.text);
-                          }
-
-                          chatController.clear();
-                        },
-                        icon: const Icon(Icons.send),
-                      ),
-                    ),
                   ),
                 ),
               ],

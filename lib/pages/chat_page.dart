@@ -16,7 +16,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> message = context.watch<ChatProvider>().message;
+    List<String> message = context.watch<ChatProvider>().messages;
 
     final reverseMessage = message.reversed.toList();
 

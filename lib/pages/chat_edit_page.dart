@@ -18,7 +18,7 @@ class EditPage extends StatefulWidget {
 class _EditPageState extends State<EditPage> {
   final textController = TextEditingController();
 
-  List<String> get messages => context.read<ChatProvider>().message;
+  List<String> get messages => context.read<ChatProvider>().messages;
 
   @override
   void initState() {

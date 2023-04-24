@@ -29,35 +29,40 @@ class _ChatPageState extends State<ChatPage> {
         context: context,
         builder: (context) {
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<ChatProvider>().deleteMessages(index);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Delete'),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return EditPage(
-                            index: index,
-                          );
-                        },
-                      ),
-                    );
-                    // Navigator.pop(context);
-                  },
-                  child: const Text('Edit message'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return EditPage(
+                              index: index,
+                            );
+                          },
+                        ),
+                      );
+                      // Navigator.pop(context);
+                    },
+                    child: const Text('Edit message'),
+                  ),
+                  const SizedBox(
+                    width: 35,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {
+                      context.read<ChatProvider>().deleteMessages(index);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Delete message'),
+                  ),
+                ],
+              ),
             ),
           );
         },

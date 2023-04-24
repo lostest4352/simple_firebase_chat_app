@@ -68,7 +68,6 @@ class _EditPageState extends State<EditPage> {
               FocusManager.instance.primaryFocus?.unfocus();
             },
             decoration: InputDecoration(
-              hintText: 'Enter your message',
               suffixIcon: IconButton(
                 onPressed: () {
                   editFunction(widget.index);

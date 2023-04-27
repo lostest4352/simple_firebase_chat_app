@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/pages/forgot_password.dart';
+import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
+
 
 class LoginPage extends StatefulWidget {
   final VoidCallback? onClicked;

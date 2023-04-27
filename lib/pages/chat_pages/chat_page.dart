@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/components/chat_text_field.dart';
-import 'package:simple_firebase1/pages/chat_edit_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -54,7 +54,8 @@ class _ChatPageState extends State<ChatPage> {
                     width: 35,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: () {
                       context.read<ChatProvider>().deleteMessages(index);
                       Navigator.pop(context);
@@ -67,6 +68,7 @@ class _ChatPageState extends State<ChatPage> {
           );
         },
       );
+      
     }
 
     return SafeArea(
@@ -107,11 +109,10 @@ class _ChatPageState extends State<ChatPage> {
                                         child: GestureDetector(
                                           onTap: () {
                                             deleteOrEditMessage(
-                                              // reverseIndex,
-
                                               message.length - index - 1,
                                               chatController.text,
                                             );
+                                            
                                           },
                                           child: Text(
                                             reverseMessage[index],
@@ -134,13 +135,9 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
             Row(
-              children: [
+              children: const [
                 Flexible(
-                  child: Consumer(
-                    builder: (context, value, child) {
-                      return const ChatTextField();
-                    },
-                  ),
+                  child: ChatTextField(),
                 ),
               ],
             ),

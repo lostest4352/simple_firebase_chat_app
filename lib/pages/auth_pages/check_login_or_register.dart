@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/pages/login_page.dart';
-import 'package:simple_firebase1/pages/register_page.dart';
+import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
+import 'package:simple_firebase1/pages/auth_pages/register_page.dart';
 
 class CheckIfLoggedIn extends StatefulWidget {
   const CheckIfLoggedIn({super.key});

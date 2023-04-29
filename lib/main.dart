@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_options.dart';
+import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Simple App',
           theme: ThemeData.dark(),
-          home: ChatPage(),
+          home: AuthPage(),
         );
       },
     );

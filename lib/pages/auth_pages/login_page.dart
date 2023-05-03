@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
 
+import '../../models/user_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -74,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 50,
                 ),
+
                 // Login Icon
                 const Icon(
                   Icons.account_box,
@@ -82,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(
                   height: 25,
                 ),
+
                 // Text to the user
                 Text(
                   'Welcome back!',
@@ -96,49 +99,29 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 // Email textfield
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    // Remove focus when click outside textfield
-                    onTapOutside: (event) {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    },
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                    ),
-                    obscureText: false,
-                  ),
+                UserTextField(
+                  textController: emailController,
+                  hintText: 'Email',
                 ),
                 const SizedBox(
-                  height: 5,
+                  height: 10,
                 ),
 
                 // Password textfield
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    // Remove focus when click outside textfield
-                    onTapOutside: (event) {
-                      FocusManager.instance.primaryFocus?.unfocus();
+                UserTextField(
+                  obscureText: !showPassword,
+                  textController: passwordController,
+                  hintText: 'Enter Your Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        showPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      togglevisibility();
                     },
-                    controller: passwordController,
-                    obscureText: !showPassword,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      suffixIcon: IconButton(
-                        icon: Icon(showPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off),
-                        onPressed: () {
-                          togglevisibility();
-                        },
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(
-                  height: 5,
+                  height: 10,
                 ),
 
                 // Forgot password?

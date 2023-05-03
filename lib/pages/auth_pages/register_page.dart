@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_firebase1/models/user_text_field.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -13,18 +15,38 @@ class _RegisterPageState extends State<RegisterPage> {
   bool showPassword = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final passwordConfirmController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final ageController = TextEditingController();
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
-    passwordConfirmController.dispose();
+    confirmPasswordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    ageController.dispose();
     super.dispose();
   }
 
+  showDialogPopup(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.blue,
+          title: Text(
+            message,
+          ),
+        );
+      },
+    );
+  }
+
   // Create account and register the user
-  void registerUser() async {
+  Future registerUser() async {
     // show loading circle
     showDialog(
       context: context,
@@ -35,52 +57,66 @@ class _RegisterPageState extends State<RegisterPage> {
       },
     );
 
+    // check if all fields are entered
+    if (emailController.text.trim() == '' ||
+        passwordController.text.trim() == '' ||
+        confirmPasswordController.text.trim() == '' ||
+        firstNameController.text.trim() == '' ||
+        lastNameController.text.trim() == '' ||
+        ageController.text.trim() == '') {
+      Navigator.pop(context);
+      showDialogPopup("Please enter all fields");
+      return;
+    }
     // check if password is confirmed
-    if (passwordController.text != passwordConfirmController.text) {
+    else if (passwordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
       Navigator.pop(context);
       // show error message. password don't match
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            backgroundColor: Colors.blue,
-            title: Text(
-              "Passwords don't match!",
-            ),
-          );
-        },
-      );
+      showDialogPopup("Passwords don't match!");
       return;
     } else {
       // try registering the user
       try {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        addUserDetails(
+          firstNameController.text.trim(),
+          lastNameController.text.trim(),
+          emailController.text.trim(),
+          int.parse(ageController.text.trim()),
         );
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
-        return showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              backgroundColor: Colors.blue,
-              title: Text(e.code),
-            );
-          },
-        );
+        return showDialogPopup(e.code);
       }
     }
   }
 
+  Future addUserDetails(
+      String firstName, String lastName, String email, int age) async {
+    await FirebaseFirestore.instance.collection('users').add({
+      'first name': firstName,
+      'last name': lastName,
+      'email': email,
+      'age': age,
+    });
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
+
     void togglevisibility() {
-      setState(() {
-        showPassword = !showPassword;
-      });
-    }
+    setState(() {
+      showPassword = !showPassword;
+    });
+  }
 
     return SafeArea(
       child: Scaffold(
@@ -90,15 +126,15 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(
-                  height: 30,
+                  height: 15,
                 ),
                 // Login Icon
                 const Icon(
                   Icons.account_box,
-                  size: 80,
+                  size: 50,
                 ),
                 const SizedBox(
-                  height: 25,
+                  height: 15,
                 ),
                 // Text to the user
                 Text(
@@ -114,75 +150,78 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Email textfield
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    // Remove focus when click outside textfield
-                    onTapOutside: (event) {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    },
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                    ),
-                    obscureText: false,
-                  ),
+                UserTextField(
+                  
+                  textController: emailController,
+                  hintText: 'Email',
                 ),
                 const SizedBox(
-                  height: 2,
+                  height: 10,
+                ),
+
+                // First name textfield
+                UserTextField(
+                  textController: firstNameController,
+                  hintText: 'First Name',
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // Last Name textfield
+                UserTextField(
+                  textController: lastNameController,
+                  hintText: 'last Name',
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // Age
+                UserTextField(
+                  textController: ageController,
+                  hintText: 'Your Age',
+                ),
+
+                const SizedBox(
+                  height: 10,
                 ),
 
                 // Password textfield
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    // Remove focus when click outside textfield
-                    onTapOutside: (event) {
-                      FocusManager.instance.primaryFocus?.unfocus();
+                UserTextField(
+                  obscureText: !showPassword,
+                  textController: passwordController,
+                  hintText: 'Enter Your Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        showPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      togglevisibility();
                     },
-                    controller: passwordController,
-                    obscureText: !showPassword,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      suffixIcon: IconButton(
-                        icon: Icon(showPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off),
-                        onPressed: () {
-                          togglevisibility();
-                        },
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(
-                  height: 2,
+                  height: 10,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    // Remove focus when click outside textfield
-                    onTapOutside: (event) {
-                      FocusManager.instance.primaryFocus?.unfocus();
+
+                // Confirm password textfield
+                UserTextField(
+                  obscureText: !showPassword,
+                  textController: confirmPasswordController,
+                  hintText: 'Confirm Your Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        showPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      togglevisibility();
                     },
-                    controller: passwordConfirmController,
-                    obscureText: !showPassword,
-                    decoration: InputDecoration(
-                      hintText: 'Confirm your password',
-                      suffixIcon: IconButton(
-                        icon: Icon(showPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off),
-                        onPressed: () {
-                          togglevisibility();
-                        },
-                      ),
-                    ),
                   ),
                 ),
 
                 const SizedBox(
-                  height: 2,
+                  height: 15,
                 ),
 
                 ElevatedButton(

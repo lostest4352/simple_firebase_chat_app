@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/models/chat_user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
-import 'package:simple_firebase1/services/database.dart';
+import 'package:simple_firebase1/read_data/get_user_data.dart';
 
 class ConversationList extends StatefulWidget {
   const ConversationList({super.key});
@@ -16,12 +14,22 @@ class ConversationList extends StatefulWidget {
 }
 
 class _ConversationListState extends State<ConversationList> {
+  List<String> documentIDs = [];
+
+  // get document IDs
+  Future getDocumentIDs() async {
+    documentIDs.clear();
+    await FirebaseFirestore.instance.collection('users').get().then(
+          (snapshot) => snapshot.docs.forEach(
+            (documents) {
+              documentIDs.add(documents.reference.id);
+            },
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final userList = FirebaseFirestore.instance.collection('chat_data').where('field');
-
-    List<String> message = context.watch<ChatProvider>().messages;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -44,16 +52,16 @@ class _ConversationListState extends State<ConversationList> {
       ),
       body: Column(
         children: [
-          
           const SizedBox(
             height: 15,
           ),
           Expanded(
             child: Center(
-              child: Consumer<ChatProvider>(
-                builder: (context, value, child) {
+              child: FutureBuilder(
+                future: getDocumentIDs(),
+                builder: (context, snapshot) {
                   return ListView.builder(
-                    itemCount: message.length,
+                    itemCount: documentIDs.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
@@ -66,12 +74,13 @@ class _ConversationListState extends State<ConversationList> {
                             ),
                           );
                         },
-                        child: ListTile(
-                          leading: const Icon(Icons.label),
-                          title: Text('User Name'),
-                          subtitle: Text(message[index]),
-                          trailing: const Icon(Icons.arrow_forward),
-                        ),
+                        // child: ListTile(
+                        //   leading: const Icon(Icons.label),
+                        //   title: Text(documentIDs[index]),
+                        //   subtitle: Text('surname'),
+                        //   trailing: const Icon(Icons.arrow_forward),
+                        // ),
+                        child: GetUserData(documentID: documentIDs[index]),
                       );
                     },
                   );

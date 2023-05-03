@@ -44,12 +44,7 @@ class _ConversationListState extends State<ConversationList> {
       ),
       body: Column(
         children: [
-          // Card(
-          //   child: Text(
-          //     'Logged in as ${user?.email.toString()}',
-          //     style: const TextStyle(fontSize: 20),
-          //   ),
-          // ),
+          
           const SizedBox(
             height: 15,
           ),

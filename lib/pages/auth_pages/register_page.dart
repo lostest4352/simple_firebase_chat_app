@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/models/items_text_field.dart';
+import 'package:simple_firebase1/models/items_text_fields.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;

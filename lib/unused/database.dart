@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
-import 'package:simple_firebase1/models/chat_user_model.dart';
+
+import 'chat_user_model.dart';
+
 
 class DatabaseService with ChangeNotifier {
   final String? uid;

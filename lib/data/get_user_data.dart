@@ -21,7 +21,7 @@ class GetUserData extends StatelessWidget {
           Map<String, dynamic> data =
               snapshot.data?.data() as Map<String, dynamic>;
           return ListTile(
-            title: Text('${data['first name']} ${data['last name']}, '),
+            title: Text('${data['first name']} ${data['last name']} '),
             subtitle: Text('${data['age']} years old '),
           );
         }

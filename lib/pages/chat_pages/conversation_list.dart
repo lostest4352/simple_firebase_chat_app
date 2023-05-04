@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_page.dart';
-import 'package:simple_firebase1/provider/chat_provider.dart';
-import 'package:simple_firebase1/read_data/get_user_data.dart';
+import 'package:simple_firebase1/data/get_user_data.dart';
 
 class ConversationList extends StatefulWidget {
   const ConversationList({super.key});
@@ -69,17 +67,12 @@ class _ConversationListState extends State<ConversationList> {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return ChatPage();
+                                return const ChatPage();
                               },
                             ),
                           );
                         },
-                        // child: ListTile(
-                        //   leading: const Icon(Icons.label),
-                        //   title: Text(documentIDs[index]),
-                        //   subtitle: Text('surname'),
-                        //   trailing: const Icon(Icons.arrow_forward),
-                        // ),
+                        
                         child: GetUserData(documentID: documentIDs[index]),
                       );
                     },
@@ -90,24 +83,24 @@ class _ConversationListState extends State<ConversationList> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            label: '',
-            icon: Icon(
-              Icons.abc,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: '',
-            icon: Icon(Icons.abc),
-          ),
-          BottomNavigationBarItem(
-            label: '',
-            icon: Icon(Icons.abc),
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       label: '',
+      //       icon: Icon(
+      //         Icons.abc,
+      //       ),
+      //     ),
+      //     BottomNavigationBarItem(
+      //       label: '',
+      //       icon: Icon(Icons.abc),
+      //     ),
+      //     BottomNavigationBarItem(
+      //       label: '',
+      //       icon: Icon(Icons.abc),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

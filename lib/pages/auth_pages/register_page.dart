@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/models/user_text_field.dart';
+import 'package:simple_firebase1/models/items_text_field.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -37,9 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.blue,
-          title: Text(
-            message,
-          ),
+          title: Text(message),
         );
       },
     );
@@ -89,6 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
           emailController.text.trim(),
           int.parse(ageController.text.trim()),
         );
+        if (context.mounted) {}
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
@@ -107,16 +106,13 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
-
     void togglevisibility() {
-    setState(() {
-      showPassword = !showPassword;
-    });
-  }
+      setState(() {
+        showPassword = !showPassword;
+      });
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -150,8 +146,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Email textfield
-                UserTextField(
-                  
+                ItemsTextField(
                   textController: emailController,
                   hintText: 'Email',
                 ),
@@ -160,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // First name textfield
-                UserTextField(
+                ItemsTextField(
                   textController: firstNameController,
                   hintText: 'First Name',
                 ),
@@ -170,7 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Last Name textfield
-                UserTextField(
+                ItemsTextField(
                   textController: lastNameController,
                   hintText: 'last Name',
                 ),
@@ -180,7 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Age
-                UserTextField(
+                ItemsTextField(
                   textController: ageController,
                   hintText: 'Your Age',
                 ),
@@ -190,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Password textfield
-                UserTextField(
+                ItemsTextField(
                   obscureText: !showPassword,
                   textController: passwordController,
                   hintText: 'Enter Your Password',
@@ -207,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Confirm password textfield
-                UserTextField(
+                ItemsTextField(
                   obscureText: !showPassword,
                   textController: confirmPasswordController,
                   hintText: 'Confirm Your Password',

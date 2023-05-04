@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
 
-import '../../models/user_text_field.dart';
+import '../../models/items_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 // Email textfield
-                UserTextField(
+                ItemsTextField(
                   textController: emailController,
                   hintText: 'Email',
                 ),
@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 // Password textfield
-                UserTextField(
+                ItemsTextField(
                   obscureText: !showPassword,
                   textController: passwordController,
                   hintText: 'Enter Your Password',

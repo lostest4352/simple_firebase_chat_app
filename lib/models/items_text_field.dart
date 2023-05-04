@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-class UserTextField extends StatefulWidget {
+class ItemsTextField extends StatefulWidget {
   final TextEditingController textController;
   final String hintText;
   final Widget? suffixIcon;
   final bool? obscureText;
 
-  const UserTextField({
+  const ItemsTextField({
     Key? key,
     required this.textController,
     required this.hintText,
@@ -16,10 +16,10 @@ class UserTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<UserTextField> createState() => _UserTextFieldState();
+  State<ItemsTextField> createState() => _ItemsTextFieldState();
 }
 
-class _UserTextFieldState extends State<UserTextField> {
+class _ItemsTextFieldState extends State<ItemsTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(

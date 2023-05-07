@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
@@ -192,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
+                    InkWell(
                       onTap: () {},
                       child: SizedBox(
                         height: 40,
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(
                       width: 4,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: widget.onClicked,
                       child: const Text(
                         "Register now",

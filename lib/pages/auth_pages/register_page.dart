@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/models/items_text_fields.dart';
+import 'package:uuid/uuid.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -18,7 +19,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final confirmPasswordController = TextEditingController();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
+  final usernameController = TextEditingController();
   final ageController = TextEditingController();
+
+  // final uuid = const Uuid();
+
+  final docUser = FirebaseFirestore.instance.collection('users').doc();
+  
+
 
   @override
   void dispose() {
@@ -27,6 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
     confirmPasswordController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
+    usernameController.dispose();
     ageController.dispose();
     super.dispose();
   }
@@ -61,6 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
         confirmPasswordController.text.trim() == '' ||
         firstNameController.text.trim() == '' ||
         lastNameController.text.trim() == '' ||
+        usernameController.text.trim() == '' ||
         ageController.text.trim() == '') {
       Navigator.pop(context);
       showDialogPopup("Please enter all fields");
@@ -82,10 +92,14 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         addUserDetails(
+          
           firstNameController.text.trim(),
           lastNameController.text.trim(),
           emailController.text.trim(),
+          usernameController.text.trim(),
           int.parse(ageController.text.trim()),
+          docUser.id,
+          
         );
         if (context.mounted) {}
         Navigator.pop(context);
@@ -97,11 +111,13 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future addUserDetails(
-      String firstName, String lastName, String email, int age) async {
+      String firstName, String lastName,String username,  String email, int age, String uuid) async {
     await FirebaseFirestore.instance.collection('users').add({
+      'uid': uuid,
       'first name': firstName,
       'last name': lastName,
-      'email': email,
+      'username' : username,
+      'email' : email,
       'age': age,
     });
   }
@@ -167,7 +183,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Last Name textfield
                 ItemsTextField(
                   textController: lastNameController,
-                  hintText: 'last Name',
+                  hintText: 'Last Name',
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // username textfield
+                ItemsTextField(
+                  textController: usernameController,
+                  hintText: 'Choose a username you want to display',
                 ),
 
                 const SizedBox(
@@ -259,7 +284,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
+                    InkWell(
                       onTap: () {},
                       child: SizedBox(
                         height: 40,
@@ -280,7 +305,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(
                       width: 4,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: widget.onClicked,
                       child: const Text(
                         "Sign In",

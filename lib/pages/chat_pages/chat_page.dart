@@ -1,11 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:simple_firebase1/models/chat_text_field.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  const ChatPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -13,6 +21,12 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final chatController = TextEditingController();
+
+  // final firebaseUsers = FirebaseFirestore.instance.collection("users");
+
+  List<String> documentIDs = [];
+
+  final users = FirebaseFirestore.instance.collection('users').get();
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +82,6 @@ class _ChatPageState extends State<ChatPage> {
           );
         },
       );
-      
     }
 
     return SafeArea(
@@ -106,18 +119,57 @@ class _ChatPageState extends State<ChatPage> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(5),
-                                        child: GestureDetector(
+                                        child: InkWell(
                                           onTap: () {
                                             deleteOrEditMessage(
                                               message.length - index - 1,
                                               chatController.text,
                                             );
-                                            
                                           },
-                                          child: Text(
-                                            reverseMessage[index],
-                                            style:
-                                                const TextStyle(fontSize: 18),
+                                          child: Wrap(
+                                            direction: Axis.vertical,
+                                            children: [
+                                              Text(
+                                                reverseMessage[index],
+                                                style: const TextStyle(
+                                                    fontSize: 18),
+                                                softWrap: true,
+                                              ),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              const Icon(
+                                                Icons.check,
+                                                color: Colors.white,
+                                                size: 20,
+                                                fill: BorderSide
+                                                    .strokeAlignCenter,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              StreamBuilder(
+                                                stream: FirebaseFirestore
+                                                    .instance
+                                                    .collection("users")
+                                                    .snapshots(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    Map<String, dynamic>
+                                                        userMap = snapshot.data
+                                                                ?.docs[index]
+                                                                .data()
+                                                            as Map<String,
+                                                                dynamic>;
+                                                    return Text(
+                                                        userMap["username"]);
+                                                  } else {
+                                                    return const Text(
+                                                        "Data not found");
+                                                  }
+                                                },
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),

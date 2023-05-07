@@ -61,7 +61,7 @@ class _ChatUsersListState extends State<ChatUsersList> {
                   return ListView.builder(
                     itemCount: documentIDs.length,
                     itemBuilder: (context, index) {
-                      return GestureDetector(
+                      return InkWell(
                         onTap: () {
                           Navigator.push(
                             context,

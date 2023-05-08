@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Simple App',
           theme: ThemeData.dark(),
-          home: AuthPage(),
+          home: const AuthPage(),
         );
       },
     );

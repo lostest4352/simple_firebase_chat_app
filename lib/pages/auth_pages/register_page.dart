@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/models/items_text_fields.dart';
 import 'package:simple_firebase1/models/user_model.dart';
-import 'package:uuid/uuid.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -22,8 +21,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final lastNameController = TextEditingController();
   final usernameController = TextEditingController();
   final ageController = TextEditingController();
-
-  // final uuid = const Uuid();
 
   final docUser = FirebaseFirestore.instance.collection('users').doc();
 
@@ -90,14 +87,6 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text.trim(),
         );
 
-        // addUserDetails(
-        //   firstNameController.text.trim(),
-        //   lastNameController.text.trim(),
-        //   emailController.text.trim(),
-        //   usernameController.text.trim(),
-        //   int.parse(ageController.text.trim()),
-        //   docUser.id,
-        // );
         final user = UserModel(
           firstName: firstNameController.text.trim(),
           lastName: lastNameController.text.trim(),
@@ -120,18 +109,6 @@ class _RegisterPageState extends State<RegisterPage> {
   Future addUserDetails(UserModel user) async {
     await FirebaseFirestore.instance.collection("users").add(user.toMap());
   }
-
-  // Future addUserDetails(String firstName, String lastName, String username,
-  //     String email, int age, String uuid) async {
-  //   await FirebaseFirestore.instance.collection('users').add({
-  //     'uid': uuid,
-  //     'first name': firstName,
-  //     'last name': lastName,
-  //     'username': username,
-  //     'email': email,
-  //     'age': age,
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

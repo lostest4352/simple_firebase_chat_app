@@ -1,8 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,19 +19,15 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final chatController = TextEditingController();
 
-  // final firebaseUsers = FirebaseFirestore.instance.collection("users");
-
   List<String> documentIDs = [];
 
-  final users = FirebaseFirestore.instance.collection('users').get();
+  final firebaseUsers = FirebaseFirestore.instance.collection('users').get();
 
   @override
   Widget build(BuildContext context) {
     List<String> message = context.watch<ChatProvider>().messages;
 
     final reverseMessage = message.reversed.toList();
-
-    // int index = int.fromEnvironment(reverseMessage.toString());
 
     void deleteOrEditMessage(int index, String content) {
       showModalBottomSheet(

@@ -46,13 +46,14 @@ class _ChatUsersListState extends State<ChatUsersList> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     if (snapshot.hasData) {
-                      QuerySnapshot dataSnapshot =
+                      final QuerySnapshot dataSnapshot =
                           snapshot.data as QuerySnapshot;
 
                       return ListView.builder(
                         itemCount: dataSnapshot.docs.length,
                         itemBuilder: (context, index) {
-                          final QueryDocumentSnapshot doc =
+                          
+                          final QueryDocumentSnapshot singleDoc =
                               dataSnapshot.docs[index];
 
                           return InkWell(
@@ -67,8 +68,8 @@ class _ChatUsersListState extends State<ChatUsersList> {
                               );
                             },
                             child: ListTile(
-                              title: Text(doc['username']),
-                              subtitle: Text(doc['age'].toString()),
+                              title: Text(singleDoc['username']),
+                              subtitle: Text(singleDoc['age'].toString()),
                             ),
                           );
                         },

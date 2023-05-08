@@ -2,74 +2,42 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class UserMessages {
-  String uid;
-  String username;
-  String message;
-  DateTime createdAt;
-  UserMessages({
-    required this.uid,
-    required this.username,
-    required this.message,
-    required this.createdAt,
-  });
+  String? messageId;
+  String? sender;
+  String? messageText;
+  bool? seen;
+  DateTime? createdOn;
 
-  UserMessages copyWith({
-    String? uid,
-    String? username,
-    String? message,
-    DateTime? createdAt,
-  }) {
-    return UserMessages(
-      uid: uid ?? this.uid,
-      username: username ?? this.username,
-      message: message ?? this.message,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
+  UserMessages({
+    this.messageId,
+    this.sender,
+    this.messageText,
+    this.seen,
+    this.createdOn,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'uid': uid,
-      'username': username,
-      'message': message,
-      'createdAt': createdAt.millisecondsSinceEpoch,
+      'messageId': messageId,
+      'sender': sender,
+      'messageText': messageText,
+      'seen': seen,
+      'createdOn': createdOn?.millisecondsSinceEpoch,
     };
   }
 
   factory UserMessages.fromMap(Map<String, dynamic> map) {
     return UserMessages(
-      uid: map['uid'] as String,
-      username: map['username'] as String,
-      message: map['message'] as String,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+      messageId: map['messageId'] != null ? map['messageId'] as String : null,
+      sender: map['sender'] != null ? map['sender'] as String : null,
+      messageText: map['messageText'] != null ? map['messageText'] as String : null,
+      seen: map['seen'] != null ? map['seen'] as bool : null,
+      createdOn: map['createdOn'] != null ? DateTime.fromMillisecondsSinceEpoch(map['createdOn'] as int) : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UserMessages.fromJson(String source) => UserMessages.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'UserMessages(uid: $uid, username: $username, message: $message, createdAt: $createdAt)';
-  }
-
-  @override
-  bool operator ==(covariant UserMessages other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.username == username &&
-      other.message == message &&
-      other.createdAt == createdAt;
-  }
-
-  @override
-  int get hashCode {
-    return uid.hashCode ^
-      username.hashCode ^
-      message.hashCode ^
-      createdAt.hashCode;
-  }
+  factory UserMessages.fromJson(String source) =>
+      UserMessages.fromMap(json.decode(source) as Map<String, dynamic>);
 }

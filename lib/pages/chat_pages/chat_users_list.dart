@@ -84,24 +84,7 @@ class _ChatUsersListState extends State<ChatUsersList> {
           ),
         ],
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       label: '',
-      //       icon: Icon(
-      //         Icons.abc,
-      //       ),
-      //     ),
-      //     BottomNavigationBarItem(
-      //       label: '',
-      //       icon: Icon(Icons.abc),
-      //     ),
-      //     BottomNavigationBarItem(
-      //       label: '',
-      //       icon: Icon(Icons.abc),
-      //     ),
-      //   ],
-      // ),
+      
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/models/items_text_fields.dart';
+import 'package:simple_firebase1/models/user_model.dart';
 import 'package:uuid/uuid.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -25,8 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
   // final uuid = const Uuid();
 
   final docUser = FirebaseFirestore.instance.collection('users').doc();
-  
-
 
   @override
   void dispose() {
@@ -91,16 +90,24 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text.trim(),
         );
 
-        addUserDetails(
-          
-          firstNameController.text.trim(),
-          lastNameController.text.trim(),
-          emailController.text.trim(),
-          usernameController.text.trim(),
-          int.parse(ageController.text.trim()),
-          docUser.id,
-          
+        // addUserDetails(
+        //   firstNameController.text.trim(),
+        //   lastNameController.text.trim(),
+        //   emailController.text.trim(),
+        //   usernameController.text.trim(),
+        //   int.parse(ageController.text.trim()),
+        //   docUser.id,
+        // );
+        final user = UserModel(
+          firstName: firstNameController.text.trim(),
+          lastName: lastNameController.text.trim(),
+          email: emailController.text.trim(),
+          username: usernameController.text.trim(),
+          age: int.parse(ageController.text.trim()),
         );
+
+        await addUserDetails(user);
+
         if (context.mounted) {}
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
@@ -110,17 +117,21 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future addUserDetails(
-      String firstName, String lastName,String username,  String email, int age, String uuid) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'uid': uuid,
-      'first name': firstName,
-      'last name': lastName,
-      'username' : username,
-      'email' : email,
-      'age': age,
-    });
+  Future addUserDetails(UserModel user) async {
+    await FirebaseFirestore.instance.collection("users").add(user.toMap());
   }
+
+  // Future addUserDetails(String firstName, String lastName, String username,
+  //     String email, int age, String uuid) async {
+  //   await FirebaseFirestore.instance.collection('users').add({
+  //     'uid': uuid,
+  //     'first name': firstName,
+  //     'last name': lastName,
+  //     'username': username,
+  //     'email': email,
+  //     'age': age,
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

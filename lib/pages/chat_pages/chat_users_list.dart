@@ -11,6 +11,10 @@ class ChatUsersList extends StatefulWidget {
 }
 
 class _ChatUsersListState extends State<ChatUsersList> {
+  void signOutFromFirebase() async {
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +28,7 @@ class _ChatUsersListState extends State<ChatUsersList> {
           IconButton(
             enableFeedback: true,
             onPressed: () {
-              FirebaseAuth.instance.signOut();
+              signOutFromFirebase();
             },
             icon: const Icon(
               Icons.logout,
@@ -42,6 +46,7 @@ class _ChatUsersListState extends State<ChatUsersList> {
             child: Center(
               child: StreamBuilder(
                 stream:
+                    // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
                     FirebaseFirestore.instance.collection("users").snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
@@ -52,7 +57,6 @@ class _ChatUsersListState extends State<ChatUsersList> {
                       return ListView.builder(
                         itemCount: dataSnapshot.docs.length,
                         itemBuilder: (context, index) {
-                          
                           final QueryDocumentSnapshot singleDoc =
                               dataSnapshot.docs[index];
 

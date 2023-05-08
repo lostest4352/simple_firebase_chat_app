@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_page.dart';
-import 'package:simple_firebase1/data/get_user_data.dart';
 
 class ChatUsersList extends StatefulWidget {
   const ChatUsersList({super.key});
@@ -12,20 +11,6 @@ class ChatUsersList extends StatefulWidget {
 }
 
 class _ChatUsersListState extends State<ChatUsersList> {
-  List<String> documentIDs = [];
-
-  // get document IDs
-  Future getDocumentIDs() async {
-    documentIDs.clear();
-    await FirebaseFirestore.instance.collection('users').get().then(
-          (snapshot) => snapshot.docs.forEach(
-            (documents) {
-              documentIDs.add(documents.reference.id);
-            },
-          ),
-        );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,28 +40,43 @@ class _ChatUsersListState extends State<ChatUsersList> {
           ),
           Expanded(
             child: Center(
-              child: FutureBuilder(
-                future: getDocumentIDs(),
+              child: StreamBuilder(
+                stream:
+                    FirebaseFirestore.instance.collection("users").snapshots(),
                 builder: (context, snapshot) {
-                  return ListView.builder(
-                    itemCount: documentIDs.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const ChatPage();
-                              },
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    if (snapshot.hasData) {
+                      QuerySnapshot dataSnapshot =
+                          snapshot.data as QuerySnapshot;
+
+                      return ListView.builder(
+                        itemCount: dataSnapshot.docs.length,
+                        itemBuilder: (context, index) {
+                          final QueryDocumentSnapshot doc =
+                              dataSnapshot.docs[index];
+
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return const ChatPage();
+                                  },
+                                ),
+                              );
+                            },
+                            child: ListTile(
+                              title: Text(doc['username']),
+                              subtitle: Text(doc['age'].toString()),
                             ),
                           );
                         },
-                        child: GetUserData(
-                          documentID: documentIDs[index],
-                        ),
                       );
-                    },
+                    }
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
                 },
               ),
@@ -84,7 +84,6 @@ class _ChatUsersListState extends State<ChatUsersList> {
           ),
         ],
       ),
-      
     );
   }
 }

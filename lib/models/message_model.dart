@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-class UserMessages {
+class MessageModel {
   String? messageId;
   String? sender;
   String? messageText;
   bool? seen;
   DateTime? createdOn;
 
-  UserMessages({
+  MessageModel({
     this.messageId,
     this.sender,
     this.messageText,
@@ -26,8 +26,8 @@ class UserMessages {
     };
   }
 
-  factory UserMessages.fromMap(Map<String, dynamic> map) {
-    return UserMessages(
+  factory MessageModel.fromMap(Map<String, dynamic> map) {
+    return MessageModel(
       messageId: map['messageId'] != null ? map['messageId'] as String : null,
       sender: map['sender'] != null ? map['sender'] as String : null,
       messageText: map['messageText'] != null ? map['messageText'] as String : null,
@@ -38,6 +38,6 @@ class UserMessages {
 
   String toJson() => json.encode(toMap());
 
-  factory UserMessages.fromJson(String source) =>
-      UserMessages.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MessageModel.fromJson(String source) =>
+      MessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

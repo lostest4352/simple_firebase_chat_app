@@ -1,26 +1,26 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
-import 'package:simple_firebase1/components/chat_text_field.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
+import 'package:simple_firebase1/models/message_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatRoomPage extends StatefulWidget {
-  final UserModel userModel;
   final UserModel targetUser;
   final ChatRoomModel chatroom;
-  final User firebaseUser;
+  final User currentUser;
 
   const ChatRoomPage({
     Key? key,
-    required this.userModel,
     required this.targetUser,
     required this.chatroom,
-    required this.firebaseUser,
+    required this.currentUser,
   }) : super(key: key);
 
   @override
@@ -28,14 +28,50 @@ class ChatRoomPage extends StatefulWidget {
 }
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
-  final chatController = TextEditingController();
+  final messageController = TextEditingController();
+
+  final uuid = const Uuid();
+
+  @override
+  void dispose() {
+    messageController.dispose();
+    super.dispose();
+  }
+
+  void sendMessage() async {
+    String message = messageController.text.trim();
+    messageController.clear();
+
+    if (message.isNotEmpty) {
+      MessageModel newMessage = MessageModel(
+        messageId: uuid.v1(),
+        sender: widget.currentUser.uid,
+        createdOn: DateTime.now(),
+        messageText: message,
+        seen: false,
+      );
+
+      // Add message to collection
+      FirebaseFirestore.instance
+          .collection("chatrooms")
+          .doc(widget.chatroom.chatRoomId)
+          .collection("messages")
+          .doc(newMessage.messageId)
+          .set(newMessage.toMap());
+
+      // set every newest message as last message
+      widget.chatroom.lastMessage = message;
+
+      // update the chatroom
+      // FirebaseFirestore.instance
+      //     .collection("chatrooms")
+      //     .doc(widget.chatroom.chatRoomId)
+      //     .set(widget.chatroom.toMap());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> message = context.watch<ChatProvider>().messages;
-
-    final reverseMessage = message.reversed.toList();
-
     void showDeleteConfirmationDialog(int index) {
       showDialog(
         context: context,
@@ -113,84 +149,85 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           children: [
             Expanded(
               child: Center(
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: message.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 20,
-                      ),
-                      child: Consumer(
-                        builder: (context, value, child) {
-                          return Row(
-                            // mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Wrap(
-                                  alignment: WrapAlignment.end,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(1),
-                                        child: InkWell(
-                                          onTap: () {
-                                            showEditOrDeleteDialog(
-                                              message.length - index - 1,
-                                              chatController.text,
-                                            );
-                                          },
-                                          child: Wrap(
-                                            direction: Axis.horizontal,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 15,
-                                                        vertical: 5),
-                                                color: Colors.blue[900],
-                                                child: Text(
-                                                  reverseMessage[index],
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                  softWrap: true,
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: const EdgeInsets.all(8),
-                                                child: const Icon(
-                                                  Icons.check,
-                                                  color: Colors.white,
-                                                  size: 25,
-                                                  fill: BorderSide
-                                                      .strokeAlignCenter,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("chatrooms")
+                      .doc(widget.chatroom.chatRoomId)
+                      .collection("messages")
+                      .orderBy("createdOn", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.active) {
+                      if (snapshot.hasData) {
+                        QuerySnapshot dataSnapshot =
+                            snapshot.data as QuerySnapshot;
+
+                        return ListView.builder(
+                          reverse: true,
+                          itemCount: dataSnapshot.docs.length,
+                          itemBuilder: (context, index) {
+                            MessageModel currentMessage = MessageModel.fromMap(
+                                dataSnapshot.docs[index].data()
+                                    as Map<String, dynamic>);
+                            return Wrap(
+                              alignment: (currentMessage.sender ==
+                                      widget.currentUser.uid)
+                                  ? WrapAlignment.end
+                                  : WrapAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: (currentMessage.sender ==
+                                            widget.currentUser.uid)
+                                        ? Colors.blue[800]
+                                        : Colors.black38,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Text(
+                                    currentMessage.messageText.toString(),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    } else {
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   },
                 ),
               ),
             ),
             Row(
-              children: const [
+              children: [
                 Flexible(
-                  child: ChatTextField(),
+                  child: TextField(
+                    maxLines: null,
+                    controller: messageController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter message",
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    sendMessage();
+                  },
+                  icon: const Icon(Icons.send),
                 ),
               ],
             ),

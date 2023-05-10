@@ -23,8 +23,7 @@ class _ChatUsersListState extends State<ChatUsersList> {
 
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  Future<ChatRoomModel?> getChatRoomModel(
-      UserModel targetUser, int index) async {
+  Future<ChatRoomModel?> getChatRoomModel(UserModel targetUser) async {
     ChatRoomModel? chatRoom;
 
     const uuid = Uuid();
@@ -38,7 +37,7 @@ class _ChatUsersListState extends State<ChatUsersList> {
     if (snapshot.docs.isNotEmpty) {
       // Fetch the existing chatroom
 
-      final docData = snapshot.docs[index].data();
+      final docData = snapshot.docs[0].data();
 
       ChatRoomModel existingChatroom =
           ChatRoomModel.fromMap(docData as Map<String, dynamic>);
@@ -103,24 +102,21 @@ class _ChatUsersListState extends State<ChatUsersList> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     if (snapshot.hasData) {
-                      final QuerySnapshot dataSnapshot =
+                      QuerySnapshot dataSnapshot =
                           snapshot.data as QuerySnapshot;
 
-                      return ListView.builder(
-                        itemCount: dataSnapshot.docs.length,
-                        itemBuilder: (context, index) {
-                          if (dataSnapshot.docs.isNotEmpty) {
-                            Map<String, dynamic> userMap =
-                                dataSnapshot.docs[index].data()
-                                    as Map<String, dynamic>;
-
+                      if (dataSnapshot.docs.isNotEmpty) {
+                        return ListView.builder(
+                          itemCount: dataSnapshot.docs.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> userMap = dataSnapshot.docs[index]
+                                .data() as Map<String, dynamic>;
                             // We can user either UserModel or Firebase User here
                             UserModel selectedUser = UserModel.fromMap(userMap);
-
                             return ListTile(
                               onTap: () async {
                                 ChatRoomModel? chatRoomModel =
-                                    await getChatRoomModel(selectedUser, index);
+                                    await getChatRoomModel(selectedUser);
                                 if (chatRoomModel != null) {
                                   if (context.mounted) {}
                                   Navigator.push(
@@ -140,17 +136,12 @@ class _ChatUsersListState extends State<ChatUsersList> {
                               title: Text(selectedUser.username.toString()),
                               subtitle: Text(selectedUser.email.toString()),
                             );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      );
+                          },
+                        );
+                      }
                     }
                   }
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return Center();
                 },
               ),
             ),

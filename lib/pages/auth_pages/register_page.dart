@@ -50,6 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Create account and register the user
   Future registerUser() async {
+    UserCredential? credential;
     // show loading circle
     showDialog(
       context: context,
@@ -82,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       // try registering the user
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
@@ -93,6 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
           email: emailController.text.trim(),
           username: usernameController.text.trim(),
           age: int.parse(ageController.text.trim()),
+          uid: credential.user?.uid,
         );
 
         await addUserDetails(user);

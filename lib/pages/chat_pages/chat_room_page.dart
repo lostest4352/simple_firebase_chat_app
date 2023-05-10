@@ -63,10 +63,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       widget.chatroom.lastMessage = message;
 
       // update the chatroom
-      // FirebaseFirestore.instance
-      //     .collection("chatrooms")
-      //     .doc(widget.chatroom.chatRoomId)
-      //     .set(widget.chatroom.toMap());
+      FirebaseFirestore.instance
+          .collection("chatrooms")
+          .doc(widget.chatroom.chatRoomId)
+          .set(widget.chatroom.toMap());
     }
   }
 

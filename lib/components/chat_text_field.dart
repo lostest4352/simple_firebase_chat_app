@@ -44,7 +44,7 @@ class _ChatTextFieldState extends State<ChatTextField> {
         suffixIcon: IconButton(
           onPressed: () {
             FocusManager.instance.primaryFocus?.unfocus();
-            if (textController.text.trim() != '') {
+            if (textController.text.trim().isNotEmpty) {
               context.read<ChatProvider>().insertMessage(textController.text);
             }
 

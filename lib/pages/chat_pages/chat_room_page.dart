@@ -1,20 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:simple_firebase1/components/chat_text_field.dart';
+import 'package:simple_firebase1/models/chatroom_model.dart';
+import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({
+class ChatRoomPage extends StatefulWidget {
+  final UserModel userModel;
+  final UserModel targetUser;
+  final ChatRoomModel chatroom;
+  final User firebaseUser;
+
+  const ChatRoomPage({
     Key? key,
+    required this.userModel,
+    required this.targetUser,
+    required this.chatroom,
+    required this.firebaseUser,
   }) : super(key: key);
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatRoomPage> createState() => _ChatRoomPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatRoomPageState extends State<ChatRoomPage> {
   final chatController = TextEditingController();
 
   @override
@@ -104,7 +117,6 @@ class _ChatPageState extends State<ChatPage> {
                   reverse: true,
                   itemCount: message.length,
                   itemBuilder: (context, index) {
-                    // return Text('data');
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 20,
@@ -122,10 +134,9 @@ class _ChatPageState extends State<ChatPage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
-                                        color: Colors.blue,
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.all(5),
+                                        padding: const EdgeInsets.all(1),
                                         child: InkWell(
                                           onTap: () {
                                             showEditOrDeleteDialog(
@@ -134,26 +145,30 @@ class _ChatPageState extends State<ChatPage> {
                                             );
                                           },
                                           child: Wrap(
-                                            direction: Axis.vertical,
+                                            direction: Axis.horizontal,
                                             children: [
-                                              Text(
-                                                reverseMessage[index],
-                                                style: const TextStyle(
-                                                    fontSize: 18),
-                                                softWrap: true,
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 5),
+                                                color: Colors.blue[900],
+                                                child: Text(
+                                                  reverseMessage[index],
+                                                  style: const TextStyle(
+                                                      fontSize: 18),
+                                                  softWrap: true,
+                                                ),
                                               ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              const Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                                size: 20,
-                                                fill: BorderSide
-                                                    .strokeAlignCenter,
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
+                                              Container(
+                                                margin: const EdgeInsets.all(8),
+                                                child: const Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                  size: 25,
+                                                  fill: BorderSide
+                                                      .strokeAlignCenter,
+                                                ),
                                               ),
                                             ],
                                           ),

@@ -7,7 +7,7 @@ class UserModel {
   String? username;
   String? email;
   int? age;
-  String? uuid;
+  String? uid;
   
   UserModel({
     this.firstName,
@@ -15,7 +15,7 @@ class UserModel {
     this.username,
     this.email,
     this.age,
-    this.uuid,
+    this.uid,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,7 +25,7 @@ class UserModel {
       'username': username,
       'email': email,
       'age': age,
-      'uuid': uuid,
+      'uid': uid,
     };
   }
 
@@ -36,7 +36,7 @@ class UserModel {
       username: map['username'] != null ? map['username'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       age: map['age'] != null ? map['age'] as int : null,
-      uuid: map['uuid'] != null ? map['uuid'] as String : null,
+      uid: map['uid'] != null ? map['uid'] as String : null,
     );
   }
 

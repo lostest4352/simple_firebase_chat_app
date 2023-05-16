@@ -17,20 +17,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
   final usernameController = TextEditingController();
   final ageController = TextEditingController();
-
-  final docUser = FirebaseFirestore.instance.collection('users').doc();
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-    firstNameController.dispose();
-    lastNameController.dispose();
     usernameController.dispose();
     ageController.dispose();
     super.dispose();
@@ -50,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Create account and register the user
   Future registerUser() async {
-    UserCredential? credential;
+    
     // show loading circle
     showDialog(
       context: context,
@@ -65,8 +59,6 @@ class _RegisterPageState extends State<RegisterPage> {
     if (emailController.text.trim() == '' ||
         passwordController.text.trim() == '' ||
         confirmPasswordController.text.trim() == '' ||
-        firstNameController.text.trim() == '' ||
-        lastNameController.text.trim() == '' ||
         usernameController.text.trim() == '' ||
         ageController.text.trim() == '') {
       Navigator.pop(context);
@@ -83,24 +75,24 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       // try registering the user
       try {
-        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        final credential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
 
         final user = UserModel(
-          firstName: firstNameController.text.trim(),
-          lastName: lastNameController.text.trim(),
           email: emailController.text.trim(),
           username: usernameController.text.trim(),
           age: int.parse(ageController.text.trim()),
           uid: credential.user?.uid,
         );
 
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+        
         await addUserDetails(user);
-
-        if (context.mounted) {}
-        Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         return showDialogPopup(e.code);
@@ -160,29 +152,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 10,
                 ),
 
-                // First name textfield
-                ItemsTextField(
-                  textController: firstNameController,
-                  hintText: 'First Name',
-                ),
-
-                const SizedBox(
-                  height: 10,
-                ),
-
-                // Last Name textfield
-                ItemsTextField(
-                  textController: lastNameController,
-                  hintText: 'Last Name',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
                 // username textfield
                 ItemsTextField(
                   textController: usernameController,
-                  hintText: 'Choose a username you want to display',
+                  hintText: 'Your username',
                 ),
 
                 const SizedBox(
@@ -249,8 +222,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Expanded(
                       child: Divider(
                         thickness: 0.5,

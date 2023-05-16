@@ -72,6 +72,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<QuerySnapshot> chatRoomStream = FirebaseFirestore.instance
+        .collection("chatrooms")
+        .doc(widget.chatroom.chatRoomId)
+        .collection("messages")
+        .orderBy("createdOn", descending: true)
+        .snapshots();
+
     void showDeleteConfirmationDialog(int index) {
       showDialog(
         context: context,
@@ -150,12 +157,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             Expanded(
               child: Center(
                 child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("chatrooms")
-                      .doc(widget.chatroom.chatRoomId)
-                      .collection("messages")
-                      .orderBy("createdOn", descending: true)
-                      .snapshots(),
+                  stream: chatRoomStream,
+                  // stream: FirebaseFirestore.instance
+                  //     .collection("chatrooms")
+                  //     .doc(widget.chatroom.chatRoomId)
+                  //     .collection("messages")
+                  //     .orderBy("createdOn", descending: true)
+                  //     .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       if (snapshot.hasData) {
@@ -175,23 +183,31 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                   ? WrapAlignment.end
                                   : WrapAlignment.start,
                               children: [
-                                Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 4,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: (currentMessage.sender ==
-                                            widget.currentUser.uid)
-                                        ? Colors.blue[800]
-                                        : Colors.black38,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Text(
-                                    currentMessage.messageText.toString(),
+                                Padding(
+                                  padding: EdgeInsets.only(left: (currentMessage.sender == widget.currentUser.uid) ? 50 : 5, right: (currentMessage.sender == widget.currentUser.uid) ? 5: 50),
+                                  child: Container(
+                                    
+                                    
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: (currentMessage.sender ==
+                                              widget.currentUser.uid)
+                                          ? Colors.blue[800]
+                                          : Colors.black38,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      currentMessage.messageText.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -211,25 +227,31 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 ),
               ),
             ),
-            Row(
-              children: [
-                Flexible(
-                  child: TextField(
-                    maxLines: null,
-                    controller: messageController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Enter message",
+            Container(
+              color: Colors.black26,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: TextField(
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      maxLines: null,
+                      controller: messageController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter message",
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    sendMessage();
-                  },
-                  icon: const Icon(Icons.send),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () {
+                      sendMessage();
+                    },
+                    icon: const Icon(Icons.send),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

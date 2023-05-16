@@ -7,18 +7,18 @@ import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
 
-class ChatUsersList extends StatefulWidget {
-  const ChatUsersList({
+class HomePage extends StatefulWidget {
+  const HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<ChatUsersList> createState() => _ChatUsersListState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _ChatUsersListState extends State<ChatUsersList> {
+class _HomePageState extends State<HomePage> {
   void signOutFromFirebase() async {
-    FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signOut();
   }
 
   final currentUser = FirebaseAuth.instance.currentUser;
@@ -65,6 +65,11 @@ class _ChatUsersListState extends State<ChatUsersList> {
 
   @override
   Widget build(BuildContext context) {
+    Stream<QuerySnapshot> userStream = FirebaseFirestore.instance
+        .collection("users")
+        .where("email", isNotEqualTo: currentUser?.email)
+        .snapshots();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -93,12 +98,13 @@ class _ChatUsersListState extends State<ChatUsersList> {
           Expanded(
             child: Center(
               child: StreamBuilder(
-                stream:
-                    // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
-                    FirebaseFirestore.instance
-                        .collection("users")
-                        .where("email", isNotEqualTo: currentUser?.email)
-                        .snapshots(),
+                // stream:
+                //     // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
+                //     FirebaseFirestore.instance
+                //         .collection("users")
+                //         .where("email", isNotEqualTo: currentUser?.email)
+                //         .snapshots(),
+                stream: userStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     if (snapshot.hasData) {
@@ -109,28 +115,30 @@ class _ChatUsersListState extends State<ChatUsersList> {
                         return ListView.builder(
                           itemCount: dataSnapshot.docs.length,
                           itemBuilder: (context, index) {
-                            Map<String, dynamic> userMap = dataSnapshot.docs[index]
-                                .data() as Map<String, dynamic>;
-                            // We can user either UserModel or Firebase User here
+                            Map<String, dynamic> userMap =
+                                dataSnapshot.docs[index].data()
+                                    as Map<String, dynamic>;
+                            // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
                             UserModel selectedUser = UserModel.fromMap(userMap);
                             return ListTile(
                               onTap: () async {
                                 ChatRoomModel? chatRoomModel =
                                     await getChatRoomModel(selectedUser);
                                 if (chatRoomModel != null) {
-                                  if (context.mounted) {}
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return ChatRoomPage(
-                                          chatroom: chatRoomModel,
-                                          targetUser: selectedUser,
-                                          currentUser: currentUser as User,
-                                        );
-                                      },
-                                    ),
-                                  );
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ChatRoomPage(
+                                            chatroom: chatRoomModel,
+                                            targetUser: selectedUser,
+                                            currentUser: currentUser as User,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                               title: Text(selectedUser.username.toString()),
@@ -141,10 +149,31 @@ class _ChatUsersListState extends State<ChatUsersList> {
                       }
                     }
                   }
-                  return Center();
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 },
               ),
             ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                label: '',
+                icon: Icon(Icons.home),
+              ),
+              BottomNavigationBarItem(
+                label: '',
+                icon: Icon(Icons.search),
+              ),
+              BottomNavigationBarItem(
+                label: '',
+                icon: Icon(Icons.settings),
+              ),
+            ],
           ),
         ],
       ),

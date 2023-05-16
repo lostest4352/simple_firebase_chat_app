@@ -31,10 +31,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) {
-        return ChatProvider();
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) {
+            return ChatProvider();
+          },
+        ),
+      ],
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,

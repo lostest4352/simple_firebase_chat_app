@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
     Stream<QuerySnapshot> userStream = FirebaseFirestore.instance
         .collection("users")
         .where("email", isNotEqualTo: currentUser?.email)
@@ -98,12 +99,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: StreamBuilder(
-                // stream:
-                //     // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
-                //     FirebaseFirestore.instance
-                //         .collection("users")
-                //         .where("email", isNotEqualTo: currentUser?.email)
-                //         .snapshots(),
+                
                 stream: userStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
@@ -142,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                                 }
                               },
                               title: Text(selectedUser.username.toString()),
-                              subtitle: Text(selectedUser.email.toString()),
+                              subtitle: Text(ChatRoomModel().lastMessage.toString()),
                             );
                           },
                         );

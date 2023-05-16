@@ -158,12 +158,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               child: Center(
                 child: StreamBuilder(
                   stream: chatRoomStream,
-                  // stream: FirebaseFirestore.instance
-                  //     .collection("chatrooms")
-                  //     .doc(widget.chatroom.chatRoomId)
-                  //     .collection("messages")
-                  //     .orderBy("createdOn", descending: true)
-                  //     .snapshots(),
+                  
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       if (snapshot.hasData) {
@@ -184,7 +179,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                   : WrapAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(left: (currentMessage.sender == widget.currentUser.uid) ? 50 : 5, right: (currentMessage.sender == widget.currentUser.uid) ? 5: 50),
+                                  padding: EdgeInsets.only(left: (currentMessage.sender == widget.currentUser.uid) ? 50 : 10, right: (currentMessage.sender == widget.currentUser.uid) ? 10: 50),
                                   child: Container(
                                     
                                     
@@ -227,7 +222,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 ),
               ),
             ),
+            const SizedBox(height: 5,),
             Container(
+              padding: const EdgeInsets.all(5),
               color: Colors.black26,
               child: Row(
                 children: [
@@ -253,6 +250,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 ],
               ),
             ),
+            const SizedBox(height: 2,),
           ],
         ),
       ),

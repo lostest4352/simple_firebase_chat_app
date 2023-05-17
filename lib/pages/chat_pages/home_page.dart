@@ -30,7 +30,8 @@ class _HomePageState extends State<HomePage> {
         .where("email", isNotEqualTo: currentUser?.email)
         .snapshots();
 
-    
+    Stream<QuerySnapshot> chatroomStream =
+        FirebaseFirestore.instance.collection("chatrooms").where("participants", isEqualTo: currentUser?.uid).snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +77,8 @@ class _HomePageState extends State<HomePage> {
                                     as Map<String, dynamic>;
                             // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
                             UserModel selectedUser = UserModel.fromMap(userMap);
-                            CreateOrUpdateChatRoom createOrUpdateChatRoom = CreateOrUpdateChatRoom();
+                            CreateOrUpdateChatRoom createOrUpdateChatRoom =
+                                CreateOrUpdateChatRoom();
 
                             return ListTile(
                               onTap: () async {
@@ -101,7 +103,8 @@ class _HomePageState extends State<HomePage> {
                                 }
                               },
                               title: Text(selectedUser.username.toString()),
-                              subtitle: Text( ''),
+                              // Try to show last message with provider
+                              subtitle: Text(''),
                             );
                           },
                         );

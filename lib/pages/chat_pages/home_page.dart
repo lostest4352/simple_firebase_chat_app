@@ -71,12 +71,10 @@ class _HomePageState extends State<HomePage> {
                       return ListView.builder(
                         itemCount: userSnapshot.docs.length,
                         itemBuilder: (context, index) {
-
                           // Get map data from snapshot as per its index and convert to format suitable for UserModel
                           Map<String, dynamic> userFromFirebaseMap =
                               userSnapshot.docs[index].data()
                                   as Map<String, dynamic>;
-                          
 
                           // After above function seperates each user with index the data is set to UserModel
                           UserModel targetUser =
@@ -108,7 +106,6 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                           builder: (context) {
                                             return ChatRoomPage(
-                                              targetUser: targetUser,
                                               chatroom: chatRoomModel
                                                   as ChatRoomModel,
                                               currentUser: currentUser as User,

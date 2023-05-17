@@ -2,17 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/chatroom_model.dart';
-import '../models/user_model.dart';
+import '../../models/chatroom_model.dart';
+import '../../models/user_model.dart';
 
-class FirebaseChatRoomModel {
+class CreateOrUpdateChatRoom {
   final currentUser = FirebaseAuth.instance.currentUser;
 
+  ChatRoomModel? chatRoom;
+
+  Uuid uuid = const Uuid();
+
   Future<ChatRoomModel?> getChatRoomModel(UserModel targetUser) async {
-    ChatRoomModel? chatRoom;
-
-    const uuid = Uuid();
-
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("chatrooms")
         .where("participants.${currentUser?.uid}", isEqualTo: true)

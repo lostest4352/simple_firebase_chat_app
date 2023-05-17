@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/data/chatroom_data_helper.dart';
-import 'package:uuid/uuid.dart';
-
+import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
@@ -78,11 +76,12 @@ class _HomePageState extends State<HomePage> {
                                     as Map<String, dynamic>;
                             // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
                             UserModel selectedUser = UserModel.fromMap(userMap);
+                            CreateOrUpdateChatRoom createOrUpdateChatRoom = CreateOrUpdateChatRoom();
 
                             return ListTile(
                               onTap: () async {
                                 ChatRoomModel? chatRoomModel =
-                                    await FirebaseChatRoomModel()
+                                    await createOrUpdateChatRoom
                                         .getChatRoomModel(selectedUser);
                                 if (chatRoomModel != null) {
                                   if (context.mounted) {

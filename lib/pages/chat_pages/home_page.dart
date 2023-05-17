@@ -84,22 +84,21 @@ class _HomePageState extends State<HomePage> {
                                 if (snapshot.hasData &&
                                     snapshot.connectionState ==
                                         ConnectionState.active) {
-                                  QuerySnapshot chatRoomSnapshot =
-                                      snapshot.data as QuerySnapshot;
+                                  CreateOrUpdateChatRoom
+                                      createOrUpdateChatRoom =
+                                      CreateOrUpdateChatRoom();
+
+                                  final getChatRoomModel =
+                                      createOrUpdateChatRoom
+                                          .getChatRoomModel(targetUser);
 
                                   return ListTile(
                                     onTap: () async {
-                                      debugPrint(chatRoomSnapshot.docs[index]
-                                              ['lastMessage']
-                                          .toString());
-
-                                      CreateOrUpdateChatRoom
-                                          createOrUpdateChatRoom =
-                                          CreateOrUpdateChatRoom();
-
                                       ChatRoomModel? chatRoomModel =
-                                          await createOrUpdateChatRoom
-                                              .getChatRoomModel(targetUser);
+                                          await getChatRoomModel;
+
+                                      debugPrint(chatRoomModel?.lastMessage
+                                          .toString());
 
                                       // ignore: use_build_context_synchronously
                                       Navigator.push(
@@ -121,9 +120,22 @@ class _HomePageState extends State<HomePage> {
                                     // },
 
                                     title: Text(
-                                        userSnapshot.docs[index]['username']),
-                                    subtitle: Text(chatRoomSnapshot.docs[index]
-                                        ['lastMessage'] ?? 'send message'),
+                                      userSnapshot.docs[index]['username'],
+                                    ),
+                                    subtitle: FutureBuilder(
+                                      future: getChatRoomModel,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                                ConnectionState.done &&
+                                            snapshot.hasData) {
+                                          return Text(snapshot.data?.lastMessage
+                                              as String);
+                                        } else {
+                                          return const Text(
+                                              "Send your first message");
+                                        }
+                                      },
+                                    ),
                                   );
                                 } else {
                                   return const Center();

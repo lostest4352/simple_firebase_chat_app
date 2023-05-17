@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/data/chatroom_data_helper.dart';
-import 'package:uuid/uuid.dart';
-
+import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
@@ -32,7 +30,8 @@ class _HomePageState extends State<HomePage> {
         .where("email", isNotEqualTo: currentUser?.email)
         .snapshots();
 
-    
+    Stream<QuerySnapshot> chatRoomStream =
+        FirebaseFirestore.instance.collection("chatrooms").snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -73,36 +72,91 @@ class _HomePageState extends State<HomePage> {
                         return ListView.builder(
                           itemCount: dataSnapshot.docs.length,
                           itemBuilder: (context, index) {
-                            Map<String, dynamic> userMap =
+                            Map<String, dynamic> userFromFirebaseToMap =
                                 dataSnapshot.docs[index].data()
                                     as Map<String, dynamic>;
-                            // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
-                            UserModel selectedUser = UserModel.fromMap(userMap);
+                            // // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
+                            UserModel selectedUser = UserModel.fromMap(userFromFirebaseToMap);
 
-                            return ListTile(
-                              onTap: () async {
-                                ChatRoomModel? chatRoomModel =
-                                    await FirebaseChatRoomModel()
-                                        .getChatRoomModel(selectedUser);
-                                if (chatRoomModel != null) {
-                                  if (context.mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return ChatRoomPage(
-                                            chatroom: chatRoomModel,
-                                            targetUser: selectedUser,
-                                            currentUser: currentUser as User,
+                            // Future<ChatRoomModel?> chatRoomId =
+                            //     FirebaseChatRoomModel()
+                            //         .getChatRoomModel(selectedUser);
+
+                            // return ListTile(
+                            //   onTap: () async {
+                            //     ChatRoomModel? chatRoomModel =
+                            //         await FirebaseChatRoomModel()
+                            //             .getChatRoomModel(selectedUser);
+                            //     if (chatRoomModel != null) {
+                            //       if (context.mounted) {
+                            //         Navigator.push(
+                            //           context,
+                            //           MaterialPageRoute(
+                            //             builder: (context) {
+                            //               return ChatRoomPage(
+                            //                 chatroom: chatRoomModel,
+                            //                 targetUser: selectedUser,
+                            //                 currentUser: currentUser as User,
+                            //               );
+                            //             },
+                            //           ),
+                            //         );
+                            //       }
+                            //     }
+                            //   },
+                            //   title: Text(selectedUser.username.toString()),
+                            //   subtitle: Text(chatRoomId.toString()),
+                            // );
+                            return StreamBuilder<Object>(
+                              stream: chatRoomStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  QuerySnapshot chatRoomSnapshot =
+                                      snapshot.data as QuerySnapshot;
+
+                                  if (chatRoomSnapshot.docs.isNotEmpty) {
+                                    return ListTile(
+                                      onTap: () async {
+                                        ChatRoomModel? chatRoomModel =
+                                            await CreateOrUpdateChatRoom()
+                                                .getChatRoomModel(selectedUser);
+
+                                        if (context.mounted) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return ChatRoomPage(
+                                                  chatroom: chatRoomModel
+                                                      as ChatRoomModel,
+                                                  targetUser: selectedUser,
+                                                  currentUser:
+                                                      currentUser as User,
+                                                );
+                                              },
+                                            ),
                                           );
-                                        },
+                                        }
+                                      },
+                                      title: Text(
+                                          selectedUser.username.toString()),
+                                      subtitle: Text(
+                                        chatRoomSnapshot.docs[index]
+                                            ['lastMessage'],
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     );
+                                  } else {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
                                   }
+                                } else {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
                                 }
                               },
-                              title: Text(selectedUser.username.toString()),
-                              subtitle: Text( ''),
                             );
                           },
                         );
@@ -131,7 +185,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BottomNavigationBarItem(
                 label: '',
-                icon: Icon(Icons.settings),
+                icon: Icon(Icons.person),
               ),
             ],
           ),

@@ -71,12 +71,22 @@ class _HomePageState extends State<HomePage> {
                       return ListView.builder(
                         itemCount: userSnapshot.docs.length,
                         itemBuilder: (context, index) {
-                          Map<String, dynamic> userFromFirebaseToMap =
+
+                          // Get map data from snapshot as per its index and convert to format suitable for UserModel
+                          Map<String, dynamic> userFromFirebaseMap =
                               userSnapshot.docs[index].data()
                                   as Map<String, dynamic>;
+                          
 
+                          // After above function seperates each user with index the data is set to UserModel
                           UserModel targetUser =
-                              UserModel.fromMap(userFromFirebaseToMap);
+                              UserModel.fromMap(userFromFirebaseMap);
+
+                          // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
+                          CreateOrUpdateChatRoom createOrUpdateChatRoom =
+                              CreateOrUpdateChatRoom();
+                          final getChatRoomModel = createOrUpdateChatRoom
+                              .getChatRoomModel(targetUser);
 
                           return StreamBuilder<Object>(
                               stream: chatroomStream,
@@ -84,21 +94,13 @@ class _HomePageState extends State<HomePage> {
                                 if (snapshot.hasData &&
                                     snapshot.connectionState ==
                                         ConnectionState.active) {
-                                  CreateOrUpdateChatRoom
-                                      createOrUpdateChatRoom =
-                                      CreateOrUpdateChatRoom();
-
-                                  final getChatRoomModel =
-                                      createOrUpdateChatRoom
-                                          .getChatRoomModel(targetUser);
-
                                   return ListTile(
                                     onTap: () async {
                                       ChatRoomModel? chatRoomModel =
                                           await getChatRoomModel;
 
-                                      debugPrint(chatRoomModel?.lastMessage
-                                          .toString());
+                                      // debugPrint(chatRoomModel?.lastMessage
+                                      //     .toString());
 
                                       // ignore: use_build_context_synchronously
                                       Navigator.push(
@@ -115,10 +117,6 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     },
-                                    // onTap: () {
-                                    //   debugPrint(chatRoomSnapshot.docs[index]['lastMessage'].toString());
-                                    // },
-
                                     title: Text(
                                       userSnapshot.docs[index]['username'],
                                     ),

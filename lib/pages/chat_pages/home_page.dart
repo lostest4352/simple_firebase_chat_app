@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         .snapshots();
 
     Stream<QuerySnapshot> chatroomStream =
-        FirebaseFirestore.instance.collection("chatrooms").where("participants", isEqualTo: currentUser?.uid).snapshots();
+        FirebaseFirestore.instance.collection("chatrooms").snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -63,52 +63,74 @@ class _HomePageState extends State<HomePage> {
               child: StreamBuilder(
                 stream: userStream,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    if (snapshot.hasData) {
-                      QuerySnapshot dataSnapshot =
-                          snapshot.data as QuerySnapshot;
+                  if (snapshot.connectionState == ConnectionState.active &&
+                      snapshot.hasData) {
+                    QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
 
-                      if (dataSnapshot.docs.isNotEmpty) {
-                        return ListView.builder(
-                          itemCount: dataSnapshot.docs.length,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> userMap =
-                                dataSnapshot.docs[index].data()
-                                    as Map<String, dynamic>;
-                            // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
-                            UserModel selectedUser = UserModel.fromMap(userMap);
-                            CreateOrUpdateChatRoom createOrUpdateChatRoom =
-                                CreateOrUpdateChatRoom();
+                    if (userSnapshot.docs.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: userSnapshot.docs.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> userFromFirebaseToMap =
+                              userSnapshot.docs[index].data()
+                                  as Map<String, dynamic>;
 
-                            return ListTile(
-                              onTap: () async {
-                                ChatRoomModel? chatRoomModel =
-                                    await createOrUpdateChatRoom
-                                        .getChatRoomModel(selectedUser);
-                                if (chatRoomModel != null) {
-                                  if (context.mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return ChatRoomPage(
-                                            chatroom: chatRoomModel,
-                                            targetUser: selectedUser,
-                                            currentUser: currentUser as User,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  }
+                          UserModel targetUser =
+                              UserModel.fromMap(userFromFirebaseToMap);
+
+                          return StreamBuilder<Object>(
+                              stream: chatroomStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData &&
+                                    snapshot.connectionState ==
+                                        ConnectionState.active) {
+                                  QuerySnapshot chatRoomSnapshot =
+                                      snapshot.data as QuerySnapshot;
+
+                                  return ListTile(
+                                    onTap: () async {
+                                      debugPrint(chatRoomSnapshot.docs[index]
+                                              ['lastMessage']
+                                          .toString());
+
+                                      CreateOrUpdateChatRoom
+                                          createOrUpdateChatRoom =
+                                          CreateOrUpdateChatRoom();
+
+                                      ChatRoomModel? chatRoomModel =
+                                          await createOrUpdateChatRoom
+                                              .getChatRoomModel(targetUser);
+
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return ChatRoomPage(
+                                              targetUser: targetUser,
+                                              chatroom: chatRoomModel
+                                                  as ChatRoomModel,
+                                              currentUser: currentUser as User,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    // onTap: () {
+                                    //   debugPrint(chatRoomSnapshot.docs[index]['lastMessage'].toString());
+                                    // },
+
+                                    title: Text(
+                                        userSnapshot.docs[index]['username']),
+                                    subtitle: Text(chatRoomSnapshot.docs[index]
+                                        ['lastMessage'] ?? 'send message'),
+                                  );
+                                } else {
+                                  return const Center();
                                 }
-                              },
-                              title: Text(selectedUser.username.toString()),
-                              // Try to show last message with provider
-                              subtitle: Text(''),
-                            );
-                          },
-                        );
-                      }
+                              });
+                        },
+                      );
                     }
                   }
                   return const Center(
@@ -133,7 +155,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BottomNavigationBarItem(
                 label: '',
-                icon: Icon(Icons.settings),
+                icon: Icon(Icons.person),
               ),
             ],
           ),

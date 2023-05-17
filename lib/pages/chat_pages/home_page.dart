@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                           final getChatRoomModel = createOrUpdateChatRoom
                               .getChatRoomModel(targetUser);
 
-                          return StreamBuilder<Object>(
+                          return StreamBuilder(
                               stream: chatroomStream,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData &&
@@ -123,8 +123,11 @@ class _HomePageState extends State<HomePage> {
                                         if (snapshot.connectionState ==
                                                 ConnectionState.done &&
                                             snapshot.hasData) {
-                                          return Text(snapshot.data?.lastMessage
-                                              as String);
+                                          return Text(
+                                            snapshot.data?.lastMessage
+                                                as String,
+                                            overflow: TextOverflow.ellipsis,
+                                          );
                                         } else {
                                           return const Text(
                                               "Send your first message");

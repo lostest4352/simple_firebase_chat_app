@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
         .where("email", isNotEqualTo: currentUser?.email)
         .snapshots();
 
-    Stream<QuerySnapshot> chatRoomStream =
+    Stream<QuerySnapshot> chatroomStream =
         FirebaseFirestore.instance.collection("chatrooms").snapshots();
 
     return Scaffold(
@@ -63,104 +63,86 @@ class _HomePageState extends State<HomePage> {
               child: StreamBuilder(
                 stream: userStream,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    if (snapshot.hasData) {
-                      QuerySnapshot dataSnapshot =
-                          snapshot.data as QuerySnapshot;
+                  if (snapshot.connectionState == ConnectionState.active &&
+                      snapshot.hasData) {
+                    QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
 
-                      if (dataSnapshot.docs.isNotEmpty) {
-                        return ListView.builder(
-                          itemCount: dataSnapshot.docs.length,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> userFromFirebaseToMap =
-                                dataSnapshot.docs[index].data()
-                                    as Map<String, dynamic>;
-                            // // We can user either UserModel or Firebase User here. But User doesnt give any option and User() gives error
-                            UserModel selectedUser = UserModel.fromMap(userFromFirebaseToMap);
+                    if (userSnapshot.docs.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: userSnapshot.docs.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> userFromFirebaseToMap =
+                              userSnapshot.docs[index].data()
+                                  as Map<String, dynamic>;
 
-                            // Future<ChatRoomModel?> chatRoomId =
-                            //     FirebaseChatRoomModel()
-                            //         .getChatRoomModel(selectedUser);
+                          UserModel targetUser =
+                              UserModel.fromMap(userFromFirebaseToMap);
 
-                            // return ListTile(
-                            //   onTap: () async {
-                            //     ChatRoomModel? chatRoomModel =
-                            //         await FirebaseChatRoomModel()
-                            //             .getChatRoomModel(selectedUser);
-                            //     if (chatRoomModel != null) {
-                            //       if (context.mounted) {
-                            //         Navigator.push(
-                            //           context,
-                            //           MaterialPageRoute(
-                            //             builder: (context) {
-                            //               return ChatRoomPage(
-                            //                 chatroom: chatRoomModel,
-                            //                 targetUser: selectedUser,
-                            //                 currentUser: currentUser as User,
-                            //               );
-                            //             },
-                            //           ),
-                            //         );
-                            //       }
-                            //     }
-                            //   },
-                            //   title: Text(selectedUser.username.toString()),
-                            //   subtitle: Text(chatRoomId.toString()),
-                            // );
-                            return StreamBuilder<Object>(
-                              stream: chatRoomStream,
+                          return StreamBuilder<Object>(
+                              stream: chatroomStream,
                               builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  QuerySnapshot chatRoomSnapshot =
-                                      snapshot.data as QuerySnapshot;
+                                if (snapshot.hasData &&
+                                    snapshot.connectionState ==
+                                        ConnectionState.active) {
+                                  CreateOrUpdateChatRoom
+                                      createOrUpdateChatRoom =
+                                      CreateOrUpdateChatRoom();
 
-                                  if (chatRoomSnapshot.docs.isNotEmpty) {
-                                    return ListTile(
-                                      onTap: () async {
-                                        ChatRoomModel? chatRoomModel =
-                                            await CreateOrUpdateChatRoom()
-                                                .getChatRoomModel(selectedUser);
+                                  final getChatRoomModel =
+                                      createOrUpdateChatRoom
+                                          .getChatRoomModel(targetUser);
 
-                                        if (context.mounted) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return ChatRoomPage(
-                                                  chatroom: chatRoomModel
-                                                      as ChatRoomModel,
-                                                  targetUser: selectedUser,
-                                                  currentUser:
-                                                      currentUser as User,
-                                                );
-                                              },
-                                            ),
-                                          );
+                                  return ListTile(
+                                    onTap: () async {
+                                      ChatRoomModel? chatRoomModel =
+                                          await getChatRoomModel;
+
+                                      debugPrint(chatRoomModel?.lastMessage
+                                          .toString());
+
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return ChatRoomPage(
+                                              targetUser: targetUser,
+                                              chatroom: chatRoomModel
+                                                  as ChatRoomModel,
+                                              currentUser: currentUser as User,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    // onTap: () {
+                                    //   debugPrint(chatRoomSnapshot.docs[index]['lastMessage'].toString());
+                                    // },
+
+                                    title: Text(
+                                      userSnapshot.docs[index]['username'],
+                                    ),
+                                    subtitle: FutureBuilder(
+                                      future: getChatRoomModel,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                                ConnectionState.done &&
+                                            snapshot.hasData) {
+                                          return Text(snapshot.data?.lastMessage
+                                              as String);
+                                        } else {
+                                          return const Text(
+                                              "Send your first message");
                                         }
                                       },
-                                      title: Text(
-                                          selectedUser.username.toString()),
-                                      subtitle: Text(
-                                        chatRoomSnapshot.docs[index]
-                                            ['lastMessage'],
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    );
-                                  } else {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                } else {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
+                                    ),
                                   );
+                                } else {
+                                  return const Center();
                                 }
-                              },
-                            );
-                          },
-                        );
-                      }
+                              });
+                        },
+                      );
                     }
                   }
                   return const Center(

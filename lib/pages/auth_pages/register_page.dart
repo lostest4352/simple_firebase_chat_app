@@ -128,12 +128,12 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(
-                  height: 15,
+                  height: 30,
                 ),
                 // Login Icon
                 const Icon(
                   Icons.account_box,
-                  size: 50,
+                  size: 60,
                 ),
                 const SizedBox(
                   height: 15,
@@ -218,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.fromLTRB(60, 10, 60, 10),
+                    padding: const EdgeInsets.fromLTRB(40, 5, 40, 5),
                     textStyle: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),

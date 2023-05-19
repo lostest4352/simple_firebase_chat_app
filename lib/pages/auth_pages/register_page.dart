@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/components/items_text_fields.dart';
 import 'package:simple_firebase1/models/user_model.dart';
+import 'package:simple_firebase1/pages/chat_pages/initial_page.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -44,7 +45,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Create account and register the user
   Future registerUser() async {
-    
     // show loading circle
     showDialog(
       context: context,
@@ -88,10 +88,18 @@ class _RegisterPageState extends State<RegisterPage> {
           uid: credential.user?.uid,
         );
 
-        if (context.mounted) {
-          Navigator.pop(context);
-        }
-        
+        if (!mounted) return;
+        Navigator.pop(context);
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const InitialPage();
+            },
+          ),
+        );
+
         await addUserDetails(user);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);

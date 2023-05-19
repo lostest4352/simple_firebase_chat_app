@@ -36,7 +36,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
 
       showMessage('Password reset link has been sent to your email.');
-      if (context.mounted) {}
+      if (!mounted) return;
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);

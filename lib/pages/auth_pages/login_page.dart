@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
+import 'package:simple_firebase1/pages/chat_pages/initial_page.dart';
 
 import '../../components/items_text_fields.dart';
 
@@ -42,8 +43,17 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       );
-      if (context.mounted) {}
+      if (!mounted) return;
       Navigator.pop(context);
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return const InitialPage();
+          },
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       return showDialog(
@@ -161,9 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   onPressed: signUserIn,
-                  child: const Text(
-                    'Login',
-                  ),
+                  child: const Text('Login'),
                 ),
                 const SizedBox(
                   height: 30,

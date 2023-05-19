@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_firebase1/pages/auth_pages/check_if_logged_in.dart';
 import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
@@ -45,6 +46,15 @@ class _HomePageState extends State<HomePage> {
             enableFeedback: true,
             onPressed: () {
               signOutFromFirebase();
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CheckIfLoggedIn();
+                  },
+                ),
+              );
             },
             icon: const Icon(
               Icons.logout,
@@ -71,76 +81,74 @@ class _HomePageState extends State<HomePage> {
                       return ListView.builder(
                         itemCount: userSnapshot.docs.length,
                         itemBuilder: (context, index) {
+                          // Get map data from snapshot as per its index and convert to format suitable for UserModel
                           Map<String, dynamic> userFromFirebaseToMap =
                               userSnapshot.docs[index].data()
                                   as Map<String, dynamic>;
 
+                          // After above function seperates each user with index the data is set to UserModel
                           UserModel targetUser =
                               UserModel.fromMap(userFromFirebaseToMap);
 
-                          return StreamBuilder<Object>(
-                              stream: chatroomStream,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData &&
-                                    snapshot.connectionState ==
-                                        ConnectionState.active) {
-                                  CreateOrUpdateChatRoom
-                                      createOrUpdateChatRoom =
-                                      CreateOrUpdateChatRoom();
+                          // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
+                          CreateOrUpdateChatRoom createOrUpdateChatRoom =
+                              CreateOrUpdateChatRoom();
+                          final getChatRoomModel = createOrUpdateChatRoom
+                              .getChatRoomModel(targetUser);
 
-                                  final getChatRoomModel =
-                                      createOrUpdateChatRoom
-                                          .getChatRoomModel(targetUser);
+                          return StreamBuilder(
+                            stream: chatroomStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                return ListTile(
+                                  onTap: () async {
+                                    ChatRoomModel? chatRoomModel =
+                                        await getChatRoomModel;
 
-                                  return ListTile(
-                                    onTap: () async {
-                                      ChatRoomModel? chatRoomModel =
-                                          await getChatRoomModel;
+                                    //  debugPrint(chatRoomModel?.lastMessage
+                                    //     .toString());
 
-                                      debugPrint(chatRoomModel?.lastMessage
-                                          .toString());
-
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return ChatRoomPage(
-                                              targetUser: targetUser,
-                                              chatroom: chatRoomModel
-                                                  as ChatRoomModel,
-                                              currentUser: currentUser as User,
-                                            );
-                                          },
-                                        ),
-                                      );
+                                    if (!mounted) return;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ChatRoomPage(
+                                            chatroom:
+                                                chatRoomModel as ChatRoomModel,
+                                            currentUser: currentUser as User,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  title: Text(
+                                    userSnapshot.docs[index]['username'],
+                                  ),
+                                  subtitle: FutureBuilder(
+                                    future: getChatRoomModel,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                              ConnectionState.done &&
+                                          snapshot.hasData) {
+                                        return Text(
+                                          snapshot.data?.lastMessage as String,
+                                          overflow: TextOverflow.ellipsis,
+                                        );
+                                      } else {
+                                        return const Text(
+                                            "Send your first message");
+                                      }
                                     },
-                                    // onTap: () {
-                                    //   debugPrint(chatRoomSnapshot.docs[index]['lastMessage'].toString());
-                                    // },
-
-                                    title: Text(
-                                      userSnapshot.docs[index]['username'],
-                                    ),
-                                    subtitle: FutureBuilder(
-                                      future: getChatRoomModel,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                                ConnectionState.done &&
-                                            snapshot.hasData) {
-                                          return Text(snapshot.data?.lastMessage
-                                              as String);
-                                        } else {
-                                          return const Text(
-                                              "Send your first message");
-                                        }
-                                      },
-                                    ),
-                                  );
-                                } else {
-                                  return const Center();
-                                }
-                              });
+                                  ),
+                                );
+                              } else {
+                                return const Center();
+                              }
+                            },
+                          );
                         },
                       );
                     }
@@ -155,22 +163,22 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 5,
           ),
-          BottomNavigationBar(
-            items: const [
-              BottomNavigationBarItem(
-                label: '',
-                icon: Icon(Icons.home),
-              ),
-              BottomNavigationBarItem(
-                label: '',
-                icon: Icon(Icons.search),
-              ),
-              BottomNavigationBarItem(
-                label: '',
-                icon: Icon(Icons.person),
-              ),
-            ],
-          ),
+          // BottomNavigationBar(
+          //   items: const [
+          //     BottomNavigationBarItem(
+          //       label: '',
+          //       icon: Icon(Icons.home),
+          //     ),
+          //     BottomNavigationBarItem(
+          //       label: '',
+          //       icon: Icon(Icons.search),
+          //     ),
+          //     BottomNavigationBarItem(
+          //       label: '',
+          //       icon: Icon(Icons.person),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

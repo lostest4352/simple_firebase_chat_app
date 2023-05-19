@@ -26,28 +26,16 @@ class _ItemsTextFieldState extends State<ItemsTextField> {
       padding: const EdgeInsets.symmetric(
         horizontal: 25,
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[900],
-          border: Border.all(
-            color: Colors.grey,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: TextField(
-            obscureText: widget.obscureText ?? false,
-            onTapOutside: (event) {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            controller: widget.textController,
-            decoration: InputDecoration(
-              hintText: widget.hintText,
-              border: InputBorder.none,
-              suffixIcon: widget.suffixIcon,
-            ),
-          ),
+      child: TextField(
+        obscureText: widget.obscureText ?? false,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        controller: widget.textController,
+        decoration: InputDecoration(
+          hintText: widget.hintText,
+          // border: InputBorder.none,
+          suffixIcon: widget.suffixIcon,
         ),
       ),
     );

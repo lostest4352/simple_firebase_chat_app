@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/auth_pages/check_if_logged_in.dart';
-import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/initial_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -16,7 +16,7 @@ class AuthPage extends StatelessWidget {
         stream: firebaseStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const  HomePage();
+            return const  InitialPage();
           } else {
             return const CheckIfLoggedIn();
           }

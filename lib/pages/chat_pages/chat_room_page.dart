@@ -7,18 +7,15 @@ import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/message_model.dart';
-import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatRoomPage extends StatefulWidget {
-  final UserModel targetUser;
   final ChatRoomModel chatroom;
   final User currentUser;
 
   const ChatRoomPage({
     Key? key,
-    required this.targetUser,
     required this.chatroom,
     required this.currentUser,
   }) : super(key: key);
@@ -158,7 +155,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               child: Center(
                 child: StreamBuilder(
                   stream: chatRoomStream,
-                  
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
                       if (snapshot.hasData) {
@@ -179,10 +175,16 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                   : WrapAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(left: (currentMessage.sender == widget.currentUser.uid) ? 50 : 10, right: (currentMessage.sender == widget.currentUser.uid) ? 10: 50),
+                                  padding: EdgeInsets.only(
+                                      left: (currentMessage.sender ==
+                                              widget.currentUser.uid)
+                                          ? 50
+                                          : 10,
+                                      right: (currentMessage.sender ==
+                                              widget.currentUser.uid)
+                                          ? 10
+                                          : 50),
                                   child: Container(
-                                    
-                                    
                                     margin: const EdgeInsets.symmetric(
                                       vertical: 4,
                                     ),
@@ -222,7 +224,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 5,),
+            const SizedBox(
+              height: 5,
+            ),
             Container(
               padding: const EdgeInsets.all(5),
               color: Colors.black26,
@@ -250,7 +254,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 2,),
+            const SizedBox(
+              height: 2,
+            ),
           ],
         ),
       ),

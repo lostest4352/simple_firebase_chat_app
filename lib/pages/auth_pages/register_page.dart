@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/components/items_text_fields.dart';
 import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/pages/chat_pages/initial_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback? onClicked;
@@ -95,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return const InitialPage();
+              return const MainPage();
             },
           ),
         );

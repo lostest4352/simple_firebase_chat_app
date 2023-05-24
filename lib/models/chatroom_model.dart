@@ -5,11 +5,13 @@ class ChatRoomModel {
   String? chatRoomId;
   Map<String, dynamic>? participants;
   String? lastMessage;
+  DateTime? dateTime;
   
   ChatRoomModel({
     this.chatRoomId,
     this.participants,
     this.lastMessage,
+    this.dateTime,
   });
 
 
@@ -18,6 +20,7 @@ class ChatRoomModel {
       'chatRoomId': chatRoomId,
       'participants': participants,
       'lastMessage': lastMessage,
+      'dateTime': dateTime?.millisecondsSinceEpoch,
     };
   }
 
@@ -26,6 +29,7 @@ class ChatRoomModel {
       chatRoomId: map['chatRoomId'] != null ? map['chatRoomId'] as String : null,
       participants: map['participants'] != null ? Map<String, dynamic>.from((map['participants'] as Map<String, dynamic>)) : null,
       lastMessage: map['lastMessage'] != null ? map['lastMessage'] as String : null,
+      dateTime: map['dateTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dateTime'] as int) : null,
     );
   }
 

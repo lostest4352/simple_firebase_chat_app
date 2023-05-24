@@ -36,10 +36,9 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Name: ${currentUser?.email} ',
-          // 'All users',
-          style: const TextStyle(fontSize: 20),
+        title: const Text(
+          'All users',
+          style: TextStyle(fontSize: 20),
         ),
         actions: [
           IconButton(
@@ -119,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                                             chatroom:
                                                 chatRoomModel as ChatRoomModel,
                                             currentUser: currentUser as User,
+                                            targetUser: targetUser,
                                           );
                                         },
                                       ),

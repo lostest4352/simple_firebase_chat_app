@@ -6,6 +6,7 @@ class ItemsTextField extends StatefulWidget {
   final String hintText;
   final Widget? suffixIcon;
   final bool? obscureText;
+  // final int? maxLines;
 
   const ItemsTextField({
     Key? key,
@@ -13,6 +14,7 @@ class ItemsTextField extends StatefulWidget {
     required this.hintText,
     this.suffixIcon,
     this.obscureText,
+    // this.maxLines,
   }) : super(key: key);
 
   @override
@@ -27,6 +29,7 @@ class _ItemsTextFieldState extends State<ItemsTextField> {
         horizontal: 25,
       ),
       child: TextField(
+        // maxLines: widget.maxLines,
         obscureText: widget.obscureText ?? false,
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();

@@ -7,17 +7,20 @@ import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/message_model.dart';
+import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_edit_page.dart';
 import 'package:simple_firebase1/provider/chat_provider.dart';
 
 class ChatRoomPage extends StatefulWidget {
   final ChatRoomModel chatroom;
   final User currentUser;
+  final UserModel targetUser;
 
   const ChatRoomPage({
     Key? key,
     required this.chatroom,
     required this.currentUser,
+    required this.targetUser,
   }) : super(key: key);
 
   @override
@@ -147,7 +150,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Chat page'),
+          title:  Text(widget.targetUser.username ?? ''),
+          centerTitle: true,
         ),
         body: Column(
           children: [

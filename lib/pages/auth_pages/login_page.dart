@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
-import 'package:simple_firebase1/pages/chat_pages/initial_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
 
 import '../../components/items_text_fields.dart';
 
@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return const InitialPage();
+            return const MainPage();
           },
         ),
       );

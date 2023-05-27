@@ -92,8 +92,9 @@ class _HomePageState extends State<HomePage> {
                           // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
                           CreateOrUpdateChatRoom createOrUpdateChatRoom =
                               CreateOrUpdateChatRoom();
-                          final getChatRoomModel = createOrUpdateChatRoom
-                              .getChatRoomModel(targetUser);
+                          Future<ChatRoomModel?> getChatRoomModel =
+                              createOrUpdateChatRoom
+                                  .getChatRoomModel(targetUser);
 
                           return StreamBuilder(
                             stream: chatroomStream,
@@ -163,22 +164,6 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 5,
           ),
-          // BottomNavigationBar(
-          //   items: const [
-          //     BottomNavigationBarItem(
-          //       label: '',
-          //       icon: Icon(Icons.home),
-          //     ),
-          //     BottomNavigationBarItem(
-          //       label: '',
-          //       icon: Icon(Icons.search),
-          //     ),
-          //     BottomNavigationBarItem(
-          //       label: '',
-          //       icon: Icon(Icons.person),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );

@@ -21,9 +21,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   void initState() {
-    textController.text;
-
     super.initState();
+    textController.text;
   }
 
   @override
@@ -61,24 +60,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
               const SizedBox(
                 height: 20,
               ),
-              // ItemsTextField(
-              //   textController: textController,
-              //   hintText: "Enter your bio",
-              //   maxLines: null,
-              // ),
-              TextField(
-                maxLines: null,
-                onTapOutside: (event) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                controller: textController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter your bio',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -91,9 +72,34 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                 ],
               ),
-              // TODO Remove this later if not used
+              const SizedBox(
+                height: 40,
+              ),
+              TextFormField(
+                initialValue: 'hy',
+                maxLines: null,
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                // controller: textController,
+                decoration: const InputDecoration(
+                  labelText: 'Your username',
+                ),
+              ),
               const SizedBox(
                 height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text(
+                      "Update",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ],
               ),
             ],
           )),

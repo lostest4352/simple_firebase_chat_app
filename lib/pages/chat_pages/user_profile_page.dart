@@ -2,13 +2,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/models/user_model.dart';
 
 class UserProfilePage extends StatefulWidget {
-  // final UserModel userModel;
   const UserProfilePage({
     Key? key,
-    // required this.userModel,
   }) : super(key: key);
 
   @override
@@ -17,8 +14,6 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage> {
   TextEditingController textController = TextEditingController(text: '');
-
-  UserModel userModel = UserModel();
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -33,13 +28,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     FirebaseFirestore.instance
         .collection("users")
-        .where('email', isEqualTo: currentUser?.email)
+        .where("email", isEqualTo: currentUser?.email)
         .get()
         .then(
           // ignore: avoid_function_literals_in_foreach_calls
           (snapshot) => snapshot.docs.forEach(
             (element) {
-              textController.text = element['username'];
+              textController.text = element["username"];
             },
           ),
         );
@@ -53,7 +48,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    void uploadData() {}
+    void uploadPhoto() {}
 
     return Scaffold(
       appBar: AppBar(
@@ -116,11 +111,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData == false &&
                         snapshot.connectionState != ConnectionState.active) {
-                      return const Center();
+                      return const Text('Error Occured');
                     }
                     QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
                     if (userSnapshot.docs.isEmpty) {
-                      return const Center();
+                      return const Text('Error Occured');
                     }
 
                     return ElevatedButton(
@@ -137,12 +132,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             .collection("users")
                             .doc(userSnapshot.docs[0].reference.id)
                             // .doc()
-                            .update(
-                          {
-                            'username': textController.text,
-                          },
-                        ).then((value) => Navigator.pop(context));
-                        
+                            .update({
+                          'username': textController.text,
+                        }).then((value) => Navigator.pop(context));
                       },
                       child: const Text(
                         "Update",

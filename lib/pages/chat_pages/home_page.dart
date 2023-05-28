@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    User? currentUser = FirebaseAuth.instance.currentUser;
 
     // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
     Stream<QuerySnapshot> userStream = FirebaseFirestore.instance

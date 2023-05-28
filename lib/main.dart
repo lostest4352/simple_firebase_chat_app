@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Simple App',
+          title: 'Chat App',
           theme: ThemeData.dark(),
           home: const MainPage(),
         );

@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
     // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
-    Stream<QuerySnapshot> userStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
         .collection("users")
         .where("email", isNotEqualTo: currentUser?.email)
         .snapshots();
@@ -34,12 +34,28 @@ class _HomePageState extends State<HomePage> {
     Stream<QuerySnapshot> chatroomStream =
         FirebaseFirestore.instance.collection("chatrooms").snapshots();
 
+    Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
+        .collection("users")
+        .where("uid", isEqualTo: currentUser?.uid)
+        .snapshots();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'All users',
-          style: TextStyle(fontSize: 20),
-        ),
+        title: StreamBuilder(
+            stream: currentUserSnapshot,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData &&
+                  snapshot.connectionState != ConnectionState.active) {
+                return const Center(
+                  child: Text('Loading..'),
+                );
+              }
+              QuerySnapshot dataSnapshot = snapshot.data as QuerySnapshot;
+              return Text(
+                dataSnapshot.docs[0]['username'],
+                style: const TextStyle(fontSize: 20),
+              );
+            }),
         actions: [
           IconButton(
             enableFeedback: true,
@@ -70,7 +86,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: StreamBuilder(
-                  stream: userStream,
+                  stream: nonCurrentUserSnapshot,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.active &&
                         snapshot.hasData == false) {

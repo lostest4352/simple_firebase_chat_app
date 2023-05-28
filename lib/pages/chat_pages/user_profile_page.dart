@@ -17,7 +17,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
-  Stream<QuerySnapshot> get currentUserStream => FirebaseFirestore.instance
+  Stream<QuerySnapshot> get currentUserSnapshot => FirebaseFirestore.instance
       .collection("users")
       .where("uid", isEqualTo: currentUser?.uid)
       .snapshots();
@@ -107,7 +107,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 StreamBuilder<Object>(
-                  stream: currentUserStream,
+                  stream: currentUserSnapshot,
                   builder: (context, snapshot) {
                     if (snapshot.hasData == false &&
                         snapshot.connectionState != ConnectionState.active) {

@@ -2,11 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:simple_firebase1/models/user_model.dart';
-
-import '../../models/chatroom_model.dart';
-import 'chatroom_create_or_update.dart';
 
 class UserProfilePage extends StatefulWidget {
   // final UserModel userModel;
@@ -29,11 +25,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Stream<QuerySnapshot> get currentUserStream => FirebaseFirestore.instance
       .collection("users")
       .where("uid", isEqualTo: currentUser?.uid)
-      .snapshots();
-
-  Stream<QuerySnapshot> get otherUsersStream => FirebaseFirestore.instance
-      .collection("users")
-      .where("email", isNotEqualTo: currentUser?.email)
       .snapshots();
 
   @override
@@ -134,14 +125,24 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                     return ElevatedButton(
                       onPressed: () {
-                        // FirebaseFirestore.instance
-                        //     .collection("users")
-                        //     .doc()
-                        //     .set(
-                        //   {
-                        //     'username': textController.text,
-                        //   },
-                        // );
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const AlertDialog(
+                              title: Text("Updating.."),
+                            );
+                          },
+                        );
+                        FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(userSnapshot.docs[0].reference.id)
+                            // .doc()
+                            .update(
+                          {
+                            'username': textController.text,
+                          },
+                        ).then((value) => Navigator.pop(context));
+                        
                       },
                       child: const Text(
                         "Update",

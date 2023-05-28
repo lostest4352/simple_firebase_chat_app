@@ -150,7 +150,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title:  Text(widget.targetUser.username ?? ''),
+          title: Text(widget.targetUser.username ?? ''),
           centerTitle: true,
         ),
         body: Column(
@@ -160,69 +160,64 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 child: StreamBuilder(
                   stream: chatRoomStream,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.active) {
-                      if (snapshot.hasData) {
-                        QuerySnapshot dataSnapshot =
-                            snapshot.data as QuerySnapshot;
-
-                        return ListView.builder(
-                          reverse: true,
-                          itemCount: dataSnapshot.docs.length,
-                          itemBuilder: (context, index) {
-                            MessageModel currentMessage = MessageModel.fromMap(
-                                dataSnapshot.docs[index].data()
-                                    as Map<String, dynamic>);
-                            return Wrap(
-                              alignment: (currentMessage.sender ==
-                                      widget.currentUser.uid)
-                                  ? WrapAlignment.end
-                                  : WrapAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: (currentMessage.sender ==
-                                              widget.currentUser.uid)
-                                          ? 50
-                                          : 10,
-                                      right: (currentMessage.sender ==
-                                              widget.currentUser.uid)
-                                          ? 10
-                                          : 50),
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: (currentMessage.sender ==
-                                              widget.currentUser.uid)
-                                          ? Colors.blue[800]
-                                          : Colors.black38,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Text(
-                                      currentMessage.messageText.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    } else {
-                      const Center(
+                    if (snapshot.connectionState != ConnectionState.active &&
+                        snapshot.hasData == false) {
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
-                    return const Center(
-                      child: CircularProgressIndicator(),
+
+                    QuerySnapshot dataSnapshot = snapshot.data as QuerySnapshot;
+
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: dataSnapshot.docs.length,
+                      itemBuilder: (context, index) {
+                        MessageModel currentMessage = MessageModel.fromMap(
+                            dataSnapshot.docs[index].data()
+                                as Map<String, dynamic>);
+                        return Wrap(
+                          alignment:
+                              (currentMessage.sender == widget.currentUser.uid)
+                                  ? WrapAlignment.end
+                                  : WrapAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: (currentMessage.sender ==
+                                          widget.currentUser.uid)
+                                      ? 50
+                                      : 10,
+                                  right: (currentMessage.sender ==
+                                          widget.currentUser.uid)
+                                      ? 10
+                                      : 50),
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: (currentMessage.sender ==
+                                          widget.currentUser.uid)
+                                      ? Colors.blue[800]
+                                      : Colors.black38,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  currentMessage.messageText.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),

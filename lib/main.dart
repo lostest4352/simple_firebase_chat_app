@@ -43,7 +43,9 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Chat App',
-          theme: ThemeData.dark(),
+          theme: ThemeData(),
+          darkTheme: ThemeData.dark(),
+          themeMode: ThemeMode.system,
           home: const MainPage(),
         );
       },

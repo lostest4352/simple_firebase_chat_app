@@ -25,14 +25,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
+    Stream<QuerySnapshot> chatroomStream =
+        FirebaseFirestore.instance.collection("chatrooms").snapshots();
+
     // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
     Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
         .collection("users")
         .where("email", isNotEqualTo: currentUser?.email)
         .snapshots();
-
-    Stream<QuerySnapshot> chatroomStream =
-        FirebaseFirestore.instance.collection("chatrooms").snapshots();
 
     Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
         .collection("users")
@@ -42,20 +42,21 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: StreamBuilder(
-            stream: currentUserSnapshot,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData &&
-                  snapshot.connectionState != ConnectionState.active) {
-                return const Center(
-                  child: Text('Loading..'),
-                );
-              }
-              QuerySnapshot dataSnapshot = snapshot.data as QuerySnapshot;
-              return Text(
-                dataSnapshot.docs[0]['username'],
-                style: const TextStyle(fontSize: 20),
+          stream: currentUserSnapshot,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData &&
+                snapshot.connectionState != ConnectionState.active) {
+              return const Center(
+                child: Text('Loading..'),
               );
-            }),
+            }
+            QuerySnapshot userDataSnapshot = snapshot.data as QuerySnapshot;
+            return Text(
+              userDataSnapshot.docs[0]['username'],
+              style: const TextStyle(fontSize: 20),
+            );
+          },
+        ),
         actions: [
           IconButton(
             enableFeedback: true,
@@ -150,6 +151,9 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               },
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(targetUser.profilePicture.toString()),
+                              ),
                               title: Text(
                                 userSnapshot.docs[index]['username'],
                               ),

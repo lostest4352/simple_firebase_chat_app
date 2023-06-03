@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                   stream: nonCurrentUserSnapshot,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.active &&
-                        snapshot.hasData == false) {
+                        !snapshot.hasData) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                         return StreamBuilder(
                           stream: chatroomStream,
                           builder: (context, snapshot) {
-                            if (snapshot.hasData == false &&
+                            if (!snapshot.hasData &&
                                 snapshot.connectionState !=
                                     ConnectionState.active) {
                               return const Center();
@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState !=
                                           ConnectionState.done &&
-                                      snapshot.hasData == false) {
+                                      !snapshot.hasData) {
                                     return const Text(
                                         "");
                                   }

@@ -178,6 +178,7 @@ class _HomePageState extends State<HomePage> {
                                         CachedNetworkImageProvider(targetUser
                                             .profilePicture
                                             .toString()),
+                                    child: (targetUser.profilePicture == null) ? const Icon(Icons.person) : null,
                                   ),
                                   title: Text(
                                     userSnapshot.docs[index]['username'],

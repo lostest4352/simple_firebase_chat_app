@@ -123,6 +123,7 @@ class _HomePageState extends State<HomePage> {
                         Future<ChatRoomModel?> getChatRoomModel =
                             createOrUpdateChatRoom.getChatRoomModel(targetUser);
 
+                        // Without this streambuilder, last message on homepage isnt shown instantly. It has no other function
                         return StreamBuilder(
                           stream: chatroomStream,
                           builder: (context, snapshot) {
@@ -144,7 +145,8 @@ class _HomePageState extends State<HomePage> {
                                 final date = DateTime.parse(
                                     snapshot.data?.dateTime.toString() ?? "");
                                 final formattedDate =
-                                    "0${date.day}-0${date.month}-${date.year} at ${date.hour}:${date.minute}";
+                                    // "0${date.day}-0${date.month}-${date.year} at ${date.hour}:${date.minute}";
+                                    "${date.hour}:${date.minute}";
 
                                 return ListTile(
                                   onTap: () async {

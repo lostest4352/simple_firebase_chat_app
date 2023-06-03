@@ -145,15 +145,12 @@ class _HomePageState extends State<HomePage> {
 
                                 DateTime? date = snapshot.data?.dateTime;
 
-                                String? formattedDate =
-                                    // "0${date.day}-0${date.month}-${date.year} at ${date.hour}:${date.minute}";
-                                    (date != null)
-                                        ? DateFormat.Hm().format(date)
-                                        : '';
+                                String? formattedDate = (date != null)
+                                    ? DateFormat.Hm().format(date)
+                                    : '';
 
                                 return ListTile(
                                   onTap: () async {
-                                    debugPrint(date.toString());
                                     ChatRoomModel? chatRoomModel =
                                         await getChatRoomModel;
 

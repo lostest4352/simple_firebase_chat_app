@@ -26,8 +26,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
-    Stream<QuerySnapshot> chatroomStream =
-        FirebaseFirestore.instance.collection("chatrooms").snapshots();
+    Stream<QuerySnapshot> chatroomStream = FirebaseFirestore.instance
+        .collection("chatrooms")
+        // .orderBy("dateTime", descending: true)
+        .snapshots();
 
     // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
     Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
@@ -129,52 +131,61 @@ class _HomePageState extends State<HomePage> {
                                     ConnectionState.active) {
                               return const Center();
                             }
-                            return ListTile(
-                              onTap: () async {
-                                ChatRoomModel? chatRoomModel =
-                                    await getChatRoomModel;
 
-                                //  debugPrint(chatRoomModel?.lastMessage
-                                //     .toString());
+                            return FutureBuilder(
+                              future: getChatRoomModel,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState !=
+                                        ConnectionState.done &&
+                                    !snapshot.hasData) {
+                                  return const Text("Loading..");
+                                }
 
-                                if (!mounted) return;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return ChatRoomPage(
-                                        chatroom:
-                                            chatRoomModel as ChatRoomModel,
-                                        currentUser: currentUser as User,
-                                        targetUser: targetUser,
-                                      );
-                                    },
+                                final date = DateTime.parse(
+                                    snapshot.data?.dateTime.toString() ?? "");
+                                final formattedDate =
+                                    "0${date.day}-0${date.month}-${date.year} at ${date.hour}:${date.minute}";
+
+                                return ListTile(
+                                  onTap: () async {
+                                    ChatRoomModel? chatRoomModel =
+                                        await getChatRoomModel;
+
+                                    //  debugPrint(chatRoomModel?.lastMessage
+                                    //     .toString());
+
+                                    if (!mounted) return;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ChatRoomPage(
+                                            chatroom:
+                                                chatRoomModel as ChatRoomModel,
+                                            currentUser: currentUser as User,
+                                            targetUser: targetUser,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  leading: CircleAvatar(
+                                    backgroundImage:
+                                        // NetworkImage(targetUser.profilePicture.toString()),
+                                        CachedNetworkImageProvider(targetUser
+                                            .profilePicture
+                                            .toString()),
                                   ),
-                                );
-                              },
-                              leading: CircleAvatar(
-                                backgroundImage: 
-                                // NetworkImage(targetUser.profilePicture.toString()),
-                                CachedNetworkImageProvider(targetUser.profilePicture.toString()),
-                              ),
-                              title: Text(
-                                userSnapshot.docs[index]['username'],
-                              ),
-                              subtitle: FutureBuilder(
-                                future: getChatRoomModel,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState !=
-                                          ConnectionState.done &&
-                                      !snapshot.hasData) {
-                                    return const Text(
-                                        "");
-                                  }
-                                  return Text(
+                                  title: Text(
+                                    userSnapshot.docs[index]['username'],
+                                  ),
+                                  subtitle: Text(
                                     snapshot.data?.lastMessage ?? "",
                                     overflow: TextOverflow.ellipsis,
-                                  );
-                                },
-                              ),
+                                  ),
+                                  trailing: Text(formattedDate),
+                                );
+                              },
                             );
                           },
                         );

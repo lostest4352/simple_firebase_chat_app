@@ -61,6 +61,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
       // set every newest message as last message
       widget.chatroom.lastMessage = message;
+      widget.chatroom.dateTime = DateTime.now();
 
       // update the chatroom
       FirebaseFirestore.instance

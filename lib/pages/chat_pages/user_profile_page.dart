@@ -43,7 +43,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
           (snapshot) => snapshot.docs.forEach(
             (element) {
               textController.text = element["username"];
-              // imageFile = element["profilePicture"];
             },
           ),
         );
@@ -145,7 +144,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       );
 
       UploadTask uploadTask = FirebaseStorage.instance
-          .ref("profilePictures")
+          .ref("profilePicture")
           .child(currentUser?.uid ?? '')
           .putFile(imageFile as File);
 
@@ -180,18 +179,37 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   onPressed: () {
                     showGalleryOrCameraOptions();
                   },
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: (imageFile != null)
-                        ? FileImage(imageFile as File)
-                        : null,
-                    
-                    child: (imageFile == null)
-                        ? const Icon(
-                            Icons.person,
-                            size: 60,
-                          )
-                        : null,
+                  child: StreamBuilder<Object>(
+                    stream: currentUserSnapshot,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData == false &&
+                          snapshot.connectionState != ConnectionState.active) {
+                        return const Text('Loading..');
+                      }
+
+                      QuerySnapshot userSnapshot =
+                          snapshot.data as QuerySnapshot;
+                      if (userSnapshot.docs.isEmpty) {
+                        return const Text('Loading..');
+                      }
+
+                      String? profilePicFromFirebase =
+                          userSnapshot.docs[0]["profilePicture"];
+
+                      return CircleAvatar(
+                        radius: 60,
+                        backgroundImage: (imageFile == null)
+                            ? NetworkImage(profilePicFromFirebase ?? '')
+                            : FileImage(imageFile as File) as ImageProvider,
+                        child: (imageFile == null &&
+                                profilePicFromFirebase == null)
+                            ? const Icon(
+                                Icons.person,
+                                size: 60,
+                              )
+                            : null,
+                      );
+                    },
                   ),
                 ),
               ),
@@ -235,7 +253,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 height: 40,
               ),
               TextField(
-                // initialValue: userSnapshot.docs[0]['username'],
                 maxLines: null,
                 onTapOutside: (event) {
                   FocusManager.instance.primaryFocus?.unfocus();

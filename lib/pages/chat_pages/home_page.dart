@@ -164,10 +164,10 @@ class _HomePageState extends State<HomePage> {
                                           ConnectionState.done &&
                                       snapshot.hasData == false) {
                                     return const Text(
-                                        "Send your first message");
+                                        "");
                                   }
                                   return Text(
-                                    snapshot.data?.lastMessage as String,
+                                    snapshot.data?.lastMessage ?? "",
                                     overflow: TextOverflow.ellipsis,
                                   );
                                 },

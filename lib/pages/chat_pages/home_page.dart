@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:simple_firebase1/pages/auth_pages/check_if_logged_in.dart';
 import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     User? currentUser = FirebaseAuth.instance.currentUser;
 
-    Stream<QuerySnapshot> chatroomStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")
         // .orderBy("dateTime", descending: true)
         .snapshots();
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage> {
 
                         // Without this streambuilder, last message on homepage isnt shown instantly. It has no other function
                         return StreamBuilder(
-                          stream: chatroomStream,
+                          stream: chatroomSnapshot,
                           builder: (context, snapshot) {
                             if (!snapshot.hasData &&
                                 snapshot.connectionState !=
@@ -142,14 +143,17 @@ class _HomePageState extends State<HomePage> {
                                   return const Text("Loading..");
                                 }
 
-                                final date = DateTime.parse(
-                                    snapshot.data?.dateTime.toString() ?? "");
-                                final formattedDate =
+                                DateTime? date = snapshot.data?.dateTime;
+
+                                String? formattedDate =
                                     // "0${date.day}-0${date.month}-${date.year} at ${date.hour}:${date.minute}";
-                                    "${date.hour}:${date.minute}";
+                                    date != null
+                                        ? DateFormat.Hm().format(date)
+                                        : '';
 
                                 return ListTile(
                                   onTap: () async {
+                                    debugPrint(date.toString());
                                     ChatRoomModel? chatRoomModel =
                                         await getChatRoomModel;
 

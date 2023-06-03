@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -177,6 +179,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         MessageModel currentMessage = MessageModel.fromMap(
                             dataSnapshot.docs[index].data()
                                 as Map<String, dynamic>);
+                        // Needed package since flutter default causes problems
+                        DateTime? date = currentMessage.createdOn;
+                        String? formattedDate = date != null
+                            ? "${DateFormat.yMMMM().format(date)} ${DateFormat.Hm().format(date)}"
+                            : '';
+                        
                         return Wrap(
                           alignment:
                               (currentMessage.sender == widget.currentUser.uid)
@@ -187,33 +195,50 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               padding: EdgeInsets.only(
                                   left: (currentMessage.sender ==
                                           widget.currentUser.uid)
-                                      ? 50
-                                      : 10,
+                                      ? 120
+                                      : 15,
                                   right: (currentMessage.sender ==
                                           widget.currentUser.uid)
-                                      ? 10
-                                      : 50),
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: (currentMessage.sender ==
-                                          widget.currentUser.uid)
-                                      ? Colors.green[800]
-                                      : Colors.black38,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Text(
-                                  currentMessage.messageText.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 16,
+                                      ? 15
+                                      : 120),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 2,
+                                      horizontal: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: (currentMessage.sender ==
+                                              widget.currentUser.uid)
+                                          ? const Color.fromARGB(
+                                              255, 0, 113, 85)
+                                          : Colors.black38,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    // child: Text(
+                                    //   currentMessage.messageText.toString(),
+                                    //   style: const TextStyle(
+                                    //     fontSize: 16,
+                                    //   ),
+                                    // ),
+                                    child: ListTile(
+                                      // contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                      title: Text(
+                                        currentMessage.messageText.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          // color: Colors.white,
+                                        ),
+                                      ),
+                                      subtitle: Text(formattedDate),
+                                    ),
                                   ),
-                                ),
+                                  // Text(formattedDate),
+                                ],
                               ),
                             ),
                           ],

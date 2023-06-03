@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -199,7 +200,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       return CircleAvatar(
                         radius: 60,
                         backgroundImage: (imageFile == null)
-                            ? NetworkImage(profilePicFromFirebase ?? '')
+                            // ? NetworkImage(profilePicFromFirebase ?? '')
+                            ? CachedNetworkImageProvider(profilePicFromFirebase ?? '')
                             : FileImage(imageFile as File) as ImageProvider,
                         child: (imageFile == null &&
                                 profilePicFromFirebase == null)

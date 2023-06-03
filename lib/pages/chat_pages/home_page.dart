@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
 
                                 String? formattedDate =
                                     // "0${date.day}-0${date.month}-${date.year} at ${date.hour}:${date.minute}";
-                                    date != null
+                                    (date != null)
                                         ? DateFormat.Hm().format(date)
                                         : '';
 

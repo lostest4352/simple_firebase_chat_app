@@ -181,10 +181,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                 as Map<String, dynamic>);
                         // Needed package since flutter default causes problems
                         DateTime? date = currentMessage.createdOn;
-                        String? formattedDate = date != null
+                        String? formattedDate = (date != null) 
                             ? "${DateFormat.yMMMMd().format(date)} at ${DateFormat.Hm().format(date)}"
                             : '';
-                        
+
                         return Wrap(
                           alignment:
                               (currentMessage.sender == widget.currentUser.uid)

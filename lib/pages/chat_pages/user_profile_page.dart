@@ -169,139 +169,139 @@ class _UserProfilePageState extends State<UserProfilePage> {
         // centerTitle: true,
       ),
       body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: CupertinoButton(
-                  onPressed: () {
-                    showGalleryOrCameraOptions();
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: ListView(
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: CupertinoButton(
+                onPressed: () {
+                  showGalleryOrCameraOptions();
+                },
+                child: StreamBuilder<Object>(
+                  stream: currentUserSnapshot,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData &&
+                        snapshot.connectionState != ConnectionState.active) {
+                      return const Text('Loading..');
+                    }
+
+                    QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
+                    if (userSnapshot.docs.isEmpty) {
+                      return const Text('Loading..');
+                    }
+
+                    String? profilePicFromFirebase =
+                        userSnapshot.docs[0]["profilePicture"];
+
+                    return CircleAvatar(
+                      radius: 60,
+                      backgroundImage: (imageFile == null)
+                          // ? NetworkImage(profilePicFromFirebase ?? '')
+                          ? CachedNetworkImageProvider(
+                              profilePicFromFirebase ?? '')
+                          : FileImage(imageFile as File) as ImageProvider,
+                      child:
+                          (imageFile == null && profilePicFromFirebase == null)
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                )
+                              : null,
+                    );
                   },
-                  child: StreamBuilder<Object>(
-                    stream: currentUserSnapshot,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData &&
-                          snapshot.connectionState != ConnectionState.active) {
-                        return const Text('Loading..');
-                      }
-
-                      QuerySnapshot userSnapshot =
-                          snapshot.data as QuerySnapshot;
-                      if (userSnapshot.docs.isEmpty) {
-                        return const Text('Loading..');
-                      }
-
-                      String? profilePicFromFirebase =
-                          userSnapshot.docs[0]["profilePicture"];
-
-                      return CircleAvatar(
-                        radius: 60,
-                        backgroundImage: (imageFile == null)
-                            // ? NetworkImage(profilePicFromFirebase ?? '')
-                            ? CachedNetworkImageProvider(
-                                profilePicFromFirebase ?? '')
-                            : FileImage(imageFile as File) as ImageProvider,
-                        child: (imageFile == null &&
-                                profilePicFromFirebase == null)
-                            ? const Icon(
-                                Icons.person,
-                                size: 60,
-                              )
-                            : null,
-                      );
-                    },
-                  ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              StreamBuilder<Object>(
-                stream: currentUserSnapshot,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData &&
-                      snapshot.connectionState != ConnectionState.active) {
-                    return const Text('Loading..');
-                  }
-                  QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
-                  if (userSnapshot.docs.isEmpty) {
-                    return const Text('Loading..');
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CupertinoButton(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        color: Colors.blue,
-                        onPressed: () {
-                          uploadPhoto(userSnapshot.docs[0].reference.id);
-                        },
-                        child: const Text(
-                          "Submit",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            StreamBuilder<Object>(
+              stream: currentUserSnapshot,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData &&
+                    snapshot.connectionState != ConnectionState.active) {
+                  return const Text('Loading..');
+                }
+                QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
+                if (userSnapshot.docs.isEmpty) {
+                  return const Text('Loading..');
+                }
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CupertinoButton(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      color: Colors.blue,
+                      onPressed: () {
+                        uploadPhoto(userSnapshot.docs[0].reference.id);
+                      },
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              TextField(
-                maxLines: null,
-                onTapOutside: (event) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                },
-                controller: textController,
-                decoration: const InputDecoration(
-                  labelText: 'Your username',
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CupertinoButton(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    color: Colors.blue,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return const AlertDialog(
-                            title: Text("Updating.."),
-                          );
-                        },
-                      );
-                      FirebaseFirestore.instance
-                          .collection("users")
-                          // .doc(userSnapshot.docs[0].reference.id) // Use this with streambuilder if the users document uid is different from current user uid
-                          .doc(currentUser?.uid)
-                          .update({
-                        'username': textController.text,
-                      }).then((value) => Navigator.pop(context));
-                    },
-                    child: const Text(
-                      "Update",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
                     ),
-                  )
-                ],
+                  ],
+                );
+              },
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            TextField(
+              maxLines: null,
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              controller: textController,
+              decoration: const InputDecoration(
+                labelText: 'Your username',
               ),
-            ],
-          )),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CupertinoButton(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  color: Colors.blue,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const AlertDialog(
+                          title: Text("Updating.."),
+                        );
+                      },
+                    );
+                    FirebaseFirestore.instance
+                        .collection("users")
+                        // .doc(userSnapshot.docs[0].reference.id) // Use this with streambuilder if the users document uid is different from current user uid
+                        .doc(currentUser?.uid)
+                        .update({
+                      'username': textController.text,
+                    }).then((value) => Navigator.pop(context));
+                  },
+                  child: const Text(
+                    "Update",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

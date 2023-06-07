@@ -23,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     const UserProfilePage(),
   ];
 
-  // need to initialize function in init state or it'll be null
+  // This is used in order to get current logged in user's usermodel data. Need to initialize function in init state or it'll be null
   @override
   void initState() {
     super.initState();

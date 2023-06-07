@@ -100,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
-        await addUserDetails(user);
+        await addUserDetails(user, credential.user?.uid ?? '');
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         return showDialogPopup(e.code);
@@ -108,8 +108,8 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future addUserDetails(UserModel user) async {
-    await FirebaseFirestore.instance.collection("users").add(user.toMap());
+  Future addUserDetails(UserModel user, String uid) async {
+    await FirebaseFirestore.instance.collection("users").doc(uid).set(user.toMap());
   }
 
   @override

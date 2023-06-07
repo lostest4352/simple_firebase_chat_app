@@ -201,7 +201,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         radius: 60,
                         backgroundImage: (imageFile == null)
                             // ? NetworkImage(profilePicFromFirebase ?? '')
-                            ? CachedNetworkImageProvider(profilePicFromFirebase ?? '')
+                            ? CachedNetworkImageProvider(
+                                profilePicFromFirebase ?? '')
                             : FileImage(imageFile as File) as ImageProvider,
                         child: (imageFile == null &&
                                 profilePicFromFirebase == null)
@@ -270,49 +271,34 @@ class _UserProfilePageState extends State<UserProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  StreamBuilder<Object>(
-                    stream: currentUserSnapshot,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData &&
-                          snapshot.connectionState != ConnectionState.active) {
-                        return const Text('Loading..');
-                      }
-                      QuerySnapshot userSnapshot =
-                          snapshot.data as QuerySnapshot;
-                      if (userSnapshot.docs.isEmpty) {
-                        return const Text('Loading..');
-                      }
-
-                      return CupertinoButton(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        color: Colors.blue,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return const AlertDialog(
-                                title: Text("Updating.."),
-                              );
-                            },
+                  CupertinoButton(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    color: Colors.blue,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const AlertDialog(
+                            title: Text("Updating.."),
                           );
-                          FirebaseFirestore.instance
-                              .collection("users")
-                              .doc(userSnapshot.docs[0].reference.id)
-                              // .doc()
-                              .update({
-                            'username': textController.text,
-                          }).then((value) => Navigator.pop(context));
                         },
-                        child: const Text(
-                          "Update",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
                       );
+                      FirebaseFirestore.instance
+                          .collection("users")
+                          // .doc(userSnapshot.docs[0].reference.id) // Use this with streambuilder if the users document uid is different from current user uid
+                          .doc(currentUser?.uid) 
+                          .update({
+                        'username': textController.text,
+                      }).then((value) => Navigator.pop(context));
                     },
-                  ),
+                    child: const Text(
+                      "Update",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ],

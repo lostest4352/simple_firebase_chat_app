@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_options.dart';
 import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
-import 'package:simple_firebase1/provider/chat_provider.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 
 void main() async {
   if (Platform.isAndroid) {
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) {
-            return ChatProvider();
+            return UserProvider();
           },
         ),
       ],

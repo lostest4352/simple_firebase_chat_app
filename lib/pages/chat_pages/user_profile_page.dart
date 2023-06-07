@@ -226,7 +226,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       snapshot.connectionState != ConnectionState.active) {
                     return const Text('Loading..');
                   }
-                  // How to get querysnapshot without streams/future
                   QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
                   if (userSnapshot.docs.isEmpty) {
                     return const Text('Loading..');
@@ -286,7 +285,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       FirebaseFirestore.instance
                           .collection("users")
                           // .doc(userSnapshot.docs[0].reference.id) // Use this with streambuilder if the users document uid is different from current user uid
-                          .doc(currentUser?.uid) 
+                          .doc(currentUser?.uid)
                           .update({
                         'username': textController.text,
                       }).then((value) => Navigator.pop(context));

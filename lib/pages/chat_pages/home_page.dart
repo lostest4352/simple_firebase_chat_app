@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/auth_pages/check_if_logged_in.dart';
 import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -19,23 +21,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
   void signOutFromFirebase() async {
     await FirebaseAuth.instance.signOut();
   }
 
   @override
   Widget build(BuildContext context) {
-    User? currentUser = FirebaseAuth.instance.currentUser;
+    UserModel? userModel = context.watch<UserProvider>().getUser;
+
+    debugPrint("checking if data is null");
+    debugPrint(userModel?.username);
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")
         // .orderBy("dateTime", descending: true)
         .snapshots();
 
-    // In FutureBuilder we have get() instead of snapshots(), and ConnectionState.done instead of ConnectionState.active
     Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
         .collection("users")
-        .where("email", isNotEqualTo: currentUser?.email)
+        // .where("uid", isNotEqualTo: currentUser?.uid)
+        .where("username", isNotEqualTo: userModel?.username)
+        .orderBy("username")
         .snapshots();
 
     Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
@@ -178,7 +186,9 @@ class _HomePageState extends State<HomePage> {
                                         CachedNetworkImageProvider(targetUser
                                             .profilePicture
                                             .toString()),
-                                    child: (targetUser.profilePicture == null) ? const Icon(Icons.person) : null,
+                                    child: (targetUser.profilePicture == null)
+                                        ? const Icon(Icons.person)
+                                        : null,
                                   ),
                                   title: Text(
                                     userSnapshot.docs[index]['username'],

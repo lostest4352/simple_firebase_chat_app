@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 
 // Initial page with bottom navigation bar items to switch pages
 class MainPage extends StatefulWidget {
@@ -20,6 +22,18 @@ class _MainPageState extends State<MainPage> {
     const GroupListPage(),
     const UserProfilePage(),
   ];
+
+  // need to initialize function in init state or it'll be null
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserModelData();
+  }
+
+  void getCurrentUserModelData() async {
+    UserProvider userProvider = context.read<UserProvider>();
+    await userProvider.refreshUser();
+  }
 
   @override
   Widget build(BuildContext context) {

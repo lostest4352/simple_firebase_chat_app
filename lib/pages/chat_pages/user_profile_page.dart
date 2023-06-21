@@ -183,8 +183,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 child: StreamBuilder<Object>(
                   stream: currentUserSnapshot,
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData &&
-                        snapshot.connectionState != ConnectionState.active) {
+                    if (snapshot.connectionState != ConnectionState.active) {
+                      return const Text('Loading..');
+                    }
+                    if (!snapshot.hasData) {
                       return const Text('Loading..');
                     }
 
@@ -221,8 +223,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             StreamBuilder<Object>(
               stream: currentUserSnapshot,
               builder: (context, snapshot) {
-                if (!snapshot.hasData &&
-                    snapshot.connectionState != ConnectionState.active) {
+                if (snapshot.connectionState != ConnectionState.active) {
+                  return const Text('Loading..');
+                }
+                if (!snapshot.hasData) {
                   return const Text('Loading..');
                 }
                 QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;

@@ -91,11 +91,13 @@ class _HomePageState extends State<HomePage> {
               child: StreamBuilder(
                 stream: nonCurrentUserSnapshot,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.active &&
-                      !snapshot.hasData) {
+                  if (snapshot.connectionState != ConnectionState.active) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text('Loading..');
                   }
                   QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
 
@@ -126,19 +128,23 @@ class _HomePageState extends State<HomePage> {
                       return StreamBuilder(
                         stream: chatroomSnapshot,
                         builder: (context, snapshot) {
-                          if (!snapshot.hasData &&
-                              snapshot.connectionState !=
-                                  ConnectionState.active) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.active) {
                             return const Center();
+                          }
+                          if (!snapshot.hasData) {
+                            return const Text('Loading..');
                           }
 
                           return FutureBuilder(
                             future: getChatRoomModel,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState !=
-                                      ConnectionState.done &&
-                                  !snapshot.hasData) {
+                                  ConnectionState.done) {
                                 return const Text("Loading..");
+                              }
+                              if (!snapshot.hasData) {
+                                return const Text('Loading..');
                               }
 
                               DateTime? date = snapshot.data?.dateTime;
@@ -174,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                                   backgroundImage:
                                       // NetworkImage(targetUser.profilePicture.toString()),
                                       CachedNetworkImageProvider(
-                                          targetUser.profilePicture.toString()),
+                                          targetUser.profilePicture ?? ''),
                                   child: (targetUser.profilePicture == null)
                                       ? const Icon(Icons.person)
                                       : null,

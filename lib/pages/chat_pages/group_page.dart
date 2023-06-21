@@ -15,9 +15,7 @@ class _GroupListPageState extends State<GroupListPage> {
         title: const Text("Groups"),
       ),
       body: Column(
-        children: [
-
-        ],
+        children: [],
       ),
     );
   }

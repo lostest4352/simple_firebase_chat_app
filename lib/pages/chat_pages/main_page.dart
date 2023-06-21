@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
+import 'package:simple_firebase1/pages/search_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
 // Initial page with bottom navigation bar items to switch pages
@@ -19,6 +20,7 @@ class _MainPageState extends State<MainPage> {
 
   final pages = [
     const HomePage(),
+    const SearchPage(),
     const GroupListPage(),
     const UserProfilePage(),
   ];
@@ -54,15 +56,31 @@ class _MainPageState extends State<MainPage> {
               items: const [
                 BottomNavigationBarItem(
                   label: '',
-                  icon: Icon(Icons.home),
+                  icon: Icon(
+                    Icons.home,
+                    color: Colors.white,
+                  ),
                 ),
                 BottomNavigationBarItem(
                   label: '',
-                  icon: Icon(Icons.group),
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
                 ),
                 BottomNavigationBarItem(
                   label: '',
-                  icon: Icon(Icons.person),
+                  icon: Icon(
+                    Icons.groups,
+                    color: Colors.white,
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: '',
+                  icon: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

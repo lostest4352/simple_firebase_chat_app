@@ -181,7 +181,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         // Needed package since flutter default causes problems
                         DateTime? date = currentMessage.createdOn;
                         String formattedDate = (date != null) 
-                            ? "${DateFormat.yMMMMd().format(date)} at ${DateFormat.Hm().format(date)}"
+                            ? "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}"
                             : '';
 
                         return Wrap(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_options.dart';
-import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
+import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
 void main() async {
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           themeMode: ThemeMode.system,
-          home: const MainPage(),
+          home: const AuthPage(),
         );
       },
     );

@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                               DateTime? date = snapshot.data?.dateTime;
 
                               String? formattedDate = (date != null)
-                                  ? DateFormat.Hm().format(date)
+                                  ? DateFormat.jmv().format(date)
                                   : '';
 
                               return ListTile(

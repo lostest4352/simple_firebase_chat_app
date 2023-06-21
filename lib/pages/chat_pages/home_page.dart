@@ -42,7 +42,8 @@ class _HomePageState extends State<HomePage> {
     Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
         .collection("users")
         // .where("uid", isNotEqualTo: currentUser?.uid,)
-        .where("username", isNotEqualTo: userModel?.username)
+        // .orderBy("uid")
+        // .where("username", isNotEqualTo: userModel?.username)
         .orderBy("username")
         .snapshots();
 
@@ -136,15 +137,20 @@ class _HomePageState extends State<HomePage> {
                             return const Text('Loading..');
                           }
 
+
                           return FutureBuilder(
                             future: getChatRoomModel,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState !=
                                   ConnectionState.done) {
                                 return const Text("Loading..");
+                                // return const Center();
                               }
+
+                              // If used loading here, there'll be empty placeholder with loadin in the listview. No need for any code to exclude yourself since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview
                               if (!snapshot.hasData) {
-                                return const Text('Loading..');
+                                // return const Text('Loading..');
+                                return const Center();
                               }
 
                               DateTime? date = snapshot.data?.dateTime;

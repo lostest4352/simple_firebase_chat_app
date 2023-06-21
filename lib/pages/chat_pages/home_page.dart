@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
 
     Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
         .collection("users")
-        // .where("uid", isNotEqualTo: currentUser?.uid)
+        // .where("uid", isNotEqualTo: currentUser?.uid,)
         .where("username", isNotEqualTo: userModel?.username)
         .orderBy("username")
         .snapshots();

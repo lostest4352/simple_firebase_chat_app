@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/pages/auth_pages/check_if_logged_in.dart';
+import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return const CheckIfLoggedIn();
+                    return const LoginPage();
                   },
                 ),
               );

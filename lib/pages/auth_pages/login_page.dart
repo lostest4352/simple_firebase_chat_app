@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
+import 'package:simple_firebase1/pages/auth_pages/register_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
 
 import '../../components/items_text_fields.dart';
 
 class LoginPage extends StatefulWidget {
-  final VoidCallback? onClicked;
-  const LoginPage({required this.onClicked, super.key});
+  const LoginPage({
+    super.key,
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -223,7 +225,16 @@ class _LoginPageState extends State<LoginPage> {
                       width: 4,
                     ),
                     InkWell(
-                      onTap: widget.onClicked,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const RegisterPage();
+                            },
+                          ),
+                        );
+                      },
                       child: const Text(
                         "Register now",
                         style: TextStyle(

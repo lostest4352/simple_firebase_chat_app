@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/components/items_text_fields.dart';
 import 'package:simple_firebase1/models/user_model.dart';
+import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  final VoidCallback? onClicked;
-  const RegisterPage({required this.onClicked, super.key});
+  const RegisterPage({
+    super.key,
+  });
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -109,7 +111,10 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future addUserDetails(UserModel user, String uid) async {
-    await FirebaseFirestore.instance.collection("users").doc(uid).set(user.toMap());
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .set(user.toMap());
   }
 
   @override
@@ -277,7 +282,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: 4,
                     ),
                     InkWell(
-                      onTap: widget.onClicked,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const LoginPage();
+                            },
+                          ),
+                        );
+                      },
                       child: const Text(
                         "Sign In",
                         style: TextStyle(

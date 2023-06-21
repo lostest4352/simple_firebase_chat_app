@@ -8,14 +8,18 @@ class GroupListPage extends StatefulWidget {
 }
 
 class _GroupListPageState extends State<GroupListPage> {
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Groups"),
+        title: const Text("List of users"),
       ),
       body: Column(
-        children: [],
+        children: [
+
+        ],
       ),
     );
   }

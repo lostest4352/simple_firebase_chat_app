@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> {
         .collection("users")
         // .where("uid", isNotEqualTo: currentUser?.uid,)
         // .orderBy("uid")
-        // .where("username", isNotEqualTo: userModel?.username)
         .orderBy("username")
         .snapshots();
 
@@ -136,7 +135,6 @@ class _HomePageState extends State<HomePage> {
                           if (!snapshot.hasData) {
                             return const Text('Loading..');
                           }
-
 
                           return FutureBuilder(
                             future: getChatRoomModel,

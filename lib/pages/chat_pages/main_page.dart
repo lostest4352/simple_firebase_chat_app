@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
-import 'package:simple_firebase1/pages/search_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
 // Initial page with bottom navigation bar items to switch pages

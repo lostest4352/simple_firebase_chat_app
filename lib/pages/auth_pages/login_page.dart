@@ -16,7 +16,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool showPassword = false;
+  // bool showPassword = false;
+  ValueNotifier<bool> showPassword = ValueNotifier<bool>(false);
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -52,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return  const MainPage();
+            return const MainPage();
           },
         ),
       );
@@ -73,9 +75,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     void togglevisibility() {
-      setState(() {
-        showPassword = !showPassword;
-      });
+      // setState(() {
+      //   showPassword = !showPassword;
+      // });
+      showPassword.value = !showPassword.value;
     }
 
     return SafeArea(
@@ -121,18 +124,23 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 // Password textfield
-                ItemsTextField(
-                  obscureText: !showPassword,
-                  textController: passwordController,
-                  hintText: 'Enter Your Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        showPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      togglevisibility();
-                    },
-                  ),
-                ),
+                ListenableBuilder(
+                    listenable: showPassword,
+                    builder: (context, child) {
+                      return ItemsTextField(
+                        obscureText: !showPassword.value,
+                        textController: passwordController,
+                        hintText: 'Enter Your Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(showPassword.value
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            togglevisibility();
+                          },
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 10,
                 ),

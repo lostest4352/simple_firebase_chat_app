@@ -16,7 +16,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  bool showPassword = false;
+  // bool showPassword = false;
+  ValueNotifier<bool> showPassword = ValueNotifier<bool>(false);
+
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -120,9 +123,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     void togglevisibility() {
-      setState(() {
-        showPassword = !showPassword;
-      });
+      // setState(() {
+      //   showPassword = !showPassword;
+      // });
+      showPassword.value = !showPassword.value;
     }
 
     return SafeArea(
@@ -186,34 +190,44 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
 
                 // Password textfield
-                ItemsTextField(
-                  obscureText: !showPassword,
-                  textController: passwordController,
-                  hintText: 'Enter Your Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        showPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      togglevisibility();
-                    },
-                  ),
+                ListenableBuilder(
+                  listenable: showPassword,
+                  builder: (context, child) {
+                    return ItemsTextField(
+                      obscureText: !showPassword.value,
+                      textController: passwordController,
+                      hintText: 'Enter Your Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                            showPassword.value ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          togglevisibility();
+                        },
+                      ),
+                    );
+                  }
                 ),
                 const SizedBox(
                   height: 10,
                 ),
 
                 // Confirm password textfield
-                ItemsTextField(
-                  obscureText: !showPassword,
-                  textController: confirmPasswordController,
-                  hintText: 'Confirm Your Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        showPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      togglevisibility();
-                    },
-                  ),
+                ListenableBuilder(
+                  listenable: showPassword,
+                  builder: (context, child) {
+                    return ItemsTextField(
+                      obscureText: !showPassword.value,
+                      textController: confirmPasswordController,
+                      hintText: 'Confirm Your Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                            showPassword.value ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          togglevisibility();
+                        },
+                      ),
+                    );
+                  }
                 ),
 
                 const SizedBox(

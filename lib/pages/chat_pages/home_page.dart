@@ -31,8 +31,6 @@ class _HomePageState extends State<HomePage> {
     // Didn't use provider since this is the future and stream was better for showing realtime username changes
     // UserModel? userModel = context.watch<UserProvider>().getUser;
 
-    debugPrint("checking if data is null");
-    // debugPrint(userModel?.username);
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")

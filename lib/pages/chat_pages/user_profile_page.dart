@@ -20,7 +20,9 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  File? imageFile;
+  // File? imageFile;
+  ValueNotifier<File>? imageFile;
+
 
   TextEditingController textController = TextEditingController(text: '');
 
@@ -73,9 +75,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
 
     if (croppedImage != null) {
-      setState(() {
-        imageFile = File(croppedImage.path);
-      });
+      // setState(() {
+      //   imageFile = File(croppedImage.path);
+      // });
+      imageFile?.value = File(croppedImage.path);
     }
   }
 

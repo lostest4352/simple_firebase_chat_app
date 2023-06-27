@@ -20,7 +20,8 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  File? imageFile;
+  // File? imageFile;
+  ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
 
   TextEditingController textController = TextEditingController(text: '');
 
@@ -73,9 +74,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
 
     if (croppedImage != null) {
-      setState(() {
-        imageFile = File(croppedImage.path);
-      });
+      // setState(() {
+      //   imageFile = File(croppedImage.path);
+      // });
+      imageFileNotifier.value = File(croppedImage.path);
     }
   }
 
@@ -112,6 +114,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   void uploadPhoto(String currentUserUid) async {
+    File? imageFile = imageFileNotifier.value;
     if (imageFile == null) {
       showDialog(
         context: context,
@@ -124,6 +127,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       );
     } else {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -147,7 +151,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       UploadTask uploadTask = FirebaseStorage.instance
           .ref("profilePicture")
           .child(currentUser?.uid ?? '')
-          .putFile(imageFile as File);
+          .putFile(imageFile);
 
       TaskSnapshot snapshot = await uploadTask;
 
@@ -198,20 +202,25 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     String? profilePicFromFirebase =
                         userSnapshot.docs[0]["profilePicture"];
 
-                    return CircleAvatar(
-                      radius: 60,
-                      backgroundImage: (imageFile == null)
-                          // ? NetworkImage(profilePicFromFirebase ?? '')
-                          ? CachedNetworkImageProvider(
-                              profilePicFromFirebase ?? '')
-                          : FileImage(imageFile as File) as ImageProvider,
-                      child:
-                          (imageFile == null && profilePicFromFirebase == null)
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                )
-                              : null,
+                    return ListenableBuilder(
+                      listenable: imageFileNotifier,
+                      builder: (context, snapshot) {
+                        return CircleAvatar(
+                          radius: 60,
+                          backgroundImage: (imageFileNotifier.value == null)
+                              // ? NetworkImage(profilePicFromFirebase ?? '')
+                              ? CachedNetworkImageProvider(
+                                  profilePicFromFirebase ?? '')
+                              : FileImage(imageFileNotifier.value as File) as ImageProvider,
+                          child:
+                              (imageFileNotifier.value == null && profilePicFromFirebase == null)
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 60,
+                                    )
+                                  : null,
+                        );
+                      }
                     );
                   },
                 ),

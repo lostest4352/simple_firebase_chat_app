@@ -3,13 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -29,36 +28,54 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel? userModel = context.watch<UserProvider>().getUser;
+    // Didn't use provider since this is the future and stream was better for showing realtime username changes
+    // UserModel? userModel = context.watch<UserProvider>().getUser;
 
     debugPrint("checking if data is null");
-    debugPrint(userModel?.username);
+    // debugPrint(userModel?.username);
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")
         // .orderBy("dateTime", descending: true)
         .snapshots();
 
-    Stream<QuerySnapshot> nonCurrentUserSnapshot = FirebaseFirestore.instance
+    Stream<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
         .collection("users")
         // .where("uid", isNotEqualTo: currentUser?.uid,)
         // .orderBy("uid")
         .orderBy("username")
         .snapshots();
 
-    // // Code when provider wasnt used
-    // Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
-    //     .collection("users")
-    //     .where("uid", isEqualTo: currentUser?.uid)
-    //     .snapshots();
+    // Code when stream is used instead of provider
+    Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
+        .collection("users")
+        .where("uid", isEqualTo: currentUser?.uid)
+        .snapshots();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          // userDataSnapshot.docs[0]['username'], // if streams is used
-          userModel?.username.toString() ?? "Loading...",
-          style: const TextStyle(fontSize: 20),
-        ),
+        title: StreamBuilder(
+            stream: currentUserSnapshot,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.active) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (!snapshot.hasData) {
+                return const Text('Loading..');
+              }
+              QuerySnapshot userDataSnapshot = snapshot.data as QuerySnapshot;
+
+              if (userDataSnapshot.docs.isEmpty) {
+                return const Text('Loading..');
+              }
+              return Text(
+                userDataSnapshot.docs[0]['username'], // if streams is used
+                // userModel?.username.toString() ?? "Loading...", // when provider is used
+                style: const TextStyle(fontSize: 20),
+              );
+            }),
         actions: [
           IconButton(
             enableFeedback: true,
@@ -89,7 +106,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: StreamBuilder(
-                stream: nonCurrentUserSnapshot,
+                stream: allUserSnapshot,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.active) {
                     return const Center(
@@ -106,8 +123,11 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator(),
                     );
                   }
+
                   return ListView.builder(
                     itemCount: userSnapshot.docs.length,
+                    // itemCount: thesnap.length,
+
                     itemBuilder: (context, index) {
                       // Get map data from snapshot as per its index and convert to format suitable for UserModel
                       Map<String, dynamic> userDataFromFirebase =
@@ -145,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                                 // return const Center();
                               }
 
-                              // If used loading here, there'll be empty placeholder with loadin in the listview. No need for any code to exclude yourself since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview
+                              // If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
                               if (!snapshot.hasData) {
                                 // return const Text('Loading..');
                                 return const Center();

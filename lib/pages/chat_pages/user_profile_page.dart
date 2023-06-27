@@ -53,6 +53,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   void dispose() {
     textController.dispose();
+    imageFileNotifier.dispose();
     super.dispose();
   }
 

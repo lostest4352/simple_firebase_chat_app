@@ -48,194 +48,219 @@ class _HomePageState extends State<HomePage> {
         .where("uid", isEqualTo: currentUser?.uid)
         .snapshots();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: StreamBuilder(
-            stream: currentUserSnapshot,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.active) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (!snapshot.hasData) {
-                return const Text('Loading..');
-              }
-              QuerySnapshot userDataSnapshot = snapshot.data as QuerySnapshot;
+    return StreamBuilder(
+      stream: currentUserSnapshot,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.active) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (!snapshot.hasData) {
+          return const Text('Loading..');
+        }
+        QuerySnapshot userDataSnapshot = snapshot.data as QuerySnapshot;
 
-              if (userDataSnapshot.docs.isEmpty) {
-                return const Text('Loading..');
-              }
-              return Text(
-                userDataSnapshot.docs[0]['username'], // if streams is used
-                // userModel?.username.toString() ?? "Loading...", // when provider is used
-                style: const TextStyle(fontSize: 20),
-              );
-            }),
-        actions: [
-          IconButton(
-            enableFeedback: true,
-            onPressed: () {
-              signOutFromFirebase();
-              Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const LoginPage();
-                  },
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.logout,
-              semanticLabel: 'Logout',
+        if (userDataSnapshot.docs.isEmpty) {
+          return const Text('Loading..');
+        }
+        return Scaffold(
+          appBar: AppBar(
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundImage:
+                    (userDataSnapshot.docs[0]["profilePicture"] != null)
+                        ? CachedNetworkImageProvider(
+                            userDataSnapshot.docs[0]["profilePicture"] ?? "",
+                          )
+                        : null,
+                child: userDataSnapshot.docs[0]["profilePicture"] == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
             ),
+            title: Text(
+              userDataSnapshot.docs[0]['username'], // if streams is used
+              // userModel?.username.toString() ?? "Loading...", // when provider is used
+              style: const TextStyle(fontSize: 20),
+            ),
+            actions: [
+              IconButton(
+                enableFeedback: true,
+                onPressed: () {
+                  signOutFromFirebase();
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const LoginPage();
+                      },
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.logout,
+                  semanticLabel: 'Logout',
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 15,
-          ),
-          Expanded(
-            child: Center(
-              child: StreamBuilder(
-                stream: allUserSnapshot,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.active) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (!snapshot.hasData) {
-                    return const Text('Loading..');
-                  }
-                  QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
+          body: Column(
+            children: [
+              const SizedBox(
+                height: 15,
+              ),
+              Expanded(
+                child: Center(
+                  child: StreamBuilder(
+                    stream: allUserSnapshot,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.active) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (!snapshot.hasData) {
+                        return const Text('Loading..');
+                      }
+                      QuerySnapshot userSnapshot =
+                          snapshot.data as QuerySnapshot;
 
-                  if (userSnapshot.docs.isEmpty) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  
-                  // This code excludes current user from the snapshot. The listview works without it and no issues outside console but we get unhandled exception in the console if we don't exclude it here
-                  final otherUserSnapshot =
-                      snapshot.data?.docs.where((element) {
-                    return element["uid"] != currentUser?.uid;
-                  }).toList();
+                      if (userSnapshot.docs.isEmpty) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                  return ListView.builder(
-                    itemCount: otherUserSnapshot?.length,
-                    // itemCount: thesnap.length,
+                      // This code excludes current user from the snapshot. The listview works without it and no issues outside console but we get unhandled exception in the console if we don't exclude it here
+                      final otherUserSnapshot =
+                          snapshot.data?.docs.where((docs) {
+                        return docs["uid"] != currentUser?.uid;
+                      }).toList();
 
-                    itemBuilder: (context, index) {
-                      // Get map data from snapshot as per its index and convert to format suitable for UserModel
-                      Map<String, dynamic> userDataFromFirebase =
-                          otherUserSnapshot?[index].data()
-                              as Map<String, dynamic>;
+                      return ListView.builder(
+                        itemCount: otherUserSnapshot?.length,
+                        // itemCount: thesnap.length,
 
-                      // After above function seperates each user with index the data is set to UserModel
-                      UserModel targetUser =
-                          UserModel.fromMap(userDataFromFirebase);
+                        itemBuilder: (context, index) {
+                          // Get map data from snapshot as per its index and convert to format suitable for UserModel
+                          Map<String, dynamic> userDataFromFirebase =
+                              otherUserSnapshot?[index].data()
+                                  as Map<String, dynamic>;
 
-                      // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
-                      CreateOrUpdateChatRoom createOrUpdateChatRoom =
-                          CreateOrUpdateChatRoom();
-                      Future<ChatRoomModel?> getChatRoomModel =
-                          createOrUpdateChatRoom.getChatRoomModel(targetUser);
+                          // After above function seperates each user with index the data is set to UserModel
+                          UserModel targetUser =
+                              UserModel.fromMap(userDataFromFirebase);
 
-                      // Without this streambuilder, last message on homepage isnt shown instantly. It has no other function
-                      return StreamBuilder(
-                        stream: chatroomSnapshot,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState !=
-                              ConnectionState.active) {
-                            return const Center();
-                          }
-                          if (!snapshot.hasData) {
-                            return const Text('Loading..');
-                          }
+                          // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
+                          CreateOrUpdateChatRoom createOrUpdateChatRoom =
+                              CreateOrUpdateChatRoom();
+                          Future<ChatRoomModel?> getChatRoomModel =
+                              createOrUpdateChatRoom
+                                  .getChatRoomModel(targetUser);
 
-                          return FutureBuilder(
-                            future: getChatRoomModel,
+                          // Without this streambuilder, last message on homepage isnt shown instantly. It has no other function
+                          return StreamBuilder(
+                            stream: chatroomSnapshot,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState !=
-                                  ConnectionState.done) {
-                                return const Text("Loading..");
-                                // return const Center();
-                              }
-
-                              // Old message: If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
-                              // Error now handled by excluding current user uid before listview.builder
-                              if (!snapshot.hasData) {
-                                // return const Text('Loading..');
+                                  ConnectionState.active) {
                                 return const Center();
                               }
+                              if (!snapshot.hasData) {
+                                return const Text('Loading..');
+                              }
 
-                              DateTime? date = snapshot.data?.dateTime;
+                              return FutureBuilder(
+                                future: getChatRoomModel,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState !=
+                                      ConnectionState.done) {
+                                    return const Text("Loading..");
+                                    // return const Center();
+                                  }
 
-                              String? formattedDate = (date != null)
-                                  ? DateFormat.jmv().format(date)
-                                  : '';
+                                  // Old message: If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
+                                  // Error now handled by excluding current user uid before listview.builder
+                                  if (!snapshot.hasData) {
+                                    // return const Text('Loading..');
+                                    return const Center();
+                                  }
 
-                              return ListTile(
-                                onTap: () async {
-                                  ChatRoomModel? chatRoomModel =
-                                      await getChatRoomModel;
+                                  DateTime? date = snapshot.data?.dateTime;
 
-                                  //  debugPrint(chatRoomModel?.lastMessage
-                                  //     .toString());
+                                  String? formattedDate = (date != null)
+                                      ? DateFormat.jmv().format(date)
+                                      : '';
 
-                                  if (!mounted) return;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return ChatRoomPage(
-                                          chatroom:
-                                              chatRoomModel as ChatRoomModel,
-                                          currentUser: currentUser as User,
-                                          targetUser: targetUser,
-                                        );
-                                      },
+                                  return ListTile(
+                                    onTap: () async {
+                                      ChatRoomModel? chatRoomModel =
+                                          await getChatRoomModel;
+
+                                      //  debugPrint(chatRoomModel?.lastMessage
+                                      //     .toString());
+
+                                      if (!mounted) return;
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return ChatRoomPage(
+                                              chatroom: chatRoomModel
+                                                  as ChatRoomModel,
+                                              currentUser: currentUser as User,
+                                              targetUser: targetUser,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    leading: CircleAvatar(
+                                      backgroundImage:
+                                          // You can also just use targetUser.profilePicture here. But used the below for consistency
+                                          otherUserSnapshot?[index]
+                                                      ['profilePicture'] !=
+                                                  null
+                                              ? CachedNetworkImageProvider(
+                                                  otherUserSnapshot?[index]
+                                                          ['profilePicture'] ??
+                                                      '')
+                                              : null,
+                                      child: (otherUserSnapshot?[index]
+                                                  ['profilePicture'] ==
+                                              null)
+                                          ? const Icon(Icons.person)
+                                          : null,
                                     ),
+                                    title: Text(
+                                      otherUserSnapshot?[index]['username'],
+                                    ),
+                                    subtitle: Text(
+                                      snapshot.data?.lastMessage ?? "",
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    trailing: Text(formattedDate),
                                   );
                                 },
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      targetUser.profilePicture != null ?
-                                      CachedNetworkImageProvider(
-                                          targetUser.profilePicture ?? '') : null,
-                                  child: (targetUser.profilePicture == null)
-                                      ? const Icon(Icons.person)
-                                      : null,
-                                ),
-                                title: Text(
-                                  otherUserSnapshot?[index]['username'],
-                                ),
-                                subtitle: Text(
-                                  snapshot.data?.lastMessage ?? "",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                trailing: Text(formattedDate),
                               );
                             },
                           );
                         },
                       );
                     },
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(
+                height: 5,
+              ),
+            ],
           ),
-          const SizedBox(
-            height: 5,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -205,9 +205,9 @@ class _HomePageState extends State<HomePage> {
                                 },
                                 leading: CircleAvatar(
                                   backgroundImage:
-                                      // NetworkImage(targetUser.profilePicture.toString()),
+                                      targetUser.profilePicture != null ?
                                       CachedNetworkImageProvider(
-                                          targetUser.profilePicture ?? ''),
+                                          targetUser.profilePicture ?? '') : null,
                                   child: (targetUser.profilePicture == null)
                                       ? const Icon(Icons.person)
                                       : null,

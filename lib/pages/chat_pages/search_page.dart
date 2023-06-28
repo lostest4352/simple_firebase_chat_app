@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -61,9 +62,9 @@ class _SearchPageState extends State<SearchPage> {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
+                  backgroundImage: otherUserSnapshot?[index]["profilePicture"] != null ? CachedNetworkImageProvider(
                     otherUserSnapshot?[index]["profilePicture"] ?? "",
-                  ),
+                  ) : null,
                   child: otherUserSnapshot?[index]["profilePicture"] == null ? const Icon(Icons.person) : null,
                 ),
                 title: Text(otherUserSnapshot?[index]["username"] ?? ""),

@@ -9,7 +9,6 @@ import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
@@ -30,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // Didn't use provider since this is the future and stream was better for showing realtime username changes
     // UserModel? userModel = context.watch<UserProvider>().getUser;
-
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")
@@ -121,15 +119,21 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator(),
                     );
                   }
+                  
+                  // This code excludes current user from the snapshot. The listview works without it and no issues outside console but we get unhandled exception in the console if we don't exclude it here
+                  final otherUserSnapshot =
+                      snapshot.data?.docs.where((element) {
+                    return element["uid"] != currentUser?.uid;
+                  }).toList();
 
                   return ListView.builder(
-                    itemCount: userSnapshot.docs.length,
+                    itemCount: otherUserSnapshot?.length,
                     // itemCount: thesnap.length,
 
                     itemBuilder: (context, index) {
                       // Get map data from snapshot as per its index and convert to format suitable for UserModel
                       Map<String, dynamic> userDataFromFirebase =
-                          userSnapshot.docs[index].data()
+                          otherUserSnapshot?[index].data()
                               as Map<String, dynamic>;
 
                       // After above function seperates each user with index the data is set to UserModel
@@ -163,7 +167,8 @@ class _HomePageState extends State<HomePage> {
                                 // return const Center();
                               }
 
-                              // If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
+                              // Old message: If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
+                              // Error now handled by excluding current user uid before listview.builder
                               if (!snapshot.hasData) {
                                 // return const Text('Loading..');
                                 return const Center();
@@ -208,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                                       : null,
                                 ),
                                 title: Text(
-                                  userSnapshot.docs[index]['username'],
+                                  otherUserSnapshot?[index]['username'],
                                 ),
                                 subtitle: Text(
                                   snapshot.data?.lastMessage ?? "",

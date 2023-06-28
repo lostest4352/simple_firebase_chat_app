@@ -63,18 +63,20 @@ class _MainPageState extends State<MainPage> {
     pageController.jumpToPage(page);
   }
 
+  void onPageChanged(int value) {
+    setState(() {
+      currentPageIndex = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: PageView(
           controller: pageController,
+          onPageChanged: onPageChanged,
           children: allPages,
-          onPageChanged: (value) {
-            setState(() {
-              currentPageIndex = value;
-            });
-          },
         ),
         bottomNavigationBar: BottomNavigationBar(
           onTap: navigationTapped,

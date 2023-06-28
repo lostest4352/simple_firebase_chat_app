@@ -52,8 +52,8 @@ class _SearchPageState extends State<SearchPage> {
           //   return false;
           // });
 
-          final otherUserSnapshot = snapshot.data?.docs.where((element) {
-            return element["uid"] != currentUser?.uid;
+          final otherUserSnapshot = snapshot.data?.docs.where((docs) {
+            return docs["uid"] != currentUser?.uid;
           }).toList();
 
           return ListView.builder(
@@ -62,7 +62,7 @@ class _SearchPageState extends State<SearchPage> {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: otherUserSnapshot?[index]["profilePicture"] != null ? CachedNetworkImageProvider(
+                  backgroundImage: (otherUserSnapshot?[index]["profilePicture"] != null) ? CachedNetworkImageProvider(
                     otherUserSnapshot?[index]["profilePicture"] ?? "",
                   ) : null,
                   child: otherUserSnapshot?[index]["profilePicture"] == null ? const Icon(Icons.person) : null,

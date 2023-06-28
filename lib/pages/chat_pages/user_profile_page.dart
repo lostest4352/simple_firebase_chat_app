@@ -204,28 +204,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         userSnapshot.docs[0]["profilePicture"];
 
                     return ListenableBuilder(
-                        listenable: imageFileNotifier,
-                        builder: (context, snapshot) {
-                          return CircleAvatar(
-                            radius: 60,
-                            backgroundImage: (profilePicFromFirebase == null &&
-                                    profilePicFromFirebase == '' &&
-                                    imageFileNotifier.value == null)
-                                ? null
-                                : (imageFileNotifier.value == null)
-                                    ? CachedNetworkImageProvider(
-                                        profilePicFromFirebase ?? '')
-                                    : FileImage(imageFileNotifier.value as File)
-                                        as ImageProvider,
-                            child: (imageFileNotifier.value == null &&
-                                    profilePicFromFirebase == null)
-                                ? const Icon(
-                                    Icons.person,
-                                    size: 60,
-                                  )
-                                : null,
-                          );
-                        });
+                      listenable: imageFileNotifier,
+                      builder: (context, snapshot) {
+                        return CircleAvatar(
+                          radius: 60,
+                          backgroundImage: (profilePicFromFirebase == null &&
+                                  profilePicFromFirebase == '' &&
+                                  imageFileNotifier.value == null)
+                              ? null
+                              : (imageFileNotifier.value == null)
+                                  ? CachedNetworkImageProvider(
+                                      profilePicFromFirebase ?? '')
+                                  : FileImage(imageFileNotifier.value as File)
+                                      as ImageProvider,
+                          child: (imageFileNotifier.value == null &&
+                                  profilePicFromFirebase == null)
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                )
+                              : null,
+                        );
+                      },
+                    );
                   },
                 ),
               ),

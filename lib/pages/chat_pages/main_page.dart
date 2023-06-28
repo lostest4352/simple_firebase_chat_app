@@ -20,13 +20,9 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // int page = 0;
-  // Used valueNotifier for practice
-  // ValueNotifier<int> page = ValueNotifier<int>(0);
-
   late PageController pageController;
 
-  List<Widget> pagesClicked = [
+  List<Widget> allPages = [
     const KeepPageAlive(
       child: HomePage(),
     ),
@@ -58,7 +54,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     pageController.dispose();
-    // page.dispose();
     super.dispose();
   }
 
@@ -66,21 +61,14 @@ class _MainPageState extends State<MainPage> {
     pageController.jumpToPage(page);
   }
 
-  // void onPageChanged(int clickedPage) {
-  //   page.value = clickedPage;
-  // }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // body: pages[indexClicked.value], // pages[indexClicked],
         body: PageView(
           controller: pageController,
-          // onPageChanged: onPageChanged,
-          children: pagesClicked,
+          children: allPages,
         ),
-
         bottomNavigationBar: BottomNavigationBar(
           onTap: navigationTapped,
           items: const [

@@ -209,12 +209,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         return CircleAvatar(
                           radius: 60,
                           backgroundImage: (profilePicFromFirebase == null &&
-                                  profilePicFromFirebase == '' &&
                                   imageFileNotifier.value == null)
                               ? null
                               : (imageFileNotifier.value == null)
                                   ? CachedNetworkImageProvider(
-                                      profilePicFromFirebase ?? '')
+                                      profilePicFromFirebase ?? "")
                                   : FileImage(imageFileNotifier.value as File)
                                       as ImageProvider,
                           child: (imageFileNotifier.value == null &&

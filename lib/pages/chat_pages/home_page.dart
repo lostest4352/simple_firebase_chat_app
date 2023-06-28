@@ -70,11 +70,12 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
                 backgroundImage:
-                    (userDataSnapshot.docs[0]["profilePicture"] != null)
-                        ? CachedNetworkImageProvider(
-                            userDataSnapshot.docs[0]["profilePicture"] ?? "",
-                          )
-                        : null,
+                    (userDataSnapshot.docs[0]["profilePicture"] == null ||
+                            userDataSnapshot.docs[0]["profilePicture"] == "")
+                        ? null
+                        : CachedNetworkImageProvider(
+                            userDataSnapshot.docs[0]["profilePicture"],
+                          ),
                 child: userDataSnapshot.docs[0]["profilePicture"] == null
                     ? const Icon(Icons.person)
                     : null,

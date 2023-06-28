@@ -20,6 +20,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  int currentPageIndex = 0;
+
   late PageController pageController;
 
   List<Widget> allPages = [
@@ -68,9 +70,15 @@ class _MainPageState extends State<MainPage> {
         body: PageView(
           controller: pageController,
           children: allPages,
+          onPageChanged: (value) {
+            setState(() {
+              currentPageIndex = value;
+            });
+          },
         ),
         bottomNavigationBar: BottomNavigationBar(
           onTap: navigationTapped,
+          currentIndex: currentPageIndex,
           items: const [
             BottomNavigationBarItem(
               label: '',

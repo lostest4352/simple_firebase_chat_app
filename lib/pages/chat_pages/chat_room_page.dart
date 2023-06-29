@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -152,8 +153,37 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.targetUser.username ?? ''),
-          centerTitle: true,
+          titleSpacing: 0,
+          automaticallyImplyLeading: false,
+          
+          title: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+              const SizedBox(width: 10,),
+              Text("Messages with ${widget.targetUser.username ?? ''}"),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 8, right: 16),
+              child: CircleAvatar(
+                backgroundImage: (widget.targetUser.profilePicture == null ||
+                        widget.targetUser.profilePicture == "")
+                    ? null
+                    : CachedNetworkImageProvider(
+                        widget.targetUser.profilePicture ?? "",
+                      ),
+                child: widget.targetUser.profilePicture == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -165,8 +195,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     if (snapshot.connectionState != ConnectionState.active &&
                         snapshot.hasData == false) {
                       return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                          // child: CircularProgressIndicator(),
+                          );
                     }
 
                     QuerySnapshot dataSnapshot = snapshot.data as QuerySnapshot;
@@ -180,7 +210,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                 as Map<String, dynamic>);
                         // Needed package since flutter default causes problems
                         DateTime? date = currentMessage.createdOn;
-                        String formattedDate = (date != null) 
+                        String formattedDate = (date != null)
                             ? "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}"
                             : '';
 

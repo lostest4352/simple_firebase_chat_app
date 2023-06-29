@@ -155,7 +155,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         appBar: AppBar(
           titleSpacing: 0,
           automaticallyImplyLeading: false,
-          
           title: Row(
             children: [
               IconButton(
@@ -164,8 +163,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 },
                 icon: const Icon(Icons.arrow_back),
               ),
-              const SizedBox(width: 10,),
-              Text("Messages with ${widget.targetUser.username ?? ''}"),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Text(
+                  "Messages with ${widget.targetUser.username ?? ''}",
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
           actions: [

@@ -70,7 +70,8 @@ class _HomePageState extends State<HomePage> {
               return Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 16),
+                    padding: const EdgeInsets.only(
+                        top: 8, bottom: 8, left: 8, right: 16),
                     child: CircleAvatar(
                       backgroundImage: (userDataSnapshot.docs[0]
                                       ["profilePicture"] ==
@@ -85,10 +86,15 @@ class _HomePageState extends State<HomePage> {
                           : null,
                     ),
                   ),
-                  Text(
-                    "Signed in as ${userDataSnapshot.docs[0]['username']}", // if streams is used
-                    // userModel?.username.toString() ?? "Loading...", // when provider is used
-                    style: const TextStyle(fontSize: 20),
+                  Expanded(
+                    child: Text(
+                      "Signed in as ${userDataSnapshot.docs[0]['username']}", // if streams is used
+                      // userModel?.username.toString() ?? "Loading...", // when provider is used
+                      style: const TextStyle(
+                        fontSize: 20,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -244,6 +250,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 title: Text(
                                   otherUserSnapshot?[index]['username'],
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 subtitle: Text(
                                   snapshot.data?.lastMessage ?? "",

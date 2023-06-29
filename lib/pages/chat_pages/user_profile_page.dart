@@ -291,6 +291,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   color: Colors.blue,
                   onPressed: () {
                     showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (context) {
                         return const AlertDialog(

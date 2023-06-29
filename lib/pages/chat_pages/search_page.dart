@@ -48,10 +48,6 @@ class _SearchPageState extends State<SearchPage> {
             );
           }
 
-          // final usersnapshot = snapshot.data?.docs.removeWhere((element) {
-          //   return false;
-          // });
-
           final otherUserSnapshot = snapshot.data?.docs.where((docs) {
             return docs["uid"] != currentUser?.uid;
           }).toList();
@@ -62,12 +58,21 @@ class _SearchPageState extends State<SearchPage> {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: (otherUserSnapshot?[index]["profilePicture"] != null) ? CachedNetworkImageProvider(
-                    otherUserSnapshot?[index]["profilePicture"] ?? "",
-                  ) : null,
-                  child: otherUserSnapshot?[index]["profilePicture"] == null ? const Icon(Icons.person) : null,
+                  backgroundImage:
+                      (otherUserSnapshot?[index]["profilePicture"] != null)
+                          ? CachedNetworkImageProvider(
+                              otherUserSnapshot?[index]["profilePicture"] ?? "",
+                            )
+                          : null,
+                  child: otherUserSnapshot?[index]["profilePicture"] == null
+                      ? const Icon(Icons.person)
+                      : null,
                 ),
                 title: Text(otherUserSnapshot?[index]["username"] ?? ""),
+                trailing: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.check_box_outline_blank),
+                ),
               );
             },
           );

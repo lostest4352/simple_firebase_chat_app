@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:simple_firebase1/pages/chat_pages/group_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/group_chat_list_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';

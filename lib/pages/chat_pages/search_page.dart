@@ -15,12 +15,20 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   bool showTheUsers = false;
 
-  // ValueNotifier<bool> buttonClicked = ValueNotifier(false);
-
   ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
 
-  void changeButtonState(int index) {
+  List<String> selectedUsernames = [];
+
+  void changeButtonState(int index, String username) {
     buttonsClicked.value[index] = !buttonsClicked.value[index];
+
+    if (buttonsClicked.value[index]) {
+      selectedUsernames.add(username);
+
+    } else {
+      selectedUsernames.remove(username);
+    }
+
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     buttonsClicked.notifyListeners();
   }
@@ -30,6 +38,10 @@ class _SearchPageState extends State<SearchPage> {
     buttonsClicked.dispose();
     super.dispose();
   }
+
+  
+
+  
 
   final searchController = TextEditingController();
 
@@ -90,13 +102,17 @@ class _SearchPageState extends State<SearchPage> {
                   builder: (context, child) {
                     if (buttonsClicked.value.isEmpty) {
                       buttonsClicked.value = List.generate(
-                          otherUserSnapshot?.length ?? 0, (_) {
-                        return false;
-                      });
+                        otherUserSnapshot?.length ?? 0,
+                        (_) => false,
+                      );
+                      
                     }
                     return IconButton(
                       onPressed: () {
-                        changeButtonState(index);
+                        // buttonsClicked.value[index] = !buttonsClicked.value[index];
+                        // buttonsClicked.notifyListeners();
+                        changeButtonState(index, otherUserSnapshot?[index]["username"] ?? "");
+                        debugPrint(selectedUsernames.toString());
                         
                       },
                       icon: buttonsClicked.value[index] == false

@@ -15,6 +15,22 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   bool showTheUsers = false;
 
+  // ValueNotifier<bool> buttonClicked = ValueNotifier(false);
+
+  ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
+
+  void changeButtonState(int index) {
+    buttonsClicked.value[index] = !buttonsClicked.value[index];
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    buttonsClicked.notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    buttonsClicked.dispose();
+    super.dispose();
+  }
+
   final searchController = TextEditingController();
 
   UserModel? get currentUser => context.read<UserProvider>().getUser;
@@ -69,9 +85,25 @@ class _SearchPageState extends State<SearchPage> {
                       : null,
                 ),
                 title: Text(otherUserSnapshot?[index]["username"] ?? ""),
-                trailing: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.check_box_outline_blank),
+                trailing: ListenableBuilder(
+                  listenable: buttonsClicked,
+                  builder: (context, child) {
+                    if (buttonsClicked.value.isEmpty) {
+                      buttonsClicked.value = List.generate(
+                          otherUserSnapshot?.length ?? 0, (_) {
+                        return false;
+                      });
+                    }
+                    return IconButton(
+                      onPressed: () {
+                        changeButtonState(index);
+                        
+                      },
+                      icon: buttonsClicked.value[index] == false
+                          ? const Icon(Icons.check_box_outline_blank)
+                          : const Icon(Icons.check_box),
+                    );
+                  },
                 ),
               );
             },

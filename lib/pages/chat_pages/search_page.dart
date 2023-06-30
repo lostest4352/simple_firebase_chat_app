@@ -40,6 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void dispose() {
     buttonsClicked.dispose();
+    selectedUsernames.dispose();
     super.dispose();
   }
 
@@ -83,6 +84,42 @@ class _SearchPageState extends State<SearchPage> {
 
           return Column(
             children: [
+              const SizedBox(
+                height: 5,
+              ),
+              Card(
+                child: ValueListenableBuilder(
+                  valueListenable: selectedUsernames,
+                  builder: (context, value, child) {
+                    if (value.length < 2) {
+                      return const ListTile(
+                        title: Text("Select users to add to group"),
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              title: Text(
+                                  "${(value.length - 1).toString()} users selected"),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              child: const Text('Create group'),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
               Expanded(
                 child: ListView.builder(
                   // itemCount: snapshot.data?.docs.length,
@@ -130,17 +167,6 @@ class _SearchPageState extends State<SearchPage> {
                     );
                   },
                 ),
-              ),
-              Container(
-                color: Colors.green,
-                child: ValueListenableBuilder(
-                    valueListenable: selectedUsernames,
-                    builder: (context, value, child) {
-                      return ListTile(
-                        title: Text(
-                            "${(value.length - 1).toString()} users selected"),
-                      );
-                    }),
               ),
             ],
           );

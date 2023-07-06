@@ -17,9 +17,10 @@ class AuthMethods {
     return UserModel.fromMap(snapshotData);
   }
 
-  Stream<UserModel> getUserDetailsStream() {
+  Stream<UserModel> getUserDetailsStream()  {
     User? currentUser = _auth.currentUser;
 
+    // We can user async* with yield* here as well
     return _firestore
         .collection("users")
         .doc(currentUser?.uid)

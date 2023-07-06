@@ -3,11 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
 import 'package:simple_firebase1/firebase_helpers/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
+
+import '../../provider/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -28,7 +31,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // Didn't use provider since this is the future and stream was better for showing realtime username changes
-    // UserModel? userModel = context.watch<UserProvider>().getUser;
+    UserModel? userModel = context.read<UserProvider>().getUser;
+    debugPrint(userModel?.username.toString());
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")

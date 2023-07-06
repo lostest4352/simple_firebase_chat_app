@@ -51,7 +51,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Add your own data by default since you need to be in the chatroom yourself
+    // Add your own data by default since you need to be in the chatroom yourself. Depending on the situation, add currentUser uid above, remove empty "" value above
     if (!selectedUid.value.contains(currentUser?.uid)) {
       selectedUid.value.add(currentUser?.uid ?? "");
     }

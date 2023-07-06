@@ -3,7 +3,7 @@ import 'dart:convert';
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class GroupChatroomModel {
   String? groupChatRoomId;
-  Map<String, dynamic>? participants;
+  List<String>? participants;
   String? lastMessage;
   DateTime? dateTime;
   
@@ -26,7 +26,7 @@ class GroupChatroomModel {
   factory GroupChatroomModel.fromMap(Map<String, dynamic> map) {
     return GroupChatroomModel(
       groupChatRoomId: map['groupChatRoomId'] != null ? map['groupChatRoomId'] as String : null,
-      participants: map['participants'] != null ? Map<String, dynamic>.from((map['participants'] as Map<String, dynamic>)) : null,
+      participants: map['participants'] != null ? List<String>.from((map['participants'] as List<String>)) : null,
       lastMessage: map['lastMessage'] != null ? map['lastMessage'] as String : null,
       dateTime: map['dateTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dateTime'] as int) : null,
     );

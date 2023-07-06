@@ -21,26 +21,26 @@ class _SearchPageState extends State<SearchPage> {
 
   ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
 
-  ValueNotifier<List<String>> selectedUsernames = ValueNotifier([]);
+  ValueNotifier<List<String>> selectedUid = ValueNotifier([]);
 
-  void changeButtonState(int index, String username) {
+  void changeButtonState(int index, String uid) {
     buttonsClicked.value[index] = !buttonsClicked.value[index];
 
     if (buttonsClicked.value[index]) {
-      selectedUsernames.value.add(username);
+      selectedUid.value.add(uid);
     } else {
-      selectedUsernames.value.remove(username);
+      selectedUid.value.remove(uid);
     }
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     buttonsClicked.notifyListeners();
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    selectedUsernames.notifyListeners();
+    selectedUid.notifyListeners();
   }
 
   @override
   void dispose() {
     buttonsClicked.dispose();
-    selectedUsernames.dispose();
+    selectedUid.dispose();
     super.dispose();
   }
 
@@ -52,8 +52,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     // Add your own data by default since you need to be in the chatroom yourself
-    if (!selectedUsernames.value.contains(currentUser?.username)) {
-      selectedUsernames.value.add(currentUser?.username ?? "");
+    if (!selectedUid.value.contains(currentUser?.uid)) {
+      selectedUid.value.add(currentUser?.uid ?? "");
     }
 
     return Scaffold(
@@ -89,7 +89,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               Card(
                 child: ValueListenableBuilder(
-                  valueListenable: selectedUsernames,
+                  valueListenable: selectedUid,
                   builder: (context, value, child) {
                     if (value.length < 2) {
                       return const ListTile(
@@ -155,8 +155,8 @@ class _SearchPageState extends State<SearchPage> {
                               // buttonsClicked.value[index] = !buttonsClicked.value[index];
                               // buttonsClicked.notifyListeners();
                               changeButtonState(index,
-                                  otherUserSnapshot?[index]["username"] ?? "");
-                              debugPrint(selectedUsernames.value.toString());
+                                  otherUserSnapshot?[index]["uid"] ?? "");
+                              debugPrint(selectedUid.value.toString());
                             },
                             icon: buttonsClicked.value[index] == false
                                 ? const Icon(Icons.check_box_outline_blank)

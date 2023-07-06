@@ -16,4 +16,17 @@ class AuthMethods {
 
     return UserModel.fromMap(snapshotData);
   }
+
+  Stream<UserModel> getUserDetailsStream() {
+    User? currentUser = _auth.currentUser;
+
+    return _firestore
+        .collection("users")
+        .doc(currentUser?.uid)
+        .snapshots()
+        .map((snapshot) {
+      final snapshotData = snapshot.data() as Map<String, dynamic>;
+      return UserModel.fromMap(snapshotData);
+    });
+  }
 }

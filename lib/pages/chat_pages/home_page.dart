@@ -4,13 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_firebase1/firebase_helpers/auth_methods.dart';
 import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
 import 'package:simple_firebase1/firebase_helpers/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
-
-import '../../provider/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -24,15 +23,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   User? currentUser = FirebaseAuth.instance.currentUser;
 
+  final consumerProvider = AuthMethods().getUserDetailsStream();
+
   void signOutFromFirebase() async {
     await FirebaseAuth.instance.signOut();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Didn't use provider since this is the future and stream was better for showing realtime username changes
-    UserModel? userModel = context.read<UserProvider>().getUser;
-    debugPrint(userModel?.username.toString());
+    // Didn't use provider since this doesnt update when the user changes
+    // UserModel? userModel = context.read<UserProvider>().getUser;
+    UserModel? userModel = context.watch<UserModel?>();
+    debugPrint(userModel?.username);
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")
@@ -58,19 +60,19 @@ class _HomePageState extends State<HomePage> {
         title: StreamBuilder(
             stream: currentUserSnapshot,
             builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.active) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                  child: CircularProgressIndicator(),
+                  child: Text("Loading"),
                 );
               }
               if (!snapshot.hasData) {
-                return const Text('Loading..');
+                return const Center(
+                  child: Text("Loading"),
+                );
               }
+
               QuerySnapshot userDataSnapshot = snapshot.data as QuerySnapshot;
 
-              if (userDataSnapshot.docs.isEmpty) {
-                return const Text('Loading..');
-              }
               return Row(
                 children: [
                   Padding(
@@ -92,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Expanded(
                     child: Text(
-                      "Signed in as ${userDataSnapshot.docs[0]['username']}", // if streams is used
+                      "Signed in as ${userDataSnapshot.docs[0]["username"]}", // if streams is used
                       // userModel?.username.toString() ?? "Loading...", // when provider is used
                       style: const TextStyle(
                         fontSize: 20,

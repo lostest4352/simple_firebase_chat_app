@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -17,7 +16,8 @@ class _SearchPageState extends State<SearchPage> {
 
   final searchController = TextEditingController();
 
-  UserModel? get currentUser => context.read<UserProvider>().getUser;
+  // UserModel? get currentUser => context.read<UserProvider>().getUser;
+  UserModel? get currentUser => context.read<UserModel?>();
 
   ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
 

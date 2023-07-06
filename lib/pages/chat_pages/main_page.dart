@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'package:simple_firebase1/pages/chat_pages/group_chat_list_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
 import 'package:simple_firebase1/widgets/keep_pages_alive.dart';
 
 // Initial page with bottom navigation bar items to switch pages
@@ -40,17 +37,17 @@ class _MainPageState extends State<MainPage> {
   ];
 
   // async cant be used in initstate so need to make a seperate function
-  void getCurrentUserModelData() async {
-    UserProvider userProvider = context.read<UserProvider>();
-    await userProvider.refreshUser();
-  }
+  // void getCurrentUserModelData() async {
+  //   UserProvider userProvider = context.read<UserProvider>();
+  //   await userProvider.refreshUser();
+  // }
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
     // This is used in order to get current logged in user's usermodel data. Need to initialize function in init state or it'll be null
-    getCurrentUserModelData();
+    // getCurrentUserModelData();
   }
 
   @override

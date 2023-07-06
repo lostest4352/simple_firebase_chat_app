@@ -143,13 +143,13 @@ class _HomePageState extends State<HomePage> {
                   if (!snapshot.hasData) {
                     return const Text('Loading..');
                   }
-                  QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
+                  // QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
 
-                  if (userSnapshot.docs.isEmpty) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+                  // if (userSnapshot.docs.isEmpty) {
+                  //   return const Center(
+                  //     child: CircularProgressIndicator(),
+                  //   );
+                  // }
 
                   // This code excludes current user from the snapshot. The listview works without it and no issues outside console but we get unhandled exception in the console if we don't exclude it here
                   final otherUserSnapshot = snapshot.data?.docs.where((docs) {

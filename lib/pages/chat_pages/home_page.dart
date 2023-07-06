@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/firebase_helpers/auth_methods.dart';
 import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
 import 'package:simple_firebase1/firebase_helpers/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
@@ -22,8 +21,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   User? currentUser = FirebaseAuth.instance.currentUser;
-
-  final consumerProvider = AuthMethods().getUserDetailsStream();
 
   void signOutFromFirebase() async {
     await FirebaseAuth.instance.signOut();

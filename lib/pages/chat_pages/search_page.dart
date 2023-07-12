@@ -118,12 +118,12 @@ class _SearchPageState extends State<SearchPage> {
                                 Future<GroupChatroomModel?>
                                     getGroupChatroomModel =
                                     createOrUpdateGroupChatroom
-                                            .getGroupChatroom(
-                                                selectedUidList.value)
-                                        ;
+                                        .getGroupChatroom(
+                                            selectedUidList.value);
 
                                 GroupChatroomModel groupChatroomModel =
-                                    await getGroupChatroomModel as GroupChatroomModel;
+                                    await getGroupChatroomModel
+                                        as GroupChatroomModel;
 
                                 if (!mounted) return;
                                 Navigator.push(context, MaterialPageRoute(
@@ -171,11 +171,24 @@ class _SearchPageState extends State<SearchPage> {
                       trailing: ListenableBuilder(
                         listenable: buttonsClicked,
                         builder: (context, child) {
+                          // if (buttonsClicked.value.isEmpty) {
+                          //   buttonsClicked.value = List.generate(
+                          //     otherUserSnapshot?.length ?? 0,
+                          //     (_) => false,
+                          //   );
+                          // }
                           if (buttonsClicked.value.isEmpty) {
-                            buttonsClicked.value = List.generate(
-                              otherUserSnapshot?.length ?? 0,
-                              (_) => false,
-                            );
+                            List<bool> buttonStates = [];
+
+                            if (otherUserSnapshot != null) {
+                              for (int i = 0;
+                                  i < otherUserSnapshot.length;
+                                  i++) {
+                                buttonStates.add(false);
+                              }
+                            }
+
+                            buttonsClicked.value = buttonStates;
                           }
                           return IconButton(
                             onPressed: () {

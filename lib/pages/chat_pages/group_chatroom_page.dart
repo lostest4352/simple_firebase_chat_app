@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:simple_firebase1/models/user_model.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
@@ -11,7 +11,7 @@ import '../../models/message_model.dart';
 
 class GroupChatroomPage extends StatefulWidget {
   final GroupChatroomModel groupChatroom;
-  final UserModel currentUser;
+  final User? currentUser;
   const GroupChatroomPage({
     Key? key,
     required this.groupChatroom,
@@ -40,7 +40,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
     if (message.isNotEmpty) {
       MessageModel newMessage = MessageModel(
         messageId: uuid.v1(),
-        sender: widget.currentUser.uid,
+        sender: widget.currentUser?.uid,
         createdOn: DateTime.now(),
         messageText: message,
         seen: false,
@@ -112,18 +112,18 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
                         return Wrap(
                           alignment:
-                              (currentMessage.sender == widget.currentUser.uid)
+                              (currentMessage.sender == widget.currentUser?.uid)
                                   ? WrapAlignment.end
                                   : WrapAlignment.start,
                           children: [
                             Padding(
                               padding: EdgeInsets.only(
                                   left: (currentMessage.sender ==
-                                          widget.currentUser.uid)
+                                          widget.currentUser?.uid)
                                       ? 120
                                       : 15,
                                   right: (currentMessage.sender ==
-                                          widget.currentUser.uid)
+                                          widget.currentUser?.uid)
                                       ? 15
                                       : 120),
                               child: Column(
@@ -138,7 +138,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: (currentMessage.sender ==
-                                              widget.currentUser.uid)
+                                              widget.currentUser?.uid)
                                           ? const Color.fromARGB(
                                               255, 0, 113, 85)
                                           : Colors.black38,

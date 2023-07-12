@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
@@ -20,7 +21,8 @@ class _SearchPageState extends State<SearchPage> {
   final searchController = TextEditingController();
 
   // UserModel? get currentUser => context.read<UserProvider>().getUser;
-  UserModel? get currentUser => context.read<UserModel?>();
+  // UserModel? get currentUser => context.read<UserModel?>();
+  User? currentUser = FirebaseAuth.instance.currentUser;
 
   ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
 
@@ -130,7 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                                   builder: (context) {
                                     return GroupChatroomPage(
                                       groupChatroom: groupChatroomModel,
-                                      currentUser: currentUser as UserModel,
+                                      currentUser: currentUser as User,
                                     );
                                   },
                                 ));

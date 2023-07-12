@@ -35,6 +35,7 @@ class CreateOrUpdateGroupChatroom {
           .collection("groupChatrooms")
           .doc(newGroupChatroom.groupChatRoomId)
           .set(newGroupChatroom.toMap());
+      groupChatroom = newGroupChatroom;
     }
     return groupChatroom;
   }

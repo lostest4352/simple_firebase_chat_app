@@ -2,10 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
-import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
 class SearchPage extends StatefulWidget {

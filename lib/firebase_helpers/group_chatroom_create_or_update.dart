@@ -10,6 +10,7 @@ class CreateOrUpdateGroupChatroom {
   Future<GroupChatroomModel?> getGroupChatroom(List selectedUidList) async {
     // This can cause errors. Check it if issues
 
+    // Sorted so the list will be in alphabetical order. lists wont be equal if not in order
     selectedUidList.sort();
 
     QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -18,6 +19,7 @@ class CreateOrUpdateGroupChatroom {
         .get();
 
     if (snapshot.docs.isNotEmpty) {
+      // Only one chatroom will be searched with the particular list of uids so it'll always be 0 index
       final docData = snapshot.docs[0].data();
 
       GroupChatroomModel existingGroupChatroom =

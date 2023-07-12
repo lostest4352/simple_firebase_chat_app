@@ -172,24 +172,10 @@ class _SearchPageState extends State<SearchPage> {
                       trailing: ListenableBuilder(
                         listenable: buttonsClicked,
                         builder: (context, child) {
-                          // if (buttonsClicked.value.isEmpty) {
-                          //   buttonsClicked.value = List.generate(
-                          //     otherUserSnapshot?.length ?? 0,
-                          //     (_) => false,
-                          //   );
-                          // }
-                          if (buttonsClicked.value.isEmpty) {
-                            List<bool> buttonStates = [];
-
-                            if (otherUserSnapshot != null) {
-                              for (int i = 0;
-                                  i < otherUserSnapshot.length;
-                                  i++) {
-                                buttonStates.add(false);
-                              }
-                            }
-
-                            buttonsClicked.value = buttonStates;
+                          if (buttonsClicked.value.isEmpty &&
+                              otherUserSnapshot != null) {
+                            buttonsClicked.value =
+                                List.filled(otherUserSnapshot.length, false);
                           }
                           return IconButton(
                             onPressed: () {

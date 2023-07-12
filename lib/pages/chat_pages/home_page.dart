@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Didn't use provider since this doesnt update when the user changes
+    // Didn't use provider since this doesnt update when the auth state changes
     // UserModel? userModel = context.read<UserProvider>().getUser;
     UserModel? userModel = context.watch<UserModel?>();
     debugPrint(userModel?.username);

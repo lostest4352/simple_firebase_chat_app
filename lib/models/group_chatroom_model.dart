@@ -3,13 +3,13 @@ import 'dart:convert';
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class GroupChatroomModel {
   String? groupChatRoomId;
-  List<String>? participants;
+  List participants = [];
   String? lastMessage;
   DateTime? dateTime;
-  
+
   GroupChatroomModel({
     this.groupChatRoomId,
-    this.participants,
+    required this.participants,
     this.lastMessage,
     this.dateTime,
   });
@@ -25,14 +25,21 @@ class GroupChatroomModel {
 
   factory GroupChatroomModel.fromMap(Map<String, dynamic> map) {
     return GroupChatroomModel(
-      groupChatRoomId: map['groupChatRoomId'] != null ? map['groupChatRoomId'] as String : null,
-      participants: map['participants'] != null ? List<String>.from((map['participants'] as List<String>)) : null,
-      lastMessage: map['lastMessage'] != null ? map['lastMessage'] as String : null,
-      dateTime: map['dateTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dateTime'] as int) : null,
-    );
+        groupChatRoomId: map['groupChatRoomId'] != null
+            ? map['groupChatRoomId'] as String
+            : null,
+        participants: List.from(
+          (map['participants'] as List)),
+          lastMessage:
+              map['lastMessage'] != null ? map['lastMessage'] as String : null,
+          dateTime: map['dateTime'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(map['dateTime'] as int)
+              : null,
+        );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory GroupChatroomModel.fromJson(String source) => GroupChatroomModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory GroupChatroomModel.fromJson(String source) =>
+      GroupChatroomModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

@@ -30,12 +30,10 @@ class _SearchPageState extends State<SearchPage> {
     // List.from needed to update the valuenotifier values when it comes to list
     buttonsClicked.value = List.from(buttonsClicked.value);
     buttonsClicked.value[index] = !buttonsClicked.value[index];
-   
 
     // Add your own data by default since you need to be in the chatroom yourself. Depending on the situation, add currentUser uid above, remove empty "" value above
     if (!selectedUidList.value.contains(currentUser?.uid)) {
       selectedUidList.value.add(currentUser?.uid ?? "");
-      
     }
 
     if (buttonsClicked.value[index]) {
@@ -98,10 +96,10 @@ class _SearchPageState extends State<SearchPage> {
                 height: 5,
               ),
               Card(
-                child: ValueListenableBuilder(
-                  valueListenable: selectedUidList,
-                  builder: (context, value, child) {
-                    if (value.length < 2) {
+                child: ListenableBuilder(
+                  listenable: selectedUidList,
+                  builder: (context, child) {
+                    if (selectedUidList.value.length < 2) {
                       return const ListTile(
                         title: Text("Select users to add to group"),
                       );
@@ -111,7 +109,7 @@ class _SearchPageState extends State<SearchPage> {
                           Expanded(
                             child: ListTile(
                               title: Text(
-                                  "${(value.length - 1).toString()} users selected"),
+                                  "${(selectedUidList.value.length - 1).toString()} users selected"),
                             ),
                           ),
                           Padding(
@@ -133,14 +131,17 @@ class _SearchPageState extends State<SearchPage> {
                                         as GroupChatroomModel;
 
                                 if (!mounted) return;
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return GroupChatroomPage(
-                                      groupChatroom: groupChatroomModel,
-                                      currentUser: currentUser as User,
-                                    );
-                                  },
-                                ));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return GroupChatroomPage(
+                                        groupChatroom: groupChatroomModel,
+                                        currentUser: currentUser as User,
+                                      );
+                                    },
+                                  ),
+                                );
                               },
                               child: const Text('Create group'),
                             ),

@@ -27,22 +27,28 @@ class _SearchPageState extends State<SearchPage> {
   ValueNotifier<List> selectedUidList = ValueNotifier([]);
 
   void changeButtonState(int index, String uid) {
+    // List.from needed to update the valuenotifier values when it comes to list
+    buttonsClicked.value = List.from(buttonsClicked.value);
     buttonsClicked.value[index] = !buttonsClicked.value[index];
+   
 
     // Add your own data by default since you need to be in the chatroom yourself. Depending on the situation, add currentUser uid above, remove empty "" value above
     if (!selectedUidList.value.contains(currentUser?.uid)) {
       selectedUidList.value.add(currentUser?.uid ?? "");
+      
     }
 
     if (buttonsClicked.value[index]) {
-      selectedUidList.value.add(uid);
+      // selectedUidList.value.add(uid);
+      selectedUidList.value = List.from(selectedUidList.value)..add(uid);
     } else {
-      selectedUidList.value.remove(uid);
+      // selectedUidList.value.remove(uid);
+      selectedUidList.value = List.from(selectedUidList.value)..remove(uid);
     }
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    buttonsClicked.notifyListeners();
+    // buttonsClicked.notifyListeners();
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    selectedUidList.notifyListeners();
+    // selectedUidList.notifyListeners();
   }
 
   @override

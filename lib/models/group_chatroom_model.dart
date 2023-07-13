@@ -5,6 +5,7 @@ class GroupChatroomModel {
   String? groupChatRoomId;
   List participants = [];
   String? lastMessage;
+  // String? lastMessageSender;
   DateTime? dateTime;
 
   GroupChatroomModel({

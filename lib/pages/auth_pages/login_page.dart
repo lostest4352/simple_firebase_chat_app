@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   void signUserIn() async {
     // show loading circle
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return const Center(

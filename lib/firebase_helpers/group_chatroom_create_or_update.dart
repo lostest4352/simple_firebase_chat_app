@@ -31,6 +31,9 @@ class CreateOrUpdateGroupChatroom {
         groupChatRoomId: uuid.v1(),
         participants: selectedUidList,
         lastMessage: "",
+        lastMessageSender: "",
+        dateTime: DateTime.now(),
+        lastMessageSenderProfilePic: "",
       );
 
       await FirebaseFirestore.instance

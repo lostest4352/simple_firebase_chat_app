@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_firebase1/models/user_model.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
@@ -26,6 +28,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
   final messageController = TextEditingController();
 
   final uuid = const Uuid();
+
+  UserModel? get currentProviderUser => context.read<UserModel>();
 
   @override
   void dispose() {
@@ -57,6 +61,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       // set every newest message as last message
       widget.groupChatroom.lastMessage = message;
       widget.groupChatroom.dateTime = DateTime.now();
+      widget.groupChatroom.lastMessageSender = currentProviderUser?.username ?? "";
 
       // update the chatroom
       FirebaseFirestore.instance

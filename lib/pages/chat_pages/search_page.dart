@@ -33,7 +33,8 @@ class _SearchPageState extends State<SearchPage> {
 
     // Add your own data by default since you need to be in the chatroom yourself. Depending on the situation, add currentUser uid above, remove empty "" value above
     if (!selectedUidList.value.contains(currentUser?.uid)) {
-      selectedUidList.value.add(currentUser?.uid ?? "");
+      // selectedUidList.value.add(currentUser?.uid ?? "");
+      selectedUidList.value = List.from(selectedUidList.value)..add(currentUser?.uid ?? "");
     }
 
     if (buttonsClicked.value[index]) {

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
@@ -25,7 +24,7 @@ class _GroupListPageState extends State<GroupListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("List of users"),
+        title: const Text("List of messages"),
       ),
       body: Column(
         children: [
@@ -58,8 +57,8 @@ class _GroupListPageState extends State<GroupListPage> {
                           "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
 
                       Map<String, dynamic> document =
-                          groupChatroomSnapshot?.docs[index].data() as Map<String, dynamic>;
-                      
+                          groupChatroomSnapshot?.docs[index].data()
+                              as Map<String, dynamic>;
 
                       GroupChatroomModel groupChatroom =
                           GroupChatroomModel.fromMap(document);
@@ -67,9 +66,10 @@ class _GroupListPageState extends State<GroupListPage> {
                       // No. of users on leading circular avatar
                       return ListTile(
                         title: Text(
-                            groupChatroomSnapshot?.docs[index]["lastMessage"]),
+                          "${groupChatroomSnapshot?.docs[index]["lastMessageSender"]}: ${groupChatroomSnapshot?.docs[index]["lastMessage"]}",
+                        ),
                         subtitle: Text(formattedDate),
-                        onTap: () async {
+                        onTap: () {
                           if (!mounted) return;
                           Navigator.push(
                             context,

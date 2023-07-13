@@ -33,49 +33,50 @@ class _GroupListPageState extends State<GroupListPage> {
           Expanded(
             child: Center(
               child: StreamBuilder(
-                  stream: groupChatroomSnapshot,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.active) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    if (!snapshot.hasData) {
-                      return const Text('Loading..');
-                    }
-
-                    QuerySnapshot? groupChatroomSnapshot = snapshot.data;
-
-                    return ListView.builder(
-                      itemCount: groupChatroomSnapshot?.docs.length,
-                      itemBuilder: (context, index) {
-                        DateTime? date = DateTime.fromMillisecondsSinceEpoch(
-                            groupChatroomSnapshot?.docs[index]["dateTime"]);
-
-                        String? formattedDate = DateFormat.jmv().format(date);
-                        
-                        // No. of users on leading circular avatar
-                        return ListTile(
-                          title: Text(groupChatroomSnapshot?.docs[index]
-                              ["lastMessage"]),
-                          subtitle: Text(formattedDate),
-                          onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) {
-                            //       // return GroupChatroomPage(
-                            //       //   groupChatroom: groupChatroomSnapshot,
-                            //       //   currentUser: currentUser,
-                            //       // );
-                            //     },
-                            //   ),
-                            // );
-                          },
-                        );
-                      },
+                stream: groupChatroomSnapshot,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.active) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
-                  }),
+                  }
+                  if (!snapshot.hasData) {
+                    return const Text('Loading..');
+                  }
+
+                  QuerySnapshot? groupChatroomSnapshot = snapshot.data;
+
+                  return ListView.builder(
+                    itemCount: groupChatroomSnapshot?.docs.length,
+                    itemBuilder: (context, index) {
+                      DateTime? date = DateTime.fromMillisecondsSinceEpoch(
+                          groupChatroomSnapshot?.docs[index]["dateTime"]);
+
+                      String? formattedDate = "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
+
+                      // No. of users on leading circular avatar
+                      return ListTile(
+                        title: Text(
+                            groupChatroomSnapshot?.docs[index]["lastMessage"]),
+                        subtitle: Text(formattedDate),
+                        onTap: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) {
+                          //       // return GroupChatroomPage(
+                          //       //   groupChatroom: groupChatroomSnapshot,
+                          //       //   currentUser: currentUser,
+                          //       // );
+                          //     },
+                          //   ),
+                          // );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ],

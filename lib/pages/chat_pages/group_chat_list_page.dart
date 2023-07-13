@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
+import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
 class GroupListPage extends StatefulWidget {
@@ -52,25 +54,34 @@ class _GroupListPageState extends State<GroupListPage> {
                       DateTime? date = DateTime.fromMillisecondsSinceEpoch(
                           groupChatroomSnapshot?.docs[index]["dateTime"]);
 
-                      String? formattedDate = "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
+                      String? formattedDate =
+                          "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
+
+                      Map<String, dynamic> document =
+                          groupChatroomSnapshot?.docs[index].data() as Map<String, dynamic>;
+                      
+
+                      GroupChatroomModel groupChatroom =
+                          GroupChatroomModel.fromMap(document);
 
                       // No. of users on leading circular avatar
                       return ListTile(
                         title: Text(
                             groupChatroomSnapshot?.docs[index]["lastMessage"]),
                         subtitle: Text(formattedDate),
-                        onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) {
-                          //       // return GroupChatroomPage(
-                          //       //   groupChatroom: groupChatroomSnapshot,
-                          //       //   currentUser: currentUser,
-                          //       // );
-                          //     },
-                          //   ),
-                          // );
+                        onTap: () async {
+                          if (!mounted) return;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return GroupChatroomPage(
+                                  groupChatroom: groupChatroom,
+                                  currentUser: currentUser,
+                                );
+                              },
+                            ),
+                          );
                         },
                       );
                     },

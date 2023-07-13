@@ -36,11 +36,14 @@ class GroupChatroomModel {
       lastMessage: map['lastMessage'],
       lastMessageSender: map['lastMessageSender'],
       lastMessageSenderProfilePic: map['lastMessageSenderProfilePic'],
-      dateTime: map['dateTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dateTime']) : null,
+      dateTime: map['dateTime'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['dateTime'])
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory GroupChatroomModel.fromJson(String source) => GroupChatroomModel.fromMap(json.decode(source));
+  factory GroupChatroomModel.fromJson(String source) =>
+      GroupChatroomModel.fromMap(json.decode(source));
 }

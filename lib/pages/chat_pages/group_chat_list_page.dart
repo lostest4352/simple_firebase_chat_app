@@ -20,6 +20,11 @@ class _GroupListPageState extends State<GroupListPage> {
       .orderBy("dateTime", descending: true)
       .snapshots();
 
+  // Stream<QuerySnapshot> allUserSnapshot =
+  //     FirebaseFirestore.instance.collection("users").snapshots().map((documents) {
+  //       return ;
+  //     });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,19 +50,25 @@ class _GroupListPageState extends State<GroupListPage> {
                     return const Text('Loading..');
                   }
 
-                  QuerySnapshot? groupChatroomSnapshot = snapshot.data;
+                  final groupChatroomSnapshot =
+                      snapshot.data?.docs.where((documents) {
+                    // First store the list in a variable and filter the contents from it
+                    List participants = documents["participants"];
+                    return participants.contains(currentUser?.uid);
+                  }).toList();
 
                   return ListView.builder(
-                    itemCount: groupChatroomSnapshot?.docs.length,
+                    itemCount: groupChatroomSnapshot?.length,
                     itemBuilder: (context, index) {
                       DateTime? date = DateTime.fromMillisecondsSinceEpoch(
-                          groupChatroomSnapshot?.docs[index]["dateTime"]);
+                          groupChatroomSnapshot?[index]["dateTime"]);
 
                       String? formattedDate =
-                          "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
+                          // " ${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
+                          DateFormat.jmv().format(date);
 
                       Map<String, dynamic> document =
-                          groupChatroomSnapshot?.docs[index].data()
+                          groupChatroomSnapshot?[index].data()
                               as Map<String, dynamic>;
 
                       GroupChatroomModel groupChatroom =
@@ -65,10 +76,16 @@ class _GroupListPageState extends State<GroupListPage> {
 
                       // No. of users on leading circular avatar
                       return ListTile(
-                        title: Text(
-                          "${groupChatroomSnapshot?.docs[index]["lastMessageSender"]}: ${groupChatroomSnapshot?.docs[index]["lastMessage"]}",
+                        leading: CircleAvatar(
+                          child: Text(groupChatroomSnapshot?[index]["participants"].length.toString() ?? "0"),
                         ),
-                        subtitle: Text(formattedDate),
+                        title: Text(
+                          "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
+                        ),
+                        // subtitle: Text(formattedDate),
+                        // The join method removes bracket
+                        subtitle: Text(groupChatroomSnapshot?[index]["participants"].join(", ").toString() ?? "users"),
+                        trailing: Text(formattedDate),
                         onTap: () {
                           if (!mounted) return;
                           Navigator.push(

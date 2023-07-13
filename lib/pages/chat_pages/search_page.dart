@@ -26,6 +26,9 @@ class _SearchPageState extends State<SearchPage> {
 
   ValueNotifier<List> selectedUidList = ValueNotifier([]);
 
+  // Make a list of username as well as pfps. will need to update them in codes around. use update instead of set
+  ValueNotifier<List> selectedUserList = ValueNotifier([]);
+
   void changeButtonState(int index, String uid) {
     // List.from needed to update the valuenotifier values when it comes to list
     buttonsClicked.value = List.from(buttonsClicked.value);

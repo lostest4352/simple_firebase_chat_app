@@ -12,7 +12,7 @@ class AuthPage extends StatelessWidget {
    Stream<User?> firebaseStream =  FirebaseAuth.instance.authStateChanges();
 
     return Scaffold(
-      body: StreamBuilder<User?>(
+      body: StreamBuilder(
         stream: firebaseStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {

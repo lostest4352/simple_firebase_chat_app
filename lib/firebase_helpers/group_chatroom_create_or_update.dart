@@ -33,7 +33,6 @@ class CreateOrUpdateGroupChatroom {
         lastMessage: "",
         lastMessageSender: "",
         dateTime: DateTime.now(),
-        lastMessageSenderProfilePic: "",
       );
 
       await FirebaseFirestore.instance

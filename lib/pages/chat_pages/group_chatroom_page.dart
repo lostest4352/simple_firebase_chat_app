@@ -33,8 +33,9 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   UserModel? get currentProviderUser => context.read<UserModel>();
 
-  Stream<QuerySnapshot> allUserSnapshot =
-      FirebaseFirestore.instance.collection("users").snapshots();
+  // Use future here because stream keeps loading all the time and causes problems
+  Future<QuerySnapshot> allUserSnapshot =
+      FirebaseFirestore.instance.collection("users").get();
 
   @override
   void dispose() {
@@ -108,6 +109,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                     QuerySnapshot dataSnapshot = snapshot.data as QuerySnapshot;
 
                     return ListView.builder(
+                      physics: const BouncingScrollPhysics(
+                          decelerationRate: ScrollDecelerationRate.fast),
                       reverse: true,
                       itemCount: dataSnapshot.docs.length,
                       itemBuilder: (context, index) {
@@ -161,16 +164,20 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                     //     fontSize: 16,
                                     //   ),
                                     // ),
-                                    child: StreamBuilder(
-                                      stream: allUserSnapshot,
+                                    child: FutureBuilder(
+                                      future: allUserSnapshot,
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState !=
-                                            ConnectionState.active) {
-                                          return const Center();
+                                                ConnectionState.done) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
                                         }
-                                        if (!snapshot.hasData) {
-                                          return const Text('Loading..');
-                                        }
+                                        // if (!snapshot.hasData) {
+                                        //   return const Center(
+                                        //     child: CircularProgressIndicator(),
+                                        //   );
+                                        // }
 
                                         //TODO: This gets the user info of only the sender. Current message here is bad name. Rename to sentMessage later
                                         final otherUserSnapshot =

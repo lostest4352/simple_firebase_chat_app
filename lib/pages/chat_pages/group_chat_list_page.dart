@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
-
 class GroupListPage extends StatefulWidget {
   const GroupListPage({super.key});
 
@@ -75,8 +74,6 @@ class _GroupListPageState extends State<GroupListPage> {
                       GroupChatroomModel groupChatroom =
                           GroupChatroomModel.fromMap(document);
 
-                      
-
                       return ListTile(
                         leading: CircleAvatar(
                           child: Text(groupChatroomSnapshot?[index]
@@ -87,14 +84,15 @@ class _GroupListPageState extends State<GroupListPage> {
                         ),
                         title: Text(
                           "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
+                          overflow: TextOverflow.ellipsis,
                         ),
                         // subtitle: Text(formattedDate),
                         // The join method removes bracket
-                        // subtitle: Text(groupChatroomSnapshot?[index]
-                        //             ["participants"]
-                        //         .join(", ")
-                        //         .toString() ??
-                        //     "users"),
+                        subtitle: Text(groupChatroomSnapshot?[index]
+                                    ["participants"]
+                                .join(", ")
+                                .toString() ??
+                            "users"),
 
                         // subtitle: Text(usernames.toString()),
 

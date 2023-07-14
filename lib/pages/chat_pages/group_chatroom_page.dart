@@ -134,12 +134,12 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                               padding: EdgeInsets.only(
                                   left: (currentMessage.sender ==
                                           widget.currentUser?.uid)
-                                      ? 120
+                                      ? 60
                                       : 15,
                                   right: (currentMessage.sender ==
                                           widget.currentUser?.uid)
                                       ? 15
-                                      : 120),
+                                      : 60),
                               child: Column(
                                 children: [
                                   Container(

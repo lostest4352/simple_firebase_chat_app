@@ -168,7 +168,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                       future: allUserSnapshot,
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState !=
-                                                ConnectionState.done) {
+                                            ConnectionState.done) {
                                           return const Center(
                                             child: CircularProgressIndicator(),
                                           );
@@ -204,7 +204,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                                 ? const Icon(Icons.person)
                                                 : null,
                                           ),
-                                          title: Text(
+                                          title: SelectableText(
                                             currentMessage.messageText
                                                 .toString(),
                                             style: const TextStyle(
@@ -214,8 +214,24 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                           ),
                                           // subtitle: Text(formattedDate),
                                           // trailing: Text(currentMessage.senderUserName ?? "none"),
-                                          subtitle: Text(
-                                              "${otherUserSnapshot?[0]["username"] ?? 'none'}: $formattedDate"),
+                                          subtitle: Row(
+                                            children: [
+                                              Text(
+                                                otherUserSnapshot?[0]
+                                                        ["username"] ??
+                                                    'none',
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                ": $formattedDate",
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
                                         );
                                       },
                                     ),

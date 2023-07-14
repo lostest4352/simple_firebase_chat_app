@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
+
 class GroupListPage extends StatefulWidget {
   const GroupListPage({super.key});
 
@@ -15,15 +16,15 @@ class GroupListPage extends StatefulWidget {
 class _GroupListPageState extends State<GroupListPage> {
   User? currentUser = FirebaseAuth.instance.currentUser;
 
+  // UserModel? get currentProviderUser => context.read<UserModel?>();
+
   Stream<QuerySnapshot> groupChatroomSnapshot = FirebaseFirestore.instance
       .collection("groupChatrooms")
       .orderBy("dateTime", descending: true)
       .snapshots();
 
-  // Stream<QuerySnapshot> allUserSnapshot =
-  //     FirebaseFirestore.instance.collection("users").snapshots().map((documents) {
-  //       return ;
-  //     });
+  Stream<QuerySnapshot> allUserSnapshot =
+      FirebaseFirestore.instance.collection("users").snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -74,17 +75,29 @@ class _GroupListPageState extends State<GroupListPage> {
                       GroupChatroomModel groupChatroom =
                           GroupChatroomModel.fromMap(document);
 
-                      // No. of users on leading circular avatar
+                      
+
                       return ListTile(
                         leading: CircleAvatar(
-                          child: Text(groupChatroomSnapshot?[index]["participants"].length.toString() ?? "0"),
+                          child: Text(groupChatroomSnapshot?[index]
+                                      ["participants"]
+                                  .length
+                                  .toString() ??
+                              "0"),
                         ),
                         title: Text(
                           "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
                         ),
                         // subtitle: Text(formattedDate),
                         // The join method removes bracket
-                        subtitle: Text(groupChatroomSnapshot?[index]["participants"].join(", ").toString() ?? "users"),
+                        // subtitle: Text(groupChatroomSnapshot?[index]
+                        //             ["participants"]
+                        //         .join(", ")
+                        //         .toString() ??
+                        //     "users"),
+
+                        // subtitle: Text(usernames.toString()),
+
                         trailing: Text(formattedDate),
                         onTap: () {
                           if (!mounted) return;

@@ -40,8 +40,6 @@ class _HomePageState extends State<HomePage> {
 
     Stream<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
         .collection("users")
-        // .where("uid", isNotEqualTo: currentUser?.uid,)
-        // .orderBy("uid")
         .orderBy("username")
         .snapshots();
 

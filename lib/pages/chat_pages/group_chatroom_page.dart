@@ -1,19 +1,21 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/models/user_model.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
+import 'package:simple_firebase1/models/user_model.dart';
 
 import '../../models/message_model.dart';
 
 class GroupChatroomPage extends StatefulWidget {
   final GroupChatroomModel groupChatroom;
   final User? currentUser;
+
   const GroupChatroomPage({
     Key? key,
     required this.groupChatroom,
@@ -30,6 +32,9 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
   final uuid = const Uuid();
 
   UserModel? get currentProviderUser => context.read<UserModel>();
+
+  Stream<QuerySnapshot> allUserSnapshot =
+      FirebaseFirestore.instance.collection("users").snapshots();
 
   @override
   void dispose() {
@@ -61,7 +66,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       // set every newest message as last message
       widget.groupChatroom.lastMessage = message;
       widget.groupChatroom.dateTime = DateTime.now();
-      widget.groupChatroom.lastMessageSender = currentProviderUser?.username ?? "";
+      widget.groupChatroom.lastMessageSender =
+          currentProviderUser?.username ?? "";
 
       // update the chatroom
       FirebaseFirestore.instance
@@ -155,16 +161,56 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                     //     fontSize: 16,
                                     //   ),
                                     // ),
-                                    child: ListTile(
-                                      // contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                      title: Text(
-                                        currentMessage.messageText.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                          // color: Colors.white,
-                                        ),
-                                      ),
-                                      subtitle: Text(formattedDate),
+                                    child: StreamBuilder(
+                                      stream: allUserSnapshot,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState !=
+                                            ConnectionState.active) {
+                                          return const Center();
+                                        }
+                                        if (!snapshot.hasData) {
+                                          return const Text('Loading..');
+                                        }
+
+                                        //TODO: This gets the user info of only the sender. Current message here is bad name. Rename to sentMessage later
+                                        final otherUserSnapshot =
+                                            snapshot.data?.docs.where((docs) {
+                                          return docs["uid"] ==
+                                              currentMessage.sender;
+                                        }).toList();
+
+                                        return ListTile(
+                                          // contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                          leading: CircleAvatar(
+                                            backgroundImage: (otherUserSnapshot?[
+                                                        0]["profilePicture"] !=
+                                                    null)
+                                                ? CachedNetworkImageProvider(
+                                                    otherUserSnapshot?[0][
+                                                            "profilePicture"] ??
+                                                        "",
+                                                  )
+                                                : null,
+                                            child: otherUserSnapshot?[0]
+                                                        ["profilePicture"] ==
+                                                    null
+                                                ? const Icon(Icons.person)
+                                                : null,
+                                          ),
+                                          title: Text(
+                                            currentMessage.messageText
+                                                .toString(),
+                                            style: const TextStyle(
+                                              fontSize: 17,
+                                              // color: Colors.white,
+                                            ),
+                                          ),
+                                          // subtitle: Text(formattedDate),
+                                          // trailing: Text(currentMessage.senderUserName ?? "none"),
+                                          subtitle: Text(
+                                              "${otherUserSnapshot?[0]["username"] ?? 'none'}: $formattedDate"),
+                                        );
+                                      },
                                     ),
                                   ),
                                   // Text(formattedDate),

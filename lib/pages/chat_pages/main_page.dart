@@ -6,6 +6,7 @@ import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
 import 'package:simple_firebase1/widgets/keep_pages_alive.dart';
 
+
 // Initial page with bottom navigation bar items to switch pages
 class MainPage extends StatefulWidget {
   const MainPage({

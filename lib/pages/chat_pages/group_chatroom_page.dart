@@ -31,7 +31,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   final uuid = const Uuid();
 
-  UserModel? get currentProviderUser => context.read<UserModel>();
+  UserModel? get currentUserProvider => context.read<UserModel>();
 
   // Use future here because stream keeps loading all the time and causes problems
   Future<QuerySnapshot> allUserSnapshot =
@@ -68,7 +68,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       widget.groupChatroom.lastMessage = message;
       widget.groupChatroom.dateTime = DateTime.now();
       widget.groupChatroom.lastMessageSender =
-          currentProviderUser?.username ?? "";
+          currentUserProvider?.username ?? "";
 
       // update the chatroom
       FirebaseFirestore.instance
@@ -214,7 +214,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                           ),
                                           // subtitle: Text(formattedDate),
                                           // trailing: Text(currentMessage.senderUserName ?? "none"),
-                                          subtitle: Row(
+                                          subtitle: Wrap(
                                             children: [
                                               Text(
                                                 otherUserSnapshot?[0]

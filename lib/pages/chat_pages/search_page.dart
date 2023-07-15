@@ -22,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   final searchController = TextEditingController();
 
   // UserModel? get currentUser => context.read<UserProvider>().getUser;
-  UserModel? get currentProviderUser => context.read<UserModel?>();
+  
   User? currentUser = FirebaseAuth.instance.currentUser;
 
   ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
@@ -72,6 +72,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    UserModel?  currentUserProvider = context.read<UserModel?>();
+
     return Scaffold(
       appBar: AppBar(
         title: TextFormField(

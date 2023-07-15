@@ -20,17 +20,17 @@ class AuthMethods {
     return UserModel.fromMap(snapshotData);
   }
 
-  // Stream<UserModel> getUserDetailsStream()  {
-  //   User? currentUser = _auth.currentUser;
+  Stream<UserModel> getUserDetailsStream()  {
+    User? currentUser = _auth.currentUser;
 
-  //   // We can user async* with yield* here as well
-  //   return _firestore
-  //       .collection("users")
-  //       .doc(currentUser?.uid)
-  //       .snapshots()
-  //       .map((snapshot) {
-  //     final snapshotData = snapshot.data() as Map<String, dynamic>;
-  //     return UserModel.fromMap(snapshotData);
-  //   });
-  // }
+    // We can user async* with yield* here as well
+    return _firestore
+        .collection("users")
+        .doc(currentUser?.uid)
+        .snapshots()
+        .map((snapshot) {
+      final snapshotData = snapshot.data() as Map<String, dynamic>;
+      return UserModel.fromMap(snapshotData);
+    });
+  }
 }

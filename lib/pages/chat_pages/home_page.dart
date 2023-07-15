@@ -53,54 +53,35 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: StreamBuilder(
-            stream: currentUserSnapshot,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Text("Loading"),
-                );
-              }
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: Text("Loading"),
-                );
-              }
-
-              QuerySnapshot userDataSnapshot = snapshot.data as QuerySnapshot;
-
-              return Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 8, bottom: 8, left: 8, right: 16),
-                    child: CircleAvatar(
-                      backgroundImage: (userDataSnapshot.docs[0]
-                                      ["profilePicture"] ==
-                                  null ||
-                              userDataSnapshot.docs[0]["profilePicture"] == "")
-                          ? null
-                          : CachedNetworkImageProvider(
-                              userDataSnapshot.docs[0]["profilePicture"],
-                            ),
-                      child: userDataSnapshot.docs[0]["profilePicture"] == null
-                          ? const Icon(Icons.person)
-                          : null,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Signed in as ${userDataSnapshot.docs[0]["username"]}", // if streams is used
-                      // userModel?.username.toString() ?? "Loading...", // when provider is used
-                      style: const TextStyle(
-                        fontSize: 20,
-                        overflow: TextOverflow.ellipsis,
+        title: Row(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 16),
+              child: CircleAvatar(
+                backgroundImage: (userModel?.profilePicture == null ||
+                        userModel?.profilePicture == "")
+                    ? null
+                    : CachedNetworkImageProvider(
+                        userModel?.profilePicture ?? "",
                       ),
-                    ),
-                  ),
-                ],
-              );
-            }),
+                child: userModel?.profilePicture == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                "Signed in as ${userModel?.username}", // if streams is used
+                // userModel?.username.toString() ?? "Loading...", // when provider is used
+                style: const TextStyle(
+                  fontSize: 20,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             enableFeedback: true,

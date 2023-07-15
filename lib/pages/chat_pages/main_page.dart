@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/firebase_helpers/auth_methods.dart';
-import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chat_list_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
@@ -42,9 +40,14 @@ class _MainPageState extends State<MainPage> {
   ];
 
   // async cant be used in initstate so need to make a seperate function
-  void getCurrentUserModelData() async {
+  // void getCurrentUserModelData() async {
+  //   UserProvider userProvider = context.read<UserProvider>();
+  //   await userProvider.refreshUser();
+  // }
+
+  void getCurrentUserModelDataFromStream() {
     UserProvider userProvider = context.read<UserProvider>();
-    await userProvider.refreshUser();
+    userProvider.refreshUserStream().listen((event) {});
   }
 
   @override
@@ -52,8 +55,9 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     pageController = PageController();
     // This is used in order to get current logged in user's usermodel data. Need to initialize function in init state or it'll be null
-    // AuthMethods().refreshUser();
-    getCurrentUserModelData();
+
+    // getCurrentUserModelData();
+    getCurrentUserModelDataFromStream();
   }
 
   @override

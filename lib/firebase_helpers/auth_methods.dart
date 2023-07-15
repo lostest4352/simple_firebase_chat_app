@@ -7,9 +7,6 @@ class AuthMethods {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
-  UserModel? _userModel;
-  UserModel? get getUserModel => _userModel;
-
   Future<UserModel> getUserDetails() async {
     User? currentUser = _auth.currentUser;
 
@@ -20,7 +17,7 @@ class AuthMethods {
     return UserModel.fromMap(snapshotData);
   }
 
-  Stream<UserModel> getUserDetailsStream()  {
+  Stream<UserModel> getUserDetailsStream() {
     User? currentUser = _auth.currentUser;
 
     // We can user async* with yield* here as well

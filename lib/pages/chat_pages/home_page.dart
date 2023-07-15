@@ -45,10 +45,10 @@ class _HomePageState extends State<HomePage> {
         .snapshots();
 
     // Code when stream is used instead of provider
-    Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
-        .collection("users")
-        .where("uid", isEqualTo: currentUser?.uid)
-        .snapshots();
+    // Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
+    //     .collection("users")
+    //     .where("uid", isEqualTo: currentUser?.uid)
+    //     .snapshots();
 
     return Scaffold(
       appBar: AppBar(

@@ -19,7 +19,6 @@ class _RegisterPageState extends State<RegisterPage> {
   // bool showPassword = false;
   ValueNotifier<bool> showPassword = ValueNotifier<bool>(false);
 
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -56,8 +55,20 @@ class _RegisterPageState extends State<RegisterPage> {
       barrierDismissible: false,
       context: context,
       builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
+        return AlertDialog(
+          content: Container(
+            padding: const EdgeInsets.all(20),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 20,
+                ),
+                Text("Signing Up"),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -193,44 +204,44 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 // Password textfield
                 ListenableBuilder(
-                  listenable: showPassword,
-                  builder: (context, child) {
-                    return ItemsTextField(
-                      obscureText: !showPassword.value,
-                      textController: passwordController,
-                      hintText: 'Enter Your Password',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                            showPassword.value ? Icons.visibility : Icons.visibility_off),
-                        onPressed: () {
-                          togglevisibility();
-                        },
-                      ),
-                    );
-                  }
-                ),
+                    listenable: showPassword,
+                    builder: (context, child) {
+                      return ItemsTextField(
+                        obscureText: !showPassword.value,
+                        textController: passwordController,
+                        hintText: 'Enter Your Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(showPassword.value
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            togglevisibility();
+                          },
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 10,
                 ),
 
                 // Confirm password textfield
                 ListenableBuilder(
-                  listenable: showPassword,
-                  builder: (context, child) {
-                    return ItemsTextField(
-                      obscureText: !showPassword.value,
-                      textController: confirmPasswordController,
-                      hintText: 'Confirm Your Password',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                            showPassword.value ? Icons.visibility : Icons.visibility_off),
-                        onPressed: () {
-                          togglevisibility();
-                        },
-                      ),
-                    );
-                  }
-                ),
+                    listenable: showPassword,
+                    builder: (context, child) {
+                      return ItemsTextField(
+                        obscureText: !showPassword.value,
+                        textController: confirmPasswordController,
+                        hintText: 'Confirm Your Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(showPassword.value
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            togglevisibility();
+                          },
+                        ),
+                      );
+                    }),
 
                 const SizedBox(
                   height: 15,

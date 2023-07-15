@@ -34,11 +34,23 @@ class _LoginPageState extends State<LoginPage> {
   void signUserIn() async {
     // show loading circle
     showDialog(
-      barrierDismissible: true,
+      barrierDismissible: false,
       context: context,
       builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
+        return AlertDialog(
+          content: Container(
+            padding: const EdgeInsets.all(20),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 20,
+                ),
+                Text("Logging In"),
+              ],
+            ),
+          ),
         );
       },
     );

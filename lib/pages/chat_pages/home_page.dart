@@ -9,6 +9,7 @@ import 'package:simple_firebase1/firebase_helpers/chatroom_create_or_update.dart
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // Didn't use provider since this doesnt update when the auth state changes
     // UserModel? userModel = context.read<UserProvider>().getUser;
-    UserModel? userModel = context.watch<UserModel?>();
+    UserModel? userModel = context.watch<UserProvider?>()?.getUser;
     debugPrint(userModel?.username);
 
     Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:simple_firebase1/firebase_helpers/auth_methods.dart';
 import 'package:simple_firebase1/firebase_options.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 
 void main() async {
   if (Platform.isAndroid) {
@@ -34,22 +36,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // ChangeNotifierProvider(
-        //   create: (context) {
-        //     return UserProvider();
-        //   },
-        // ),
+        ChangeNotifierProvider(
+          create: (context) {
+            return UserProvider();
+          },
+        ),
         // StreamProvider<UserModel?>.value(
         //   value: AuthMethods().getUserDetailsStream(),
         //   initialData: null,
         //   updateShouldNotify: (previous, current) => true,
         // ),
-        FutureProvider<UserModel?>(
-          create: (_) {
-            return AuthMethods().getUserDetails();
-          },
-          initialData: null,
-        ),
+        // FutureProvider<UserModel?>(
+        //   create: (_) {
+        //     return AuthMethods().refreshUser();
+        //   },
+        //   initialData: null,
+        //   updateShouldNotify: (previous, current) => previous != current,
+        // ),
       ],
       builder: (context, child) {
         return MaterialApp(

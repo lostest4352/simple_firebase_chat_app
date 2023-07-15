@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 
 import '../../models/user_model.dart';
 
@@ -73,7 +74,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
 
-    UserModel?  currentUserProvider = context.read<UserModel?>();
+    UserModel?  currentUserProvider = context.watch<UserProvider?>()?.getUser;
+    debugPrint("inside search page: ${currentUserProvider?.username}");
 
     return Scaffold(
       appBar: AppBar(

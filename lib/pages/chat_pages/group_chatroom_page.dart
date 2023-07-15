@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_firebase1/provider/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
@@ -31,7 +32,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   final uuid = const Uuid();
 
-  UserModel? get currentUserProvider => context.read<UserModel>();
+  UserModel? get currentUserProvider => context.read<UserProvider?>()?.getUser;
 
   // Use future here because stream keeps loading all the time and causes problems
   Future<QuerySnapshot> allUserSnapshot =
@@ -80,6 +81,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("inside group chatroom: ${currentUserProvider?.username}");
+
     Stream<QuerySnapshot> groupChatRoomStream = FirebaseFirestore.instance
         .collection("groupChatrooms")
         .doc(widget.groupChatroom.groupChatRoomId)

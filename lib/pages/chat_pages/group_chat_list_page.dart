@@ -76,88 +76,90 @@ class _GroupListPageState extends State<GroupListPage> {
                           GroupChatroomModel.fromMap(document);
 
                       return FutureBuilder(
-                          future: allUserSnapshot,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState !=
-                                ConnectionState.done) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (!snapshot.hasData) {
-                              return const Text('Loading..');
-                            }
+                        future: allUserSnapshot,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.done) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (!snapshot.hasData) {
+                            return const Text('Loading..');
+                          }
 
+                          //
+                          final otherUserSnapshot =
+                              snapshot.data?.docs.toList();
+
+                          // codes that gets the uids from both snapshot and shows the username according to their uids present in the groupchatroom snapshot
+                          List<String> allowedUsernames = [];
+
+                          if (document.containsKey("participants")) {
+                            // List<String> participants =
+                            //     List<String>.from(document["participants"]);
+
+                            List<String> participants = [];
+                            // reminder: document is from group chatroom
+                            List<dynamic> documentParticipants =
+                                document["participants"];
+                            // first take the participants(uid) and convert them to proper List<String>
+                            for (final documentParticipant
+                                in documentParticipants) {
+                              participants.add(documentParticipant.toString());
+                            }
                             //
-                            final otherUserSnapshot =
-                                snapshot.data?.docs.toList();
-
-                            // codes that gets the uids from both snapshot and shows the username according to their uids present in the groupchatroom snapshot
-                            List<String> allowedUsernames = [];
-
-                            if (document.containsKey("participants")) {
-                              // List<String> participants =
-                              //     List<String>.from(document["participants"]);
-
-                              List<String> participants = [];
-                              // reminder: document is from group chatroom
-                              List<dynamic> documentParticipants =
-                                  document["participants"];
-                              // first take the participants(uid) and convert them to proper List<String>
-                              for (final documentParticipant in documentParticipants) {
-                                participants.add(documentParticipant.toString());
-                              }
-                              // 
-                              if (otherUserSnapshot != null) {
-                                for (final doc in otherUserSnapshot) {
-                                  String username = doc.get("username");
-                                  if (participants.contains(doc.id)) {
-                                    allowedUsernames.add(username);
-                                  }
+                            if (otherUserSnapshot != null) {
+                              for (final doc in otherUserSnapshot) {
+                                String username = doc.get("username");
+                                if (participants.contains(doc.id)) {
+                                  allowedUsernames.add(username);
                                 }
                               }
                             }
+                          }
 
-                            return ListTile(
-                              leading: CircleAvatar(
-                                child: Text(groupChatroomSnapshot?[index]
-                                            ["participants"]
-                                        .length
-                                        .toString() ??
-                                    "0"),
-                              ),
-                              title: Text(
-                                "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              // subtitle: Text(formattedDate),
-                              // The join method removes bracket
-                              // subtitle: Text(groupChatroomSnapshot?[index]
-                              //             ["participants"]
-                              //         .join(", ")
-                              //         .toString() ??
-                              //     "users"),
+                          return ListTile(
+                            leading: CircleAvatar(
+                              child: Text(groupChatroomSnapshot?[index]
+                                          ["participants"]
+                                      .length
+                                      .toString() ??
+                                  "0"),
+                            ),
+                            title: Text(
+                              "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            // subtitle: Text(formattedDate),
+                            // The join method removes bracket
+                            // subtitle: Text(groupChatroomSnapshot?[index]
+                            //             ["participants"]
+                            //         .join(", ")
+                            //         .toString() ??
+                            //     "users"),
 
-                              subtitle:
-                                  Text(allowedUsernames.join(", ").toString()),
+                            subtitle:
+                                Text(allowedUsernames.join(", ").toString()),
 
-                              trailing: Text(formattedDate),
-                              onTap: () {
-                                if (!mounted) return;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return GroupChatroomPage(
-                                        groupChatroom: groupChatroom,
-                                        currentUser: currentUser,
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            );
-                          });
+                            trailing: Text(formattedDate),
+                            onTap: () {
+                              if (!mounted) return;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return GroupChatroomPage(
+                                      groupChatroom: groupChatroom,
+                                      currentUser: currentUser,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
                     },
                   );
                 },

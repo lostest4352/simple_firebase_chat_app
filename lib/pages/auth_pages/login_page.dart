@@ -62,8 +62,9 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text,
       );
       if (!mounted) return;
-      Navigator.pop(context);
+      // Navigator.pop(context);
       Navigator.popUntil(context, (route) => route.isFirst);
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

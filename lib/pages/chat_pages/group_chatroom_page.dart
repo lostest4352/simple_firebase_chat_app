@@ -81,6 +81,10 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var scaffoldKey = GlobalKey<ScaffoldState>();
+
+
     debugPrint("inside group chatroom: ${currentUserProvider?.username}");
 
     Stream<QuerySnapshot> groupChatRoomStream = FirebaseFirestore.instance
@@ -92,14 +96,24 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
     return SafeArea(
       child: Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           title: const Text("Your messages"),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.person),
-            ),
+            IconButton(onPressed: () {
+              scaffoldKey.currentState?.openEndDrawer();
+              
+            }, icon: const Icon(Icons.person),),
           ],
+        ),
+        endDrawer: Drawer(
+          width: 250,
+          child: ListView.builder(
+            itemCount: 2,
+            itemBuilder: (context, index) {
+              return ListTile();
+            },
+          ),
         ),
         body: Column(
           children: [
@@ -188,7 +202,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                         //   );
                                         // }
 
-                                        // This gets the user info of only the sender. 
+                                        // This gets the user info of only the sender.
                                         final otherUserSnapshot =
                                             snapshot.data?.docs.where((docs) {
                                           return docs["uid"] ==
@@ -214,8 +228,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                                 : null,
                                           ),
                                           title: SelectableText(
-                                            chatMessage.messageText
-                                                .toString(),
+                                            chatMessage.messageText.toString(),
                                             style: const TextStyle(
                                               fontSize: 17,
                                               // color: Colors.white,
@@ -292,6 +305,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
             ),
           ],
         ),
+        
       ),
     );
   }

@@ -88,6 +88,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   //
   Future<List<UserModel>> getAllUsersInChatroom() async {
+    List<UserModel> users = [];
+
     final groupChatroomDocs = await FirebaseFirestore.instance
         .collection("groupChatrooms")
         .doc(widget.groupChatroom.groupChatRoomId)
@@ -97,12 +99,10 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
     //     List<String>.from(groupChatroomDocs.data()?["participants"]);
 
     List<String> participantsIds = [];
-    List chatRoomParticipantsIds = groupChatroomDocs.data()?["participants"];
-    for (final chatRoomParticipantId in chatRoomParticipantsIds) {
+    List groupChatRoomParticipantsIds = groupChatroomDocs.data()?["participants"];
+    for (final chatRoomParticipantId in groupChatRoomParticipantsIds) {
       participantsIds.add(chatRoomParticipantId);
     }
-
-    List<UserModel> users = [];
 
     for (final participantsId in participantsIds) {
       final userSnapshotDocs = await FirebaseFirestore.instance
@@ -118,7 +118,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
   }
 
   // Doing functions on future/stream builders causes issues
-  Future<List<UserModel>> get getAllUsersInChatroomFuture => getAllUsersInChatroom();
+  Future<List<UserModel>> get getAllUsersInChatroomFuture =>
+      getAllUsersInChatroom();
 
   @override
   Widget build(BuildContext context) {

@@ -22,8 +22,10 @@ class _GroupListPageState extends State<GroupListPage> {
       .orderBy("dateTime", descending: true)
       .snapshots();
 
-  Stream<QuerySnapshot> allUserSnapshot =
-      FirebaseFirestore.instance.collection("users").snapshots();
+  Stream<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
+      .collection("users")
+      .orderBy("username")
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class _GroupListPageState extends State<GroupListPage> {
                       snapshot.data?.docs.where((documents) {
                     // First store the list in a variable and filter the contents from it
                     List participants = documents["participants"];
+
                     return participants.contains(currentUser?.uid);
                   }).toList();
 
@@ -74,44 +77,79 @@ class _GroupListPageState extends State<GroupListPage> {
                       GroupChatroomModel groupChatroom =
                           GroupChatroomModel.fromMap(document);
 
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: Text(groupChatroomSnapshot?[index]
-                                      ["participants"]
-                                  .length
-                                  .toString() ??
-                              "0"),
-                        ),
-                        title: Text(
-                          "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        // subtitle: Text(formattedDate),
-                        // The join method removes bracket
-                        subtitle: Text(groupChatroomSnapshot?[index]
-                                    ["participants"]
-                                .join(", ")
-                                .toString() ??
-                            "users"),
+                      return StreamBuilder(
+                          stream: allUserSnapshot,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState !=
+                                ConnectionState.active) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (!snapshot.hasData) {
+                              return const Text('Loading..');
+                            }
 
-                        // subtitle: Text(usernames.toString()),
+                            //
+                            final otherUserSnapshot =
+                                snapshot.data?.docs.toList();
 
-                        trailing: Text(formattedDate),
-                        onTap: () {
-                          if (!mounted) return;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return GroupChatroomPage(
-                                  groupChatroom: groupChatroom,
-                                  currentUser: currentUser,
+                            // codes that gets the uids from both snapshot and shows the username according to their uids present in the groupchatroom snapshot
+                            List<String> allowedUsernames = [];
+
+                            if (document.containsKey("participants")) {
+                              List<String> participants =
+                                  List<String>.from(document["participants"]);
+                              if (otherUserSnapshot != null) {
+                                for (final doc in otherUserSnapshot) {
+                                  String username = doc.get("username");
+                                  if (participants.contains(doc.id)) {
+                                    allowedUsernames.add(username);
+                                  }
+                                }
+                              }
+                            }
+
+                            return ListTile(
+                              leading: CircleAvatar(
+                                child: Text(groupChatroomSnapshot?[index]
+                                            ["participants"]
+                                        .length
+                                        .toString() ??
+                                    "0"),
+                              ),
+                              title: Text(
+                                "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              // subtitle: Text(formattedDate),
+                              // The join method removes bracket
+                              // subtitle: Text(groupChatroomSnapshot?[index]
+                              //             ["participants"]
+                              //         .join(", ")
+                              //         .toString() ??
+                              //     "users"),
+
+                              subtitle:
+                                  Text(allowedUsernames.join(", ").toString()),
+
+                              trailing: Text(formattedDate),
+                              onTap: () {
+                                if (!mounted) return;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return GroupChatroomPage(
+                                        groupChatroom: groupChatroom,
+                                        currentUser: currentUser,
+                                      );
+                                    },
+                                  ),
                                 );
                               },
-                            ),
-                          );
-                        },
-                      );
+                            );
+                          });
                     },
                   );
                 },

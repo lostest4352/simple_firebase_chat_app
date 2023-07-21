@@ -117,6 +117,9 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
     return users;
   }
 
+  // Doing functions on future/stream builders causes issues
+  Future<List<UserModel>> get getAllUsersInChatroomFuture => getAllUsersInChatroom();
+
   @override
   Widget build(BuildContext context) {
     var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -147,7 +150,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                 ),
               ),
               FutureBuilder(
-                future: getAllUsersInChatroom(),
+                future: getAllUsersInChatroomFuture,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(

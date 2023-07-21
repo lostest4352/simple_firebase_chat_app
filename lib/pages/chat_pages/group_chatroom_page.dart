@@ -34,9 +34,16 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
 
   UserModel? get currentUserProvider => context.read<UserProvider?>()?.getUser;
 
+  Stream<QuerySnapshot> get groupChatRoomStream => FirebaseFirestore.instance
+      .collection("groupChatrooms")
+      .doc(widget.groupChatroom.groupChatRoomId)
+      .collection("messages")
+      .orderBy("createdOn", descending: true)
+      .snapshots();
+
   // Use future here because stream keeps loading all the time and causes problems
-  Future<QuerySnapshot> allUserSnapshot =
-      FirebaseFirestore.instance.collection("users").get();
+  Future<QuerySnapshot> allUserStream =
+      FirebaseFirestore.instance.collection("users").orderBy("username").get();
 
   @override
   void dispose() {
@@ -79,20 +86,42 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-
-    var scaffoldKey = GlobalKey<ScaffoldState>();
-
-
-    debugPrint("inside group chatroom: ${currentUserProvider?.username}");
-
-    Stream<QuerySnapshot> groupChatRoomStream = FirebaseFirestore.instance
+  //
+  Future<List<UserModel>> getAllUsersInChatroom() async {
+    final groupChatroomDocs = await FirebaseFirestore.instance
         .collection("groupChatrooms")
         .doc(widget.groupChatroom.groupChatRoomId)
-        .collection("messages")
-        .orderBy("createdOn", descending: true)
-        .snapshots();
+        .get();
+
+    // final List<String> participantsIds =
+    //     List<String>.from(groupChatroomDocs.data()?["participants"]);
+
+    List<String> participantsIds = [];
+    List chatRoomParticipantsIds = groupChatroomDocs.data()?["participants"];
+    for (final chatRoomParticipantId in chatRoomParticipantsIds) {
+      participantsIds.add(chatRoomParticipantId);
+    }
+
+    final List<UserModel> users = [];
+
+    for (final participantsId in participantsIds) {
+      final userSnashotDocs = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(participantsId)
+          .get();
+      final user =
+          UserModel.fromMap(userSnashotDocs.data() as Map<String, dynamic>);
+      users.add(user);
+    }
+
+    return users;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var scaffoldKey = GlobalKey<ScaffoldState>();
+
+    debugPrint("inside group chatroom: ${currentUserProvider?.username}");
 
     return SafeArea(
       child: Scaffold(
@@ -100,19 +129,58 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
         appBar: AppBar(
           title: const Text("Your messages"),
           actions: [
-            IconButton(onPressed: () {
-              scaffoldKey.currentState?.openEndDrawer();
-              
-            }, icon: const Icon(Icons.person),),
+            IconButton(
+              onPressed: () {
+                scaffoldKey.currentState?.openEndDrawer();
+              },
+              icon: const Icon(Icons.person),
+            ),
           ],
         ),
         endDrawer: Drawer(
           width: 250,
-          child: ListView.builder(
-            itemCount: 2,
-            itemBuilder: (context, index) {
-              return ListTile();
-            },
+          child: Column(
+            children: [
+              const Card(
+                child: ListTile(
+                  title: Text("Participants"),
+                ),
+              ),
+              FutureBuilder(
+                future: getAllUsersInChatroom(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  final dataSnapshot = snapshot.data?.toList();
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: dataSnapshot?.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage:
+                                (dataSnapshot?[index].profilePicture != null)
+                                    ? CachedNetworkImageProvider(
+                                        dataSnapshot?[index].profilePicture ??
+                                            "",
+                                      )
+                                    : null,
+                            child: dataSnapshot?[index].profilePicture == null
+                                ? const Icon(Icons.person)
+                                : null,
+                          ),
+                          title: Text(dataSnapshot?[index].username ?? ""),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
         body: Column(
@@ -123,7 +191,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                   stream: groupChatRoomStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.active &&
-                        snapshot.hasData == false) {
+                        !snapshot.hasData) {
                       return const Center(
                           // child: CircularProgressIndicator(),
                           );
@@ -188,7 +256,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                     //   ),
                                     // ),
                                     child: FutureBuilder(
-                                      future: allUserSnapshot,
+                                      future: allUserStream,
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState !=
                                             ConnectionState.done) {
@@ -203,7 +271,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                         // }
 
                                         // This gets the user info of only the sender.
-                                        final otherUserSnapshot =
+                                        final selectedUserSnapshot =
                                             snapshot.data?.docs.where((docs) {
                                           return docs["uid"] ==
                                               chatMessage.sender;
@@ -212,16 +280,18 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                         return ListTile(
                                           // contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                                           leading: CircleAvatar(
-                                            backgroundImage: (otherUserSnapshot?[
-                                                        0]["profilePicture"] !=
-                                                    null)
-                                                ? CachedNetworkImageProvider(
-                                                    otherUserSnapshot?[0][
-                                                            "profilePicture"] ??
-                                                        "",
-                                                  )
-                                                : null,
-                                            child: otherUserSnapshot?[0]
+                                            backgroundImage:
+                                                (selectedUserSnapshot?[0][
+                                                            "profilePicture"] !=
+                                                        null)
+                                                    ? CachedNetworkImageProvider(
+                                                        selectedUserSnapshot?[0]
+                                                                [
+                                                                "profilePicture"] ??
+                                                            "",
+                                                      )
+                                                    : null,
+                                            child: selectedUserSnapshot?[0]
                                                         ["profilePicture"] ==
                                                     null
                                                 ? const Icon(Icons.person)
@@ -239,7 +309,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                           subtitle: Wrap(
                                             children: [
                                               Text(
-                                                otherUserSnapshot?[0]
+                                                selectedUserSnapshot?[0]
                                                         ["username"] ??
                                                     'none',
                                                 style: const TextStyle(
@@ -305,7 +375,6 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
             ),
           ],
         ),
-        
       ),
     );
   }

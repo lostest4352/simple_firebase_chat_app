@@ -51,10 +51,9 @@ class _GroupListPageState extends State<GroupListPage> {
                   }
 
                   final groupChatroomSnapshot =
-                      snapshot.data?.docs.where((documents) {
+                      snapshot.data?.docs.where((docs) {
                     // First store the list in a variable and filter the contents from it
-                    List participants = documents["participants"];
-
+                    List participants = docs["participants"];
                     return participants.contains(currentUser?.uid);
                   }).toList();
 

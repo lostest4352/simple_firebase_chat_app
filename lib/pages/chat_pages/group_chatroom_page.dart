@@ -94,6 +94,12 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Your messages"),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.person),
+            ),
+          ],
         ),
         body: Column(
           children: [

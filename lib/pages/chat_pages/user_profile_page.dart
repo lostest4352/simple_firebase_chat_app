@@ -233,7 +233,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             const SizedBox(
               height: 20,
             ),
-            StreamBuilder<Object>(
+            StreamBuilder(
               stream: currentUserSnapshot,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.active) {

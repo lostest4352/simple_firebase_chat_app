@@ -22,10 +22,10 @@ class _GroupListPageState extends State<GroupListPage> {
       .orderBy("dateTime", descending: true)
       .snapshots();
 
-  Stream<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
+  Future<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
       .collection("users")
       .orderBy("username")
-      .snapshots();
+      .get();
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +77,11 @@ class _GroupListPageState extends State<GroupListPage> {
                       GroupChatroomModel groupChatroom =
                           GroupChatroomModel.fromMap(document);
 
-                      return StreamBuilder(
-                          stream: allUserSnapshot,
+                      return FutureBuilder(
+                          future: allUserSnapshot,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState !=
-                                ConnectionState.active) {
+                                ConnectionState.done) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );

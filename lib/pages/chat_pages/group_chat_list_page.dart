@@ -22,10 +22,8 @@ class _GroupListPageState extends State<GroupListPage> {
       .orderBy("dateTime", descending: true)
       .snapshots();
 
-  Future<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
-      .collection("users")
-      .orderBy("username")
-      .get();
+  Future<QuerySnapshot> allUserSnapshot =
+      FirebaseFirestore.instance.collection("users").orderBy("username").get();
 
   @override
   Widget build(BuildContext context) {
@@ -98,8 +96,16 @@ class _GroupListPageState extends State<GroupListPage> {
                             List<String> allowedUsernames = [];
 
                             if (document.containsKey("participants")) {
-                              List<String> participants =
-                                  List<String>.from(document["participants"]);
+                              // List<String> participants =
+                              //     List<String>.from(document["participants"]);
+
+                              List<String> participants = [];
+                              List<dynamic> documentParticipants =
+                                  document["participants"];
+
+                              for (final participant in documentParticipants) {
+                                participants.add(participant.toString());
+                              }
                               if (otherUserSnapshot != null) {
                                 for (final doc in otherUserSnapshot) {
                                   String username = doc.get("username");

@@ -123,29 +123,29 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                       reverse: true,
                       itemCount: dataSnapshot.docs.length,
                       itemBuilder: (context, index) {
-                        MessageModel currentMessage = MessageModel.fromMap(
+                        MessageModel chatMessage = MessageModel.fromMap(
                             dataSnapshot.docs[index].data()
                                 as Map<String, dynamic>);
 
                         // Needed package since flutter default causes problems
-                        DateTime? date = currentMessage.createdOn;
+                        DateTime? date = chatMessage.createdOn;
                         String formattedDate = (date != null)
                             ? "${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}"
                             : '';
 
                         return Wrap(
                           alignment:
-                              (currentMessage.sender == widget.currentUser?.uid)
+                              (chatMessage.sender == widget.currentUser?.uid)
                                   ? WrapAlignment.end
                                   : WrapAlignment.start,
                           children: [
                             Padding(
                               padding: EdgeInsets.only(
-                                  left: (currentMessage.sender ==
+                                  left: (chatMessage.sender ==
                                           widget.currentUser?.uid)
                                       ? 60
                                       : 15,
-                                  right: (currentMessage.sender ==
+                                  right: (chatMessage.sender ==
                                           widget.currentUser?.uid)
                                       ? 15
                                       : 60),
@@ -160,7 +160,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                       horizontal: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: (currentMessage.sender ==
+                                      color: (chatMessage.sender ==
                                               widget.currentUser?.uid)
                                           ? const Color.fromARGB(
                                               255, 0, 113, 85)
@@ -168,7 +168,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     // child: Text(
-                                    //   currentMessage.messageText.toString(),
+                                    //   chatMessage.messageText.toString(),
                                     //   style: const TextStyle(
                                     //     fontSize: 16,
                                     //   ),
@@ -188,11 +188,11 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                         //   );
                                         // }
 
-                                        //TODO: This gets the user info of only the sender. Current message here is bad name. Rename to sentMessage later
+                                        // This gets the user info of only the sender. 
                                         final otherUserSnapshot =
                                             snapshot.data?.docs.where((docs) {
                                           return docs["uid"] ==
-                                              currentMessage.sender;
+                                              chatMessage.sender;
                                         }).toList();
 
                                         return ListTile(
@@ -214,7 +214,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                                 : null,
                                           ),
                                           title: SelectableText(
-                                            currentMessage.messageText
+                                            chatMessage.messageText
                                                 .toString(),
                                             style: const TextStyle(
                                               fontSize: 17,
@@ -222,7 +222,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                             ),
                                           ),
                                           // subtitle: Text(formattedDate),
-                                          // trailing: Text(currentMessage.senderUserName ?? "none"),
+                                          // trailing: Text(chatMessage.senderUserName ?? "none"),
                                           subtitle: Wrap(
                                             children: [
                                               Text(

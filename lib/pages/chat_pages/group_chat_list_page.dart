@@ -100,12 +100,14 @@ class _GroupListPageState extends State<GroupListPage> {
                               //     List<String>.from(document["participants"]);
 
                               List<String> participants = [];
+                              // reminder: document is from group chatroom
                               List<dynamic> documentParticipants =
                                   document["participants"];
-
-                              for (final participant in documentParticipants) {
-                                participants.add(participant.toString());
+                              // first take the participants(uid) and convert them to proper List<String>
+                              for (final documentParticipant in documentParticipants) {
+                                participants.add(documentParticipant.toString());
                               }
+                              // 
                               if (otherUserSnapshot != null) {
                                 for (final doc in otherUserSnapshot) {
                                   String username = doc.get("username");

@@ -102,15 +102,15 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       participantsIds.add(chatRoomParticipantId);
     }
 
-    final List<UserModel> users = [];
+    List<UserModel> users = [];
 
     for (final participantsId in participantsIds) {
-      final userSnashotDocs = await FirebaseFirestore.instance
+      final userSnapshotDocs = await FirebaseFirestore.instance
           .collection("users")
           .doc(participantsId)
           .get();
       final user =
-          UserModel.fromMap(userSnashotDocs.data() as Map<String, dynamic>);
+          UserModel.fromMap(userSnapshotDocs.data() as Map<String, dynamic>);
       users.add(user);
     }
 

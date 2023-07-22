@@ -117,13 +117,13 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
     return users;
   }
 
-  // Doing functions on future/stream builders causes issues
+  // Inputing functions directly on future/stream builders causes issues. So we need to input the value we got from function instead
   Future<List<UserModel>> get getAllUsersInChatroomFuture =>
       getAllUsersInChatroom();
 
   @override
   Widget build(BuildContext context) {
-    var scaffoldKey = GlobalKey<ScaffoldState>();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
     debugPrint("inside group chatroom: ${currentUserProvider?.username}");
 

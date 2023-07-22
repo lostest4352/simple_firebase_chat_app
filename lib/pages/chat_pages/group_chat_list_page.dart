@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
+import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
 class GroupListPage extends StatefulWidget {
@@ -92,7 +93,8 @@ class _GroupListPageState extends State<GroupListPage> {
                               snapshot.data?.docs.toList();
 
                           // codes that gets the uids from both snapshot and shows the username according to their uids present in the groupchatroom snapshot
-                          List<String> allowedUsernames = [];
+                          // List<String> allowedUsernames = [];
+                          List<UserModel> allowedUsers = [];
 
                           if (document.containsKey("participants")) {
                             // List<String> participants =
@@ -110,9 +112,14 @@ class _GroupListPageState extends State<GroupListPage> {
                             //
                             if (otherUserSnapshot != null) {
                               for (final doc in otherUserSnapshot) {
-                                String username = doc.get("username");
+                                // String username = doc.get("username");
+                                final docdata =
+                                    doc.data() as Map<String, dynamic>;
+                                UserModel userModel =
+                                    UserModel.fromMap(docdata);
                                 if (participants.contains(doc.id)) {
-                                  allowedUsernames.add(username);
+                                  // allowedUsernames.add(username);
+                                  allowedUsers.add(userModel);
                                 }
                               }
                             }
@@ -130,16 +137,15 @@ class _GroupListPageState extends State<GroupListPage> {
                               "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
                               overflow: TextOverflow.ellipsis,
                             ),
+
                             // subtitle: Text(formattedDate),
-                            // The join method removes bracket
-                            // subtitle: Text(groupChatroomSnapshot?[index]
-                            //             ["participants"]
-                            //         .join(", ")
-                            //         .toString() ??
-                            //     "users"),
 
                             subtitle:
-                                Text(allowedUsernames.join(", ").toString()),
+                                // The join method removes bracket
+                                // Text(allowedUsernames.join(", ").toString()),
+                                Text(allowedUsers
+                                    .map((user) => user.username)
+                                    .join(", ")),
 
                             trailing: Text(formattedDate),
                             onTap: () {

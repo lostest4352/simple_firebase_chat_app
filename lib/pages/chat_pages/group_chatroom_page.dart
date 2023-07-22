@@ -99,7 +99,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
     //     List<String>.from(groupChatroomDocs.data()?["participants"]);
 
     List<String> participantsIds = [];
-    List groupChatRoomParticipantsIds = groupChatroomDocs.data()?["participants"];
+    List groupChatRoomParticipantsIds =
+        groupChatroomDocs.data()?["participants"];
     for (final chatRoomParticipantId in groupChatRoomParticipantsIds) {
       participantsIds.add(chatRoomParticipantId);
     }
@@ -109,11 +110,10 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
           .collection("users")
           .doc(participantsId)
           .get();
-      final user =
+      UserModel userModel =
           UserModel.fromMap(userSnapshotDocs.data() as Map<String, dynamic>);
-      users.add(user);
+      users.add(userModel);
     }
-
     return users;
   }
 

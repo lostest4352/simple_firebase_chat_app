@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
 import 'package:simple_firebase1/pages/auth_pages/register_page.dart';
-import 'package:simple_firebase1/pages/chat_pages/main_page.dart';
 
 import '../../components/items_text_fields.dart';
 
@@ -37,6 +37,10 @@ class _LoginPageState extends State<LoginPage> {
       barrierDismissible: false,
       context: context,
       builder: (context) {
+        //  use this if pop gives problems
+        // Future.delayed(const Duration(seconds: 5)).then((_) {
+        //   Navigator.pop(context);
+        // });
         return AlertDialog(
           content: Container(
             padding: const EdgeInsets.all(20),
@@ -63,13 +67,16 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (!mounted) return;
       // Navigator.pop(context);
-      Navigator.popUntil(context, (route) => route.isFirst);
-      
+      // Navigator.popUntil(context, (route) => route.isFirst);
+      // Navigator.of(context, rootNavigator: true)
+      Navigator.of(context, rootNavigator: true)
+          .popUntil((route) => route.isFirst);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) {
-            return const MainPage();
+            return const AuthPage();
           },
         ),
       );

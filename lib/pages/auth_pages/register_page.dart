@@ -108,7 +108,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
         if (!mounted) return;
         // Navigator.pop(context);
-        Navigator.popUntil(context, (route) => route.isFirst);
+        // Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.of(context, rootNavigator: true)
+            .popUntil((route) => route.isFirst);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

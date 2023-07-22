@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   void signUserIn() async {
     // show loading circle
     showDialog(
-      barrierDismissible: false,
+      barrierDismissible: true,
       context: context,
       builder: (context) {
         //  use this if pop gives problems
@@ -67,10 +67,10 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (!mounted) return;
       // Navigator.pop(context);
-      // Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.popUntil(context, (route) => route.isFirst);
+      
       // Navigator.of(context, rootNavigator: true)
-      Navigator.of(context, rootNavigator: true)
-          .popUntil((route) => route.isFirst);
+      //     .popUntil((route) => route.isFirst);
 
       Navigator.pushReplacement(
         context,

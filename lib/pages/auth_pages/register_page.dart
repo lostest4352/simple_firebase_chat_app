@@ -52,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future registerUser() async {
     // show loading circle
     showDialog(
-      barrierDismissible: false,
+      barrierDismissible: true,
       context: context,
       builder: (context) {
         return AlertDialog(

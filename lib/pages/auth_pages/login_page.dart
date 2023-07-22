@@ -61,10 +61,11 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       );
-      if (!mounted) return;
+      // if (!mounted) return;
       // Navigator.pop(context);
+      // ignore: use_build_context_synchronously
       Navigator.popUntil(context, (route) => route.isFirst);
-      
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

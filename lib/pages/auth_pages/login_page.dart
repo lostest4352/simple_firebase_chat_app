@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // sign in user
-  void signUserIn(BuildContext dialogContext) async {
+  void signUserIn() async {
     // show loading circle
     showDialog(
       barrierDismissible: true,
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (!mounted) return;
       // Navigator.pop(context);
-      Navigator.popUntil(dialogContext, (route) => route.isFirst);
+      Navigator.popUntil(context, (route) => route.isFirst);
       
       // Navigator.of(context, rootNavigator: true)
       //     .popUntil((route) => route.isFirst);
@@ -202,9 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                     textStyle: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  onPressed: () {
-                    signUserIn(context);
-                  },
+                  onPressed: signUserIn,
                   child: const Text('Login'),
                 ),
                 const SizedBox(

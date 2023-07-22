@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -108,11 +106,9 @@ class _RegisterPageState extends State<RegisterPage> {
           uid: credential.user?.uid,
         );
 
-        // if (!mounted) return;
+        if (!mounted) return;
         // Navigator.pop(context);
-        // ignore: use_build_context_synchronously
         Navigator.popUntil(context, (route) => route.isFirst);
-        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

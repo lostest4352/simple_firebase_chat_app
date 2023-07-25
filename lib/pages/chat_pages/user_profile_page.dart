@@ -305,7 +305,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         .doc(currentUser?.uid)
                         .update({
                       'username': textController.text,
-                    }).then((value) => Navigator.pop(context));
+                    })
+                    .then((value) => Navigator.of(context, rootNavigator: true).pop());
                   },
                   child: const Text(
                     "Update",

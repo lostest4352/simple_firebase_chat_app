@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_helpers/auth_methods.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chat_list_page.dart';
-import 'package:simple_firebase1/pages/chat_pages/group_profile_edit_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/home_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
@@ -40,9 +39,7 @@ class _MainPageState extends State<MainPage> {
     const KeepPageAlive(
       child: UserProfilePage(),
     ),
-    const KeepPageAlive(
-      child: GroupCreateOrEditPage(),
-    ),
+    
   ];
 
   // async cant be used in initstate so need to make a seperate function
@@ -130,13 +127,7 @@ class _MainPageState extends State<MainPage> {
                     color: Colors.white,
                   ),
                 ),
-                BottomNavigationBarItem(
-                  label: '',
-                  icon: Icon(
-                    Icons.group_add,
-                    color: Colors.white,
-                  ),
-                ),
+                
               ],
             ),
           );

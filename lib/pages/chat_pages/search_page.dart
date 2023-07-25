@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/group_create_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
 import '../../models/user_model.dart';
@@ -144,13 +145,25 @@ class _SearchPageState extends State<SearchPage> {
                                         as GroupChatroomModel;
 
                                 if (!mounted) return;
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) {
+                                //       return GroupChatroomPage(
+                                //         groupChatroom: groupChatroomModel,
+                                //         currentUser: currentUser as User,
+                                //       );
+                                //     },
+                                //   ),
+                                // );
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return GroupChatroomPage(
+                                      return GroupCreatePage(
                                         groupChatroom: groupChatroomModel,
                                         currentUser: currentUser as User,
+                                        // otherUserSnapshot: otherUserSnapshot,
                                       );
                                     },
                                   ),

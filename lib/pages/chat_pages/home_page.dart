@@ -29,8 +29,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Didn't use provider since this doesnt update when the auth state changes
-    // UserModel? userModel = context.read<UserProvider>().getUser;
     UserModel? userModel = context.watch<UserProvider?>()?.getUser;
     debugPrint(userModel?.username);
 
@@ -108,27 +106,6 @@ class _HomePageState extends State<HomePage> {
         children: [
           const SizedBox(
             height: 15,
-          ),
-          // TODO: Remove this later. 
-          Card(
-            child: Consumer<UserModel?>(
-              builder: (context, value, child) {
-                return ListTile(
-                  title: Text(value?.username ?? "none"),
-                  leading: CircleAvatar(
-                    backgroundImage: (value?.profilePicture == null ||
-                            value?.profilePicture == "")
-                        ? null
-                        : CachedNetworkImageProvider(
-                            value?.profilePicture ?? "",
-                          ),
-                    child: value?.profilePicture == null
-                        ? const Icon(Icons.person)
-                        : null,
-                  ),
-                );
-              },
-            ),
           ),
           Expanded(
             child: Center(

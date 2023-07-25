@@ -9,15 +9,13 @@ import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import '../../models/user_model.dart';
 
 class GroupCreatePage extends StatefulWidget {
-  // TODO: Make these non nullable and remove this from main page
   final GroupChatroomModel groupChatroom;
   final User currentUser;
-  // final List<QueryDocumentSnapshot>? otherUserSnapshot;
+
   const GroupCreatePage({
     Key? key,
     required this.groupChatroom,
     required this.currentUser,
-    // required this.otherUserSnapshot,
   }) : super(key: key);
 
   @override

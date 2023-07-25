@@ -67,16 +67,16 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (!mounted) return;
       // Navigator.pop(context);
-      Navigator.popUntil(context, (route) => route.isFirst);
+      // Navigator.popUntil(context, (route) => route.isFirst);
       
-      // Navigator.of(context, rootNavigator: true)
-      //     .popUntil((route) => route.isFirst);
+      Navigator.of(context, rootNavigator: true)
+          .popUntil((route) => route.isFirst);
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) {
-            return const AuthPage();
+            return const AuthPage(); // May use MyApp()
           },
         ),
       );

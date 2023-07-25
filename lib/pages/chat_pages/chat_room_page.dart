@@ -111,6 +111,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       );
     }
 
+    // ignore: unused_element
     void showEditOrDeleteDialog(int index, String content) {
       showDialog(
         context: context,

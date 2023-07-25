@@ -61,6 +61,7 @@ class _GroupListPageState extends State<GroupListPage> {
                   return ListView.builder(
                     itemCount: groupChatroomSnapshot?.length,
                     itemBuilder: (context, index) {
+                      // Date time code using intl
                       DateTime? date = DateTime.fromMillisecondsSinceEpoch(
                           groupChatroomSnapshot?[index]["dateTime"]);
 
@@ -68,12 +69,14 @@ class _GroupListPageState extends State<GroupListPage> {
                           // " ${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
                           DateFormat.jmv().format(date);
 
-                      Map<String, dynamic> document =
+                      // list of all the group chatrooms the user is in will be shown and this code will send the user to the particular group chat room that was selected
+                      Map<String, dynamic> firebaseGroupChatroomDocument =
                           groupChatroomSnapshot?[index].data()
                               as Map<String, dynamic>;
 
                       GroupChatroomModel groupChatroom =
-                          GroupChatroomModel.fromMap(document);
+                          GroupChatroomModel.fromMap(
+                              firebaseGroupChatroomDocument);
 
                       return FutureBuilder(
                         future: allUserSnapshot,
@@ -88,22 +91,27 @@ class _GroupListPageState extends State<GroupListPage> {
                             return const Text('Loading..');
                           }
 
-                          //
+                          // Getting the docs out of the database and converting it to a list in order to only include the users who are the participants of the group chatroom in the particular listtile
                           final otherUserSnapshot =
                               snapshot.data?.docs.toList();
 
-                          // codes that gets the uids from both snapshot and shows the username according to their uids present in the groupchatroom snapshot
-                          // List<String> allowedUsernames = [];
+                          // Comment 1: Here first we get the participants from the document in firebase(firebaseGroupChatroomDocument). They are in a list<String> format but firebase doesnt directly give it that way so we need to convert. We create an empty list called participants. Then we do a for loop which gets all the participants uid and add it to List<String> participants.
+                          // Comment 2: Then we do a for loop for otherUserSnapshot which is QueryDocumentSnapshot. We get the docData as Map<String, dynamic> and put it in the UserModel.
+                          // Comment 3: We create an empty List<UserModel> called allowedUsers. Then we check if the List<String> participants in "Comment 1" has the uid of the doc we got with for loop. If yes, then we add this UserModel to allowedUsers.
+
+                          // List<String> allowedUsernames = []; // Use this if you only need usernames
+
                           List<UserModel> allowedUsers = [];
 
-                          if (document.containsKey("participants")) {
+                          if (firebaseGroupChatroomDocument
+                              .containsKey("participants")) {
                             // List<String> participants =
                             //     List<String>.from(document["participants"]);
 
                             List<String> participants = [];
                             // reminder: document is from group chatroom
-                            List<dynamic> documentParticipants =
-                                document["participants"];
+                            List documentParticipants =
+                                firebaseGroupChatroomDocument["participants"];
                             // first take the participants(uid) and convert them to proper List<String>
                             for (final documentParticipant
                                 in documentParticipants) {

@@ -23,14 +23,14 @@ class _SearchPageState extends State<SearchPage> {
   final searchController = TextEditingController();
 
   // UserModel? get currentUser => context.read<UserProvider>().getUser;
-  
+
   User? currentUser = FirebaseAuth.instance.currentUser;
 
   ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
 
   ValueNotifier<List> selectedUidList = ValueNotifier([]);
 
-  // Make a list of username as well as pfps. will need to update them in codes around. use update instead of set
+  // Make a list of username. will need to update them in codes around. use update instead of set
   ValueNotifier<List> selectedUserList = ValueNotifier([]);
 
   void changeButtonState(int index, String uid) {
@@ -71,10 +71,10 @@ class _SearchPageState extends State<SearchPage> {
       .where("username", isGreaterThanOrEqualTo: searchController.text)
       .snapshots();
 
+  UserModel? get currentUserProvider => context.watch<UserProvider?>()?.getUser;
+
   @override
   Widget build(BuildContext context) {
-
-    UserModel?  currentUserProvider = context.watch<UserProvider?>()?.getUser;
     debugPrint("inside search page: ${currentUserProvider?.username}");
 
     return Scaffold(

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
+import 'package:simple_firebase1/main.dart';
 import 'package:simple_firebase1/firebase_helpers/chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return const AuthPage();
+                    return const MyApp();
                   },
                 ),
               );
@@ -108,6 +108,27 @@ class _HomePageState extends State<HomePage> {
         children: [
           const SizedBox(
             height: 15,
+          ),
+          // TODO: Remove this later. 
+          Card(
+            child: Consumer<UserModel?>(
+              builder: (context, value, child) {
+                return ListTile(
+                  title: Text(value?.username ?? "none"),
+                  leading: CircleAvatar(
+                    backgroundImage: (value?.profilePicture == null ||
+                            value?.profilePicture == "")
+                        ? null
+                        : CachedNetworkImageProvider(
+                            value?.profilePicture ?? "",
+                          ),
+                    child: value?.profilePicture == null
+                        ? const Icon(Icons.person)
+                        : null,
+                  ),
+                );
+              },
+            ),
           ),
           Expanded(
             child: Center(

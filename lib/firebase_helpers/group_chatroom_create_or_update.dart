@@ -30,7 +30,7 @@ class CreateOrUpdateGroupChatroom {
       GroupChatroomModel newGroupChatroom = GroupChatroomModel(
         groupChatRoomId: uuid.v1(),
         participants: selectedUidList,
-        lastMessage: "",
+        lastMessage: "No messages here",
         lastMessageSender: "",
         groupName: "",
         dateTime: DateTime.now(),

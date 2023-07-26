@@ -32,15 +32,22 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
   ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
 
-  
-
   // User? currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
     textEditingController.text;
-    //TODO Initstate here with group name later
+    FirebaseFirestore.instance
+        .collection("groupChatrooms")
+        .where("groupChatRoomId",
+            isEqualTo: widget.groupChatroom.groupChatRoomId)
+        .get()
+        .then((snapshot) {
+      for (final doc in snapshot.docs) {
+        textEditingController.text = doc["groupName"];
+      }
+    });
   }
 
   @override
@@ -258,8 +265,6 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                       );
                     },
                   );
-
-                  
 
                   FirebaseFirestore.instance
                       .collection("groupChatrooms")

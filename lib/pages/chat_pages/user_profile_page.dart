@@ -41,13 +41,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
         .where("email", isEqualTo: currentUser?.email)
         .get()
         .then(
-          // ignore: avoid_function_literals_in_foreach_calls
-          (snapshot) => snapshot.docs.forEach(
-            (element) {
-              textController.text = element["username"];
-            },
-          ),
-        );
+      (snapshot) {
+        // snapshot.docs.forEach(
+        //   (element) {
+        //     textController.text = element["username"];
+        //   },
+        // );
+        for (final doc in snapshot.docs) {
+          textController.text = doc["username"];
+        }
+      },
+    );
   }
 
   @override
@@ -305,8 +309,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         .doc(currentUser?.uid)
                         .update({
                       'username': textController.text,
-                    })
-                    .then((value) => Navigator.of(context, rootNavigator: true).pop());
+                    }).then((value) =>
+                            Navigator.of(context, rootNavigator: true).pop());
                   },
                   child: const Text(
                     "Update",

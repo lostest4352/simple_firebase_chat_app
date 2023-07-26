@@ -111,6 +111,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   // TODO replace all the copied code with proper group related code. may cause issues
   void uploadPhoto(String groupChatroomId) async {
     File? imageFile = imageFileNotifier.value;
+
     if (imageFile == null) {
       showDialog(
         context: context,
@@ -220,11 +221,10 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 onPressed: () {},
               ),
             ),
-            
 
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
                 child: TextField(
                   controller: textEditingController,
                   maxLines: null,
@@ -245,9 +245,26 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
               child: CupertinoButton(
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 color: const Color.fromARGB(255, 22, 176, 102),
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return const AlertDialog(
+                        title: Text("Updating.."),
+                      );
+                    },
+                  );
+                  FirebaseFirestore.instance
+                      .collection("groupChatrooms")
+                      .doc(widget.groupChatroom.groupChatRoomId)
+                      .update({
+                    'groupName': textController.text,
+                  }).then((value) =>
+                          Navigator.of(context, rootNavigator: true).pop());
+                },
                 child: const Text(
-                  "Create Or Update Group",
+                  "Submit",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,

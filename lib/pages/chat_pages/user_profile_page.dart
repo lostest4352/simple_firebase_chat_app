@@ -185,7 +185,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 onPressed: () {
                   showGalleryOrCameraOptions();
                 },
-                child: StreamBuilder<Object>(
+                child: StreamBuilder(
                   stream: currentUserSnapshot,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.active) {

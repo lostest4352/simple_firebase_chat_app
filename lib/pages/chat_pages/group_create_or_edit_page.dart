@@ -34,8 +34,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
   TextEditingController textController = TextEditingController(text: '');
 
-  User? currentUser = FirebaseAuth.instance.currentUser;
-
+  // User? currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -109,7 +108,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     );
   }
 
-  // TODO replace all the copied code with proper group related code
+  // TODO replace all the copied code with proper group related code. may cause issues
   void uploadPhoto(String groupChatroomId) async {
     File? imageFile = imageFileNotifier.value;
     if (imageFile == null) {
@@ -162,8 +161,6 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     }
   }
 
-
-
   // Function to get only the users present in selectec groupChatRoom
   Future<List<UserModel>> getAllUsersInChatroom() async {
     List<UserModel> users = [];
@@ -195,8 +192,6 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     return users;
   }
 
-
-
   Future<List<UserModel>> get getAllUsersInChatroomFuture =>
       getAllUsersInChatroom();
 
@@ -216,13 +211,27 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
             Center(
               child: CupertinoButton(
                 child: CircleAvatar(
-                  radius: 60,
-                  child: Icon(
+                  radius: 40,
+                  child: const Icon(
                     Icons.person,
-                    size: 60,
+                    size: 40,
                   ),
                 ),
                 onPressed: () {},
+              ),
+            ),
+            Center(
+              child: CupertinoButton(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                color: Colors.blue,
+                onPressed: () {},
+                child: const Text(
+                  "Submit",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
 
@@ -251,7 +260,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 color: Colors.blue,
                 onPressed: () {},
                 child: const Text(
-                  "Sumbit",
+                  "Create Or Update Group",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,

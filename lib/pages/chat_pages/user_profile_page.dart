@@ -294,6 +294,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   color: const Color.fromARGB(255, 22, 176, 102),
                   onPressed: () {
+                    if (textController.text == "") {
+                      return;
+                    }
                     showDialog(
                       barrierDismissible: false,
                       context: context,

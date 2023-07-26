@@ -32,6 +32,7 @@ class CreateOrUpdateGroupChatroom {
         participants: selectedUidList,
         lastMessage: "",
         lastMessageSender: "",
+        groupName: "",
         dateTime: DateTime.now(),
       );
 

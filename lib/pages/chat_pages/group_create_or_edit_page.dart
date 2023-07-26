@@ -32,7 +32,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
   ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
 
-  TextEditingController textController = TextEditingController(text: '');
+  
 
   // User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -246,6 +246,9 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 color: const Color.fromARGB(255, 22, 176, 102),
                 onPressed: () {
+                  if (textEditingController.text == "") {
+                    return;
+                  }
                   showDialog(
                     barrierDismissible: false,
                     context: context,
@@ -255,11 +258,14 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                       );
                     },
                   );
+
+                  
+
                   FirebaseFirestore.instance
                       .collection("groupChatrooms")
                       .doc(widget.groupChatroom.groupChatRoomId)
                       .update({
-                    'groupName': textController.text,
+                    'groupName': textEditingController.text,
                   }).then((value) =>
                           Navigator.of(context, rootNavigator: true).pop());
                 },

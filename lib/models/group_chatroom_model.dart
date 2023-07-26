@@ -7,7 +7,7 @@ class GroupChatroomModel {
   String? lastMessage;
   String? lastMessageSender;
   String? groupPicture;
-  String? groupName = "";
+  String groupName;
   DateTime? dateTime;
 
   GroupChatroomModel({
@@ -16,7 +16,7 @@ class GroupChatroomModel {
     this.lastMessage,
     this.lastMessageSender,
     this.groupPicture,
-    this.groupName,
+    required this.groupName,
     this.dateTime,
   });
 

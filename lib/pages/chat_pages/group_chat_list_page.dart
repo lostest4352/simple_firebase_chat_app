@@ -142,7 +142,7 @@ class _GroupListPageState extends State<GroupListPage> {
                                   "0"),
                             ),
                             title: Text(
-                              "${groupChatroomSnapshot?[index]["lastMessageSender"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
+                              "${groupChatroomSnapshot?[index]["groupName"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
                               overflow: TextOverflow.ellipsis,
                             ),
 

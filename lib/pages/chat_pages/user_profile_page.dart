@@ -251,7 +251,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   children: [
                     CupertinoButton(
                       padding: const EdgeInsets.only(left: 10, right: 10),
-                      color: Colors.blue,
+                      color: const Color.fromARGB(255, 22, 176, 102),
                       onPressed: () {
                         uploadPhoto(userSnapshot.docs[0].reference.id);
                       },
@@ -288,7 +288,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               children: [
                 CupertinoButton(
                   padding: const EdgeInsets.only(left: 10, right: 10),
-                  color: Colors.blue,
+                  color: const Color.fromARGB(255, 22, 176, 102),
                   onPressed: () {
                     showDialog(
                       barrierDismissible: false,

@@ -211,29 +211,16 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
             Center(
               child: CupertinoButton(
                 child: CircleAvatar(
-                  radius: 40,
+                  radius: 50,
                   child: const Icon(
                     Icons.person,
-                    size: 40,
+                    size: 50,
                   ),
                 ),
                 onPressed: () {},
               ),
             ),
-            Center(
-              child: CupertinoButton(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                color: Colors.blue,
-                onPressed: () {},
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
+            
 
             Center(
               child: Padding(
@@ -257,7 +244,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
             Center(
               child: CupertinoButton(
                 padding: const EdgeInsets.only(left: 10, right: 10),
-                color: Colors.blue,
+                color: const Color.fromARGB(255, 22, 176, 102),
                 onPressed: () {},
                 child: const Text(
                   "Create Or Update Group",

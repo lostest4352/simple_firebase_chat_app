@@ -60,6 +60,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void dispose() {
+    searchController.dispose();
     // When provider is used, dont use these two dispose
     buttonsClicked.dispose();
     selectedUidList.dispose();

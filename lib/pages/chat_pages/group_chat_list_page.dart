@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class _GroupListPageState extends State<GroupListPage> {
 
                       String? formattedDate =
                           // " ${DateFormat.yMMMMd().format(date)} at ${DateFormat.jmv().format(date)}";
-                          DateFormat.jmv().format(date);
+                          DateFormat.yMMMMd().format(date);
 
                       // list of all the group chatrooms the user is in will be shown and this code will send the user to the particular group chat room that was selected
                       Map<String, dynamic> firebaseGroupChatroomDocument =
@@ -134,13 +135,25 @@ class _GroupListPageState extends State<GroupListPage> {
                           }
 
                           return ListTile(
+                            // leading: CircleAvatar(
+                            //   child: Text(groupChatroomSnapshot?[index]
+                            //               ["participants"]
+                            //           .length
+                            //           .toString() ??
+                            //       "0"),
+                            // ),
                             leading: CircleAvatar(
-                              child: Text(groupChatroomSnapshot?[index]
-                                          ["participants"]
-                                      .length
-                                      .toString() ??
-                                  "0"),
-                            ),
+                            backgroundImage:
+                                (groupChatroomSnapshot?[index]["groupPicture"] != null)
+                                    ? CachedNetworkImageProvider(
+                                        groupChatroomSnapshot?[index]["groupPicture"]  ??
+                                            "",
+                                      )
+                                    : null,
+                            child: groupChatroomSnapshot?[index]["groupPicture"]  == null
+                                ? const Icon(Icons.person)
+                                : null,
+                          ),
                             title: Text(
                               "${groupChatroomSnapshot?[index]["groupName"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
                               overflow: TextOverflow.ellipsis,

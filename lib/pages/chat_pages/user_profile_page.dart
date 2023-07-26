@@ -301,8 +301,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       barrierDismissible: false,
                       context: context,
                       builder: (context) {
-                        return const AlertDialog(
-                          title: Text("Updating.."),
+                        return AlertDialog(
+                          content: Container(
+                            padding: const EdgeInsets.all(20),
+                            child: const Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text("Updating"),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     );

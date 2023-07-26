@@ -116,19 +116,20 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   }
 
   // TODO replace all the copied code with proper group related code. may cause issues
-  void uploadPhoto(String groupChatroomId) async {
+  void uploadPhoto() async {
     File? imageFile = imageFileNotifier.value;
 
     if (imageFile == null) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text("No image selected"),
-            content: Text("Please select an image"),
-          );
-        },
-      );
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return const AlertDialog(
+      //       title: Text("No image selected"),
+      //       content: Text("Please select an image"),
+      //     );
+      //   },
+      // );
+      return;
     } else {
       showDialog(
         barrierDismissible: false,
@@ -154,7 +155,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
       UploadTask uploadTask = FirebaseStorage.instance
           .ref("groupPicture")
-          .child(groupChatroomId)
+          .child(widget.groupChatroom.groupChatRoomId ?? "")
           .putFile(imageFile);
 
       TaskSnapshot snapshot = await uploadTask;
@@ -163,7 +164,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
       await FirebaseFirestore.instance
           .collection("groupChatrooms")
-          .doc(groupChatroomId)
+          .doc(widget.groupChatroom.groupChatRoomId)
           .update({"groupPicture": imageURL}).then(
               (value) => Navigator.pop(context));
     }
@@ -203,6 +204,8 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   Future<List<UserModel>> get getAllUsersInChatroomFuture =>
       getAllUsersInChatroom();
 
+  String? get profilePicFromFirebase => widget.groupChatroom.groupPicture;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,15 +220,33 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
               height: 15,
             ),
             Center(
-              child: CupertinoButton(
-                child: CircleAvatar(
-                  radius: 50,
-                  child: const Icon(
-                    Icons.person,
-                    size: 50,
-                  ),
-                ),
-                onPressed: () {},
+              child: ListenableBuilder(
+                listenable: imageFileNotifier,
+                builder: (context, child) {
+                  return CupertinoButton(
+                    onPressed: () {
+                      showGalleryOrCameraOptions();
+                    },
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: (profilePicFromFirebase == null &&
+                              imageFileNotifier.value == null)
+                          ? null
+                          : (imageFileNotifier.value == null)
+                              ? CachedNetworkImageProvider(
+                                  profilePicFromFirebase ?? "")
+                              : FileImage(imageFileNotifier.value as File)
+                                  as ImageProvider,
+                      child: (imageFileNotifier.value == null &&
+                              profilePicFromFirebase == null)
+                          ? const Icon(
+                              Icons.person,
+                              size: 50,
+                            )
+                          : null,
+                    ),
+                  );
+                },
               ),
             ),
 
@@ -260,12 +281,24 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                     barrierDismissible: false,
                     context: context,
                     builder: (context) {
-                      return const AlertDialog(
-                        title: Text("Updating.."),
+                      return AlertDialog(
+                        content: Container(
+                          padding: const EdgeInsets.all(20),
+                          child: const Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text("Updating"),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   );
-
+                  uploadPhoto();
                   FirebaseFirestore.instance
                       .collection("groupChatrooms")
                       .doc(widget.groupChatroom.groupChatRoomId)

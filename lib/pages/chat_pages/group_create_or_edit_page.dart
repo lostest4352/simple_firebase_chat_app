@@ -115,7 +115,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     );
   }
 
-  // TODO replace all the copied code with proper group related code. may cause issues
+  // TODO : Fix two dialogs issues
   void uploadPhoto() async {
     File? imageFile = imageFileNotifier.value;
 
@@ -166,7 +166,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
           .collection("groupChatrooms")
           .doc(widget.groupChatroom.groupChatRoomId)
           .update({"groupPicture": imageURL}).then(
-              (value) => Navigator.pop(context));
+              (value) => Navigator.of(context, rootNavigator: true).pop());
     }
   }
 
@@ -277,6 +277,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                   if (textEditingController.text == "") {
                     return;
                   }
+
                   showDialog(
                     barrierDismissible: false,
                     context: context,
@@ -298,7 +299,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                       );
                     },
                   );
-                  uploadPhoto();
+
                   FirebaseFirestore.instance
                       .collection("groupChatrooms")
                       .doc(widget.groupChatroom.groupChatRoomId)
@@ -306,6 +307,8 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                     'groupName': textEditingController.text,
                   }).then((value) =>
                           Navigator.of(context, rootNavigator: true).pop());
+
+                  uploadPhoto();
                 },
                 child: const Text(
                   "Submit",

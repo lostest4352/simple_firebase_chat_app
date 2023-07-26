@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
-import 'package:simple_firebase1/pages/chat_pages/group_create_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
 import '../../models/user_model.dart';

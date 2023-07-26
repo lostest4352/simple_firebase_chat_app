@@ -6,7 +6,8 @@ class GroupChatroomModel {
   List participants = [];
   String? lastMessage;
   String? lastMessageSender;
-
+  String? groupPicture;
+  String? groupName = "";
   DateTime? dateTime;
 
   GroupChatroomModel({
@@ -14,6 +15,8 @@ class GroupChatroomModel {
     required this.participants,
     this.lastMessage,
     this.lastMessageSender,
+    this.groupPicture,
+    this.groupName,
     this.dateTime,
   });
 
@@ -23,6 +26,8 @@ class GroupChatroomModel {
       'participants': participants,
       'lastMessage': lastMessage,
       'lastMessageSender': lastMessageSender,
+      'groupPicture': groupPicture,
+      'groupName': groupName,
       'dateTime': dateTime?.millisecondsSinceEpoch,
     };
   }
@@ -33,9 +38,9 @@ class GroupChatroomModel {
       participants: List.from(map['participants']),
       lastMessage: map['lastMessage'],
       lastMessageSender: map['lastMessageSender'],
-      dateTime: map['dateTime'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['dateTime'])
-          : null,
+      groupPicture: map['groupPicture'],
+      groupName: map['groupName'],
+      dateTime: map['dateTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['dateTime']) : null,
     );
   }
 

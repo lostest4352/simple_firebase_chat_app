@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 
@@ -25,19 +30,141 @@ class GroupCreatePage extends StatefulWidget {
 class _GroupCreatePageState extends State<GroupCreatePage> {
   final textEditingController = TextEditingController();
 
+  ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
+
+  TextEditingController textController = TextEditingController(text: '');
+
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
+
   @override
   void initState() {
     super.initState();
     textEditingController.text;
+    //TODO Initstate here with group name later
   }
 
   @override
   void dispose() {
     textEditingController.dispose();
+    imageFileNotifier.dispose();
     super.dispose();
   }
 
   //
+  void selectImage(ImageSource source) async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? selectedImage = await imagePicker.pickImage(source: source);
+
+    if (selectedImage != null) {
+      cropImage(selectedImage);
+    }
+  }
+
+  void cropImage(XFile selectedImage) async {
+    final imageCropper = ImageCropper();
+
+    CroppedFile? croppedImage = await imageCropper.cropImage(
+      sourcePath: selectedImage.path,
+      compressQuality: 20,
+    );
+
+    if (croppedImage != null) {
+      // setState(() {
+      //   imageFile = File(croppedImage.path);
+      // });
+      imageFileNotifier.value = File(croppedImage.path);
+    }
+  }
+
+  void showGalleryOrCameraOptions() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Upload profile picture"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  selectImage(ImageSource.gallery);
+                },
+                leading: const Icon(Icons.photo),
+                title: const Text("Select from gallery"),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  selectImage(ImageSource.camera);
+                },
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Select from camera"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // TODO replace all the copied code with proper group related code
+  void uploadPhoto(String groupChatroomId) async {
+    File? imageFile = imageFileNotifier.value;
+    if (imageFile == null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text("No image selected"),
+            content: Text("Please select an image"),
+          );
+        },
+      );
+    } else {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Container(
+              padding: const EdgeInsets.all(20),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text("Uploading Image"),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      UploadTask uploadTask = FirebaseStorage.instance
+          .ref("groupPicture")
+          .child(groupChatroomId)
+          .putFile(imageFile);
+
+      TaskSnapshot snapshot = await uploadTask;
+
+      String? imageURL = await snapshot.ref.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection("groupChatrooms")
+          .doc(groupChatroomId)
+          .update({"groupPicture": imageURL}).then(
+              (value) => Navigator.pop(context));
+    }
+  }
+
+
+
+  // Function to get only the users present in selectec groupChatRoom
   Future<List<UserModel>> getAllUsersInChatroom() async {
     List<UserModel> users = [];
 
@@ -67,6 +194,8 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     }
     return users;
   }
+
+
 
   Future<List<UserModel>> get getAllUsersInChatroomFuture =>
       getAllUsersInChatroom();
@@ -122,7 +251,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 color: Colors.blue,
                 onPressed: () {},
                 child: const Text(
-                  "Submit",
+                  "Sumbit",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,

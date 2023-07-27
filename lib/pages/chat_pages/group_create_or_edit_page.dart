@@ -116,6 +116,8 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   }
 
   void uploadData() async {
+    // TODO Make barrierdismissable false when everything works
+
     CreateOrUpdateGroupChatroom createOrUpdateGroupChatroom =
         CreateOrUpdateGroupChatroom();
 
@@ -126,14 +128,16 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
     if (textEditingController.text == "") {
       return;
+    } else {
+      FirebaseFirestore.instance
+          .collection("groupChatrooms")
+          .doc(groupChatroomModel?.groupChatRoomId)
+          .update({
+        'groupName': textEditingController.text,
+      }).then((value) {
+        Navigator.of(context, rootNavigator: true).pop();
+      });
     }
-
-    FirebaseFirestore.instance
-        .collection("groupChatrooms")
-        .doc(groupChatroomModel?.groupChatRoomId)
-        .update({
-      'groupName': textEditingController.text,
-    });
 
     // Code to upload photo
     File? imageFile = imageFileNotifier.value;
@@ -141,29 +145,6 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     if (imageFile == null) {
       return;
     } else {
-      if (!mounted) return;
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Container(
-              padding: const EdgeInsets.all(20),
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text("Updating"),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-
       UploadTask uploadTask = FirebaseStorage.instance
           .ref("groupPicture")
           .child(groupChatroomModel?.groupChatRoomId ?? "")
@@ -176,9 +157,11 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
       await FirebaseFirestore.instance
           .collection("groupChatrooms")
           .doc(groupChatroomModel?.groupChatRoomId)
-          .update({"groupPicture": imageURL});
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
+          .update({"groupPicture": imageURL})
+          // .then((value) {
+        // Navigator.of(context, rootNavigator: true).pop();
+      // })
+      ;
     }
   }
 
@@ -257,7 +240,8 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                         },
                         child: CircleAvatar(
                           radius: 50,
-                          backgroundImage: (profilePicFromFirebase == "" &&
+                          backgroundImage: ((profilePicFromFirebase == "" ||
+                                      profilePicFromFirebase == null) &&
                                   imageFileNotifier.value == null)
                               ? null
                               : (imageFileNotifier.value == null)
@@ -265,8 +249,9 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                                       profilePicFromFirebase ?? "")
                                   : FileImage(imageFileNotifier.value as File)
                                       as ImageProvider,
-                          child: (imageFileNotifier.value == null &&
-                                  profilePicFromFirebase == "")
+                          child: ((profilePicFromFirebase == "" ||
+                                      profilePicFromFirebase == null) &&
+                                  imageFileNotifier.value == null)
                               ? const Icon(
                                   Icons.person,
                                   size: 50,
@@ -304,6 +289,28 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 color: const Color.fromARGB(255, 22, 176, 102),
                 onPressed: () {
+                  showDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: Container(
+                          padding: const EdgeInsets.all(20),
+                          child: const Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text("Updating"),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+
                   uploadData();
                 },
                 child: const Text(

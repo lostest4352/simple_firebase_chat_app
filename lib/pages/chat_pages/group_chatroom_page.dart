@@ -274,7 +274,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                                         //   );
                                         // }
 
-                                        // This gets the user info of only the sender.
+                                        // This gets the user info of only the sender. Since one listtile has only one user so the 0th position will give the correct profile pic and username data
                                         final selectedUserSnapshot =
                                             snapshot.data?.docs.where((docs) {
                                           return docs["uid"] ==

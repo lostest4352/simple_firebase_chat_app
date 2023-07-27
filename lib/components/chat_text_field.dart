@@ -34,7 +34,9 @@ class _ChatTextFieldState extends State<ChatTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      maxLines: null,
+      minLines: 1,
+      keyboardType: TextInputType.multiline,
+      maxLines: 8,
       controller: textController,
       onTapOutside: (event) {
         FocusManager.instance.primaryFocus?.unfocus();

@@ -357,7 +357,10 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                       onTapOutside: (event) {
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
-                      maxLines: null,
+                      // maxLines: null,
+                      minLines: 1,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 8,
                       controller: messageController,
                       decoration: const InputDecoration(
                         border: InputBorder.none,

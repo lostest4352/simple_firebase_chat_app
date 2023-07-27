@@ -155,13 +155,13 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
       String? imageURL = await taskSnapshot.ref.getDownloadURL();
 
       await FirebaseFirestore.instance
-          .collection("groupChatrooms")
-          .doc(groupChatroomModel?.groupChatRoomId)
-          .update({"groupPicture": imageURL})
+              .collection("groupChatrooms")
+              .doc(groupChatroomModel?.groupChatRoomId)
+              .update({"groupPicture": imageURL})
           // .then((value) {
-        // Navigator.of(context, rootNavigator: true).pop();
-      // })
-      ;
+          // Navigator.of(context, rootNavigator: true).pop();
+          // })
+          ;
     }
   }
 
@@ -270,7 +270,9 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
                 child: TextField(
                   controller: textEditingController,
-                  maxLines: null,
+                  minLines: 1,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 8,
                   onTapOutside: (event) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   },

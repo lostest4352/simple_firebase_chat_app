@@ -275,7 +275,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
               height: 40,
             ),
             TextField(
-              maxLines: null,
+              minLines: 1,
+              keyboardType: TextInputType.multiline,
+              maxLines: 8,
               onTapOutside: (event) {
                 FocusManager.instance.primaryFocus?.unfocus();
               },

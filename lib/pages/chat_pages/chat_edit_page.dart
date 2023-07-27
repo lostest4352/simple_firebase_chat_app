@@ -62,7 +62,9 @@ class _EditPageState extends State<EditPage> {
           ),
           TextFormField(
             // initialValue: context.watch<ChatProvider>().message[widget.index],
-            maxLines: null,
+            minLines: 1,
+            keyboardType: TextInputType.multiline,
+            maxLines: 8,
             controller: textController,
             onTapOutside: (event) {
               FocusManager.instance.primaryFocus?.unfocus();

@@ -27,12 +27,7 @@ class _HomePageState extends State<HomePage> {
     await FirebaseAuth.instance.signOut();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    UserModel? userModel = context.watch<UserProvider?>()?.getUser;
-    debugPrint(userModel?.username);
-
-    Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
+  Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
         .collection("chatrooms")
         // .orderBy("dateTime", descending: true)
         .snapshots();
@@ -41,6 +36,15 @@ class _HomePageState extends State<HomePage> {
         .collection("users")
         .orderBy("username")
         .snapshots();
+
+  UserModel? get userModel => context.watch<UserProvider?>()?.getUser;
+
+  @override
+  Widget build(BuildContext context) {
+    
+    debugPrint(userModel?.username);
+
+    
 
     // Code when stream is used instead of provider
     // Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance

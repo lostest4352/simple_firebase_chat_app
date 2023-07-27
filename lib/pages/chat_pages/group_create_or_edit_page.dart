@@ -11,16 +11,19 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 
+import '../../firebase_helpers/group_chatroom_create_or_update.dart';
 import '../../models/user_model.dart';
 
 class GroupCreatePage extends StatefulWidget {
-  final GroupChatroomModel groupChatroom;
+  // final GroupChatroomModel groupChatroom;
   final User currentUser;
+  final List<dynamic> selectedUidList;
 
   const GroupCreatePage({
     Key? key,
-    required this.groupChatroom,
+    // required this.groupChatroom,
     required this.currentUser,
+    required this.selectedUidList,
   }) : super(key: key);
 
   @override
@@ -32,20 +35,17 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
   ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
 
-  // User? currentUser = FirebaseAuth.instance.currentUser;
-
   @override
   void initState() {
     super.initState();
     textEditingController.text;
     FirebaseFirestore.instance
         .collection("groupChatrooms")
-        .where("groupChatRoomId",
-            isEqualTo: widget.groupChatroom.groupChatRoomId)
+        .where("participants", isEqualTo: widget.selectedUidList)
         .get()
         .then((snapshot) {
       for (final doc in snapshot.docs) {
-        textEditingController.text = doc["groupName"];
+        textEditingController.text = doc["groupName"] ?? "";
       }
     });
   }
@@ -115,22 +115,33 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
     );
   }
 
-  // TODO : Fix two dialogs issues
-  void uploadPhoto() async {
+  void uploadData() async {
+    CreateOrUpdateGroupChatroom createOrUpdateGroupChatroom =
+        CreateOrUpdateGroupChatroom();
+
+    Future<GroupChatroomModel?> getGroupChatroomModel =
+        createOrUpdateGroupChatroom.getGroupChatroom(widget.selectedUidList);
+
+    GroupChatroomModel? groupChatroomModel = await getGroupChatroomModel;
+
+    if (textEditingController.text == "") {
+      return;
+    }
+
+    FirebaseFirestore.instance
+        .collection("groupChatrooms")
+        .doc(groupChatroomModel?.groupChatRoomId)
+        .update({
+      'groupName': textEditingController.text,
+    });
+
+    // Code to upload photo
     File? imageFile = imageFileNotifier.value;
 
     if (imageFile == null) {
-      // showDialog(
-      //   context: context,
-      //   builder: (context) {
-      //     return const AlertDialog(
-      //       title: Text("No image selected"),
-      //       content: Text("Please select an image"),
-      //     );
-      //   },
-      // );
       return;
     } else {
+      if (!mounted) return;
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -145,7 +156,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                   SizedBox(
                     height: 20,
                   ),
-                  Text("Uploading Image"),
+                  Text("Updating"),
                 ],
               ),
             ),
@@ -155,18 +166,19 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
 
       UploadTask uploadTask = FirebaseStorage.instance
           .ref("groupPicture")
-          .child(widget.groupChatroom.groupChatRoomId ?? "")
+          .child(groupChatroomModel?.groupChatRoomId ?? "")
           .putFile(imageFile);
 
-      TaskSnapshot snapshot = await uploadTask;
+      TaskSnapshot taskSnapshot = await uploadTask;
 
-      String? imageURL = await snapshot.ref.getDownloadURL();
+      String? imageURL = await taskSnapshot.ref.getDownloadURL();
 
       await FirebaseFirestore.instance
           .collection("groupChatrooms")
-          .doc(widget.groupChatroom.groupChatRoomId)
-          .update({"groupPicture": imageURL}).then(
-              (value) => Navigator.of(context, rootNavigator: true).pop());
+          .doc(groupChatroomModel?.groupChatRoomId)
+          .update({"groupPicture": imageURL});
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
     }
   }
 
@@ -174,17 +186,9 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   Future<List<UserModel>> getAllUsersInChatroom() async {
     List<UserModel> users = [];
 
-    final groupChatroomDocs = await FirebaseFirestore.instance
-        .collection("groupChatrooms")
-        .doc(widget.groupChatroom.groupChatRoomId)
-        .get();
-
-    // final List<String> participantsIds =
-    //     List<String>.from(groupChatroomDocs.data()?["participants"]);
-
     List<String> participantsIds = [];
-    List groupChatRoomParticipantsIds =
-        groupChatroomDocs.data()?["participants"];
+    List groupChatRoomParticipantsIds = widget.selectedUidList;
+
     for (final chatRoomParticipantId in groupChatRoomParticipantsIds) {
       participantsIds.add(chatRoomParticipantId);
     }
@@ -204,10 +208,15 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   Future<List<UserModel>> get getAllUsersInChatroomFuture =>
       getAllUsersInChatroom();
 
-  String? get profilePicFromFirebase => widget.groupChatroom.groupPicture;
+  Future<QuerySnapshot>? get groupChatroomSnapshot => FirebaseFirestore.instance
+      .collection("groupChatrooms")
+      .where("participants", isEqualTo: widget.selectedUidList)
+      .get();
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("list exists in group page: ${widget.selectedUidList}");
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create or Edit group"),
@@ -219,35 +228,56 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
             const SizedBox(
               height: 15,
             ),
-            Center(
-              child: ListenableBuilder(
-                listenable: imageFileNotifier,
-                builder: (context, child) {
-                  return CupertinoButton(
-                    onPressed: () {
-                      showGalleryOrCameraOptions();
+
+            FutureBuilder(
+              future: groupChatroomSnapshot,
+              builder: (context, snapshot) {
+                // if (!snapshot.hasData) {
+                //   return const Center(
+                //     child: CircularProgressIndicator(),
+                //   );
+                // }
+                QuerySnapshot? groupSnapshot = snapshot.data;
+                String? profilePicFromFirebase = "";
+                // groupSnapshot?.docs[0]["groupPicture"] ??
+                //  "";
+
+                if (groupSnapshot != null && groupSnapshot.docs.isNotEmpty) {
+                  profilePicFromFirebase =
+                      groupSnapshot.docs[0]["groupPicture"];
+                }
+
+                return Center(
+                  child: ListenableBuilder(
+                    listenable: imageFileNotifier,
+                    builder: (context, child) {
+                      return CupertinoButton(
+                        onPressed: () {
+                          showGalleryOrCameraOptions();
+                        },
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: (profilePicFromFirebase == "" &&
+                                  imageFileNotifier.value == null)
+                              ? null
+                              : (imageFileNotifier.value == null)
+                                  ? CachedNetworkImageProvider(
+                                      profilePicFromFirebase ?? "")
+                                  : FileImage(imageFileNotifier.value as File)
+                                      as ImageProvider,
+                          child: (imageFileNotifier.value == null &&
+                                  profilePicFromFirebase == "")
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                )
+                              : null,
+                        ),
+                      );
                     },
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: (profilePicFromFirebase == null &&
-                              imageFileNotifier.value == null)
-                          ? null
-                          : (imageFileNotifier.value == null)
-                              ? CachedNetworkImageProvider(
-                                  profilePicFromFirebase ?? "")
-                              : FileImage(imageFileNotifier.value as File)
-                                  as ImageProvider,
-                      child: (imageFileNotifier.value == null &&
-                              profilePicFromFirebase == null)
-                          ? const Icon(
-                              Icons.person,
-                              size: 50,
-                            )
-                          : null,
-                    ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
 
             Center(
@@ -274,41 +304,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 color: const Color.fromARGB(255, 22, 176, 102),
                 onPressed: () {
-                  if (textEditingController.text == "") {
-                    return;
-                  }
-
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: Container(
-                          padding: const EdgeInsets.all(20),
-                          child: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CircularProgressIndicator(),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text("Updating"),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-
-                  FirebaseFirestore.instance
-                      .collection("groupChatrooms")
-                      .doc(widget.groupChatroom.groupChatRoomId)
-                      .update({
-                    'groupName': textEditingController.text,
-                  }).then((value) =>
-                          Navigator.of(context, rootNavigator: true).pop());
-
-                  uploadPhoto();
+                  uploadData();
                 },
                 child: const Text(
                   "Submit",

@@ -143,32 +143,39 @@ class _GroupListPageState extends State<GroupListPage> {
                             //       "0"),
                             // ),
                             leading: CircleAvatar(
-                            backgroundImage:
-                                (groupChatroomSnapshot?[index]["groupPicture"] != null)
-                                    ? CachedNetworkImageProvider(
-                                        groupChatroomSnapshot?[index]["groupPicture"]  ??
-                                            "",
-                                      )
-                                    : null,
-                            child: groupChatroomSnapshot?[index]["groupPicture"]  == null
-                                ? const Icon(Icons.person)
-                                : null,
-                          ),
+                              backgroundImage: (groupChatroomSnapshot?[index]
+                                          ["groupPicture"] !=
+                                      null)
+                                  ? CachedNetworkImageProvider(
+                                      groupChatroomSnapshot?[index]
+                                              ["groupPicture"] ??
+                                          "",
+                                    )
+                                  : null,
+                              child: groupChatroomSnapshot?[index]
+                                          ["groupPicture"] ==
+                                      null
+                                  ? const Icon(Icons.person)
+                                  : null,
+                            ),
                             title: Text(
-                              "${groupChatroomSnapshot?[index]["groupName"]}: ${groupChatroomSnapshot?[index]["lastMessage"]}",
+                              groupChatroomSnapshot?[index]["groupName"],
                               overflow: TextOverflow.ellipsis,
                             ),
 
                             // subtitle: Text(formattedDate),
 
-                            subtitle:
-                                // The join method removes bracket
-                                // Text(allowedUsernames.join(", ").toString()),
-                                Text(allowedUsers
-                                    .map((user) => user.username)
-                                    .join(", ")),
+                            subtitle: Text(
+                              groupChatroomSnapshot?[index]["lastMessage"],
+                              overflow: TextOverflow.ellipsis,
+                            ),
+
+                            // Text(allowedUsers
+                            //     .map((user) => user.username)
+                            //     .join(", ")),
 
                             trailing: Text(formattedDate),
+
                             onTap: () {
                               if (!mounted) return;
                               Navigator.push(

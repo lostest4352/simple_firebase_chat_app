@@ -3,8 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/firebase_helpers/group_chatroom_create_or_update.dart';
-import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
@@ -81,6 +79,9 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: TextFormField(
+          onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
           controller: searchController,
           decoration: const InputDecoration(
             hintText: 'Search the users',
@@ -130,44 +131,23 @@ class _SearchPageState extends State<SearchPage> {
                             padding: const EdgeInsets.only(right: 8),
                             child: ElevatedButton(
                               onPressed: () async {
-                                CreateOrUpdateGroupChatroom
-                                    createOrUpdateGroupChatroom =
-                                    CreateOrUpdateGroupChatroom();
+                                
 
-                                Future<GroupChatroomModel?>
-                                    getGroupChatroomModel =
-                                    createOrUpdateGroupChatroom
-                                        .getGroupChatroom(
-                                            selectedUidList.value);
-
-                                GroupChatroomModel groupChatroomModel =
-                                    await getGroupChatroomModel
-                                        as GroupChatroomModel;
-
-                                if (!mounted) return;
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) {
-                                //       return GroupChatroomPage(
-                                //         groupChatroom: groupChatroomModel,
-                                //         currentUser: currentUser as User,
-                                //       );
-                                //     },
-                                //   ),
-                                // );
+                                // if (!mounted) return;
+                                
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
                                       return GroupCreatePage(
-                                        groupChatroom: groupChatroomModel,
+                                        // groupChatroom: groupChatroomModel,
                                         currentUser: currentUser as User,
-                                        // otherUserSnapshot: otherUserSnapshot,
+                                        selectedUidList: selectedUidList.value,
                                       );
                                     },
                                   ),
                                 );
+                                debugPrint("list exists: ${selectedUidList.value.toString()}");
                               },
                               child: const Text('Create group'),
                             ),

@@ -132,13 +132,31 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          title:  Text(widget.groupChatroom.groupName),
+          title: Text(widget.groupChatroom.groupName),
           actions: [
-            IconButton(
-              onPressed: () {
+            // IconButton(
+            //   onPressed: () {
+            //     scaffoldKey.currentState?.openEndDrawer();
+            //   },
+            //   icon: const Icon(Icons.person),
+            // ),
+            InkWell(
+              onTap: () {
                 scaffoldKey.currentState?.openEndDrawer();
               },
-              icon: const Icon(Icons.person),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundImage: (widget.groupChatroom.groupPicture != null)
+                      ? CachedNetworkImageProvider(
+                          widget.groupChatroom.groupPicture ?? "",
+                        )
+                      : null,
+                  child: widget.groupChatroom.groupPicture == null
+                      ? const Icon(Icons.person)
+                      : null,
+                ),
+              ),
             ),
           ],
         ),
@@ -146,9 +164,22 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
           width: 250,
           child: Column(
             children: [
-              const Card(
+              Card(
                 child: ListTile(
-                  title: Text("Participants"),
+                  leading: CircleAvatar(
+                    backgroundImage: (widget.groupChatroom.groupPicture != null)
+                        ? CachedNetworkImageProvider(
+                            widget.groupChatroom.groupPicture ?? "",
+                          )
+                        : null,
+                    child: widget.groupChatroom.groupPicture == null
+                        ? const Icon(Icons.person)
+                        : null,
+                  ),
+                  title: Text(
+                    widget.groupChatroom.groupName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
               Card(
@@ -161,7 +192,8 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
                         builder: (context) {
                           return GroupCreatePage(
                               currentUser: widget.currentUser as User,
-                              selectedUidList: widget.groupChatroom.participants);
+                              selectedUidList:
+                                  widget.groupChatroom.participants);
                         },
                       ),
                     );

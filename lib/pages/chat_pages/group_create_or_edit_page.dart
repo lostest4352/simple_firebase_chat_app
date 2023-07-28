@@ -17,7 +17,7 @@ import '../../models/user_model.dart';
 class GroupCreatePage extends StatefulWidget {
   // final GroupChatroomModel groupChatroom;
   final User currentUser;
-  final List<dynamic> selectedUidList;
+  final List selectedUidList;
 
   const GroupCreatePage({
     Key? key,
@@ -88,7 +88,7 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Upload profile picture"),
+          title: const Text("Upload group picture"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -116,8 +116,6 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   }
 
   void uploadData() async {
-    // TODO Make barrierdismissable false when everything works
-
     if (textEditingController.text.trim() == "") {
       Navigator.of(context, rootNavigator: true).pop();
     } else {

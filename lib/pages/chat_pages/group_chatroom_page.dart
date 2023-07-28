@@ -79,7 +79,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       widget.groupChatroom.lastMessageSender =
           currentUserProvider?.username ?? "";
 
-      // update the chatroom
+      // update the chatroom. This is the new message so .set is used. In something not new, .set would override the collection if the particular thing already exists. In those case use .update
       FirebaseFirestore.instance
           .collection("groupChatrooms")
           .doc(widget.groupChatroom.groupChatRoomId)

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -131,7 +132,7 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          title: const Text("Your messages"),
+          title:  Text(widget.groupChatroom.groupName),
           actions: [
             IconButton(
               onPressed: () {
@@ -148,6 +149,23 @@ class _GroupChatroomPageState extends State<GroupChatroomPage> {
               const Card(
                 child: ListTile(
                   title: Text("Participants"),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  title: const Text("Edit group info"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return GroupCreatePage(
+                              currentUser: widget.currentUser as User,
+                              selectedUidList: widget.groupChatroom.participants);
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
               FutureBuilder(

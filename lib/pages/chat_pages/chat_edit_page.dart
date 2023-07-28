@@ -34,7 +34,7 @@ class _EditPageState extends State<EditPage> {
   }
 
   editFunction(int index) {
-    if (textController.text.trim() != '') {
+    if (textController.text.trim() != "") {
       context.read<ChatProvider>().editMessage(index, textController.text);
     }
     FocusManager.instance.primaryFocus?.unfocus();

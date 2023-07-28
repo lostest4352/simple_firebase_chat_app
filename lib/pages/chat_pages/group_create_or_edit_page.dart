@@ -118,17 +118,17 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
   void uploadData() async {
     // TODO Make barrierdismissable false when everything works
 
-    CreateOrUpdateGroupChatroom createOrUpdateGroupChatroom =
-        CreateOrUpdateGroupChatroom();
-
-    Future<GroupChatroomModel?> getGroupChatroomModel =
-        createOrUpdateGroupChatroom.getGroupChatroom(widget.selectedUidList);
-
-    GroupChatroomModel? groupChatroomModel = await getGroupChatroomModel;
-
-    if (textEditingController.text == "") {
-      return;
+    if (textEditingController.text.trim() == "") {
+      Navigator.of(context, rootNavigator: true).pop();
     } else {
+      CreateOrUpdateGroupChatroom createOrUpdateGroupChatroom =
+          CreateOrUpdateGroupChatroom();
+
+      Future<GroupChatroomModel?> getGroupChatroomModel =
+          createOrUpdateGroupChatroom.getGroupChatroom(widget.selectedUidList);
+
+      GroupChatroomModel? groupChatroomModel = await getGroupChatroomModel;
+
       FirebaseFirestore.instance
           .collection("groupChatrooms")
           .doc(groupChatroomModel?.groupChatRoomId)
@@ -137,31 +137,31 @@ class _GroupCreatePageState extends State<GroupCreatePage> {
       }).then((value) {
         Navigator.of(context, rootNavigator: true).pop();
       });
-    }
 
-    // Code to upload photo
-    File? imageFile = imageFileNotifier.value;
+      // Code to upload photo
+      File? imageFile = imageFileNotifier.value;
 
-    if (imageFile == null) {
-      return;
-    } else {
-      UploadTask uploadTask = FirebaseStorage.instance
-          .ref("groupPicture")
-          .child(groupChatroomModel?.groupChatRoomId ?? "")
-          .putFile(imageFile);
+      if (imageFile == null) {
+        return;
+      } else {
+        UploadTask uploadTask = FirebaseStorage.instance
+            .ref("groupPicture")
+            .child(groupChatroomModel?.groupChatRoomId ?? "")
+            .putFile(imageFile);
 
-      TaskSnapshot taskSnapshot = await uploadTask;
+        TaskSnapshot taskSnapshot = await uploadTask;
 
-      String? imageURL = await taskSnapshot.ref.getDownloadURL();
+        String? imageURL = await taskSnapshot.ref.getDownloadURL();
 
-      await FirebaseFirestore.instance
-              .collection("groupChatrooms")
-              .doc(groupChatroomModel?.groupChatRoomId)
-              .update({"groupPicture": imageURL})
-          // .then((value) {
-          // Navigator.of(context, rootNavigator: true).pop();
-          // })
-          ;
+        await FirebaseFirestore.instance
+                .collection("groupChatrooms")
+                .doc(groupChatroomModel?.groupChatRoomId)
+                .update({"groupPicture": imageURL})
+            // .then((value) {
+            // Navigator.of(context, rootNavigator: true).pop();
+            // })
+            ;
+      }
     }
   }
 

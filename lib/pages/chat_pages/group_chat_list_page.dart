@@ -7,6 +7,9 @@ import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
 
+//
+enum ButtonItem { settings, logout }
+
 class GroupListPage extends StatefulWidget {
   const GroupListPage({super.key});
 
@@ -15,6 +18,8 @@ class GroupListPage extends StatefulWidget {
 }
 
 class _GroupListPageState extends State<GroupListPage> {
+  ButtonItem? selectedMenu;
+
   User? currentUser = FirebaseAuth.instance.currentUser;
 
   // UserModel? get currentProviderUser => context.read<UserModel?>();
@@ -32,6 +37,34 @@ class _GroupListPageState extends State<GroupListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("List of messages"),
+        actions: [
+          PopupMenuButton<ButtonItem>(
+            initialValue: selectedMenu,
+            onSelected: (ButtonItem item) {
+              setState(() {
+                selectedMenu = item;
+              });
+            },
+            itemBuilder: (context) {
+              return <PopupMenuEntry<ButtonItem>>[
+                PopupMenuItem(
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                  value: ButtonItem.logout,
+                  child: const Text("Logout"),
+                ),
+                PopupMenuItem(
+                  onTap: () {
+                    
+                  },
+                  value: ButtonItem.settings,
+                  child: const Text("Settings"),
+                ),
+              ];
+            },
+          )
+        ],
       ),
       body: Column(
         children: [

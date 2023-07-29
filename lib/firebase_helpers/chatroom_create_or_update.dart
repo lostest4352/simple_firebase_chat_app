@@ -32,10 +32,10 @@ class CreateOrUpdateChatRoom {
       ChatRoomModel newChatRoom = ChatRoomModel(
         chatRoomId: uuid.v1(),
         lastMessage: "",
-        participants: {
-          currentUser?.uid as String: true,
-          targetUser.uid.toString(): true,
-        },
+        participants: [
+          currentUser?.uid as String,
+          targetUser.uid.toString(),
+        ],
       );
 
       await FirebaseFirestore.instance

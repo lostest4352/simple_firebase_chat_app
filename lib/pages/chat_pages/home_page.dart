@@ -229,6 +229,7 @@ class _HomePageState extends State<HomePage> {
                   }),
             ),
           ),
+          // Old code messages not deleted to not forget
           // Expanded(
           //   child: Center(
           //     child: StreamBuilder(
@@ -371,9 +372,7 @@ class _HomePageState extends State<HomePage> {
           //     ),
           //   ),
           // ),
-          const SizedBox(
-            height: 5,
-          ),
+          
         ],
       ),
     );

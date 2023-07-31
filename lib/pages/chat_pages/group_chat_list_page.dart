@@ -36,7 +36,7 @@ class _GroupListPageState extends State<GroupListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("List of messages"),
+        title: const Text("Group chat messages"),
         actions: [
           PopupMenuButton<ButtonItem>(
             initialValue: selectedMenu,

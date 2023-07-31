@@ -4,9 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/main.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
+
+import '../../firebase_helpers/chatroom_create_or_update.dart';
+import '../../models/chatroom_model.dart';
+import 'chat_room_page.dart';
+
+enum ButtonItem { settings, logout }
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -18,6 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  ButtonItem? selectedMenu;
   User? currentUser = FirebaseAuth.instance.currentUser;
 
   void signOutFromFirebase() async {
@@ -79,25 +85,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          IconButton(
-            enableFeedback: true,
-            onPressed: () {
-              signOutFromFirebase();
-              Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const MyApp();
-                  },
-                ),
-              );
+          PopupMenuButton<ButtonItem>(
+            initialValue: selectedMenu,
+            onSelected: (ButtonItem item) {
+              setState(() {
+                selectedMenu = item;
+              });
             },
-            icon: const Icon(
-              Icons.logout,
-              semanticLabel: 'Logout',
-            ),
-          ),
+            itemBuilder: (context) {
+              return <PopupMenuEntry<ButtonItem>>[
+                PopupMenuItem(
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                  value: ButtonItem.logout,
+                  child: const Text("Logout"),
+                ),
+                PopupMenuItem(
+                  onTap: () {},
+                  value: ButtonItem.settings,
+                  child: const Text("Settings"),
+                ),
+              ];
+            },
+          )
         ],
       ),
       body: Column(
@@ -155,26 +166,41 @@ class _HomePageState extends State<HomePage> {
                                     .contains(docs["uid"]);
                               }).toList();
 
-                              
-
                               return ListTile(
                                 onTap: () async {
-                                  // TODO: get only one user. Using index instead of 0 is a mistake
+                                  // Only one data for a listtile so its always 0
+                                  Map<String, dynamic> userDataFromFirebase =
+                                      otherUserSnapshot?[0].data()
+                                          as Map<String, dynamic>;
 
-                                  // if (!mounted) return;
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) {
-                                  //       return ChatRoomPage(
-                                  //         chatroom:
-                                  //             chatRoomModel as ChatRoomModel,
-                                  //         currentUser: currentUser as User,
-                                  //         targetUser: targetUser,
-                                  //       );
-                                  //     },
-                                  //   ),
-                                  // );
+                                  // After above function seperates each user with index the data is set to UserModel
+                                  UserModel targetUser =
+                                      UserModel.fromMap(userDataFromFirebase);
+
+                                  // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users. If we do it outside onTap, the chatroom of all visible users will be created
+                                  CreateOrUpdateChatRoom
+                                      createOrUpdateChatRoom =
+                                      CreateOrUpdateChatRoom();
+                                  Future<ChatRoomModel?> getChatRoomModel =
+                                      createOrUpdateChatRoom
+                                          .getChatRoomModel(targetUser);
+                                  ChatRoomModel? chatRoomModel =
+                                      await getChatRoomModel;
+                                  //
+                                  if (!mounted) return;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return ChatRoomPage(
+                                          chatroom:
+                                              chatRoomModel as ChatRoomModel,
+                                          currentUser: currentUser as User,
+                                          targetUser: targetUser,
+                                        );
+                                      },
+                                    ),
+                                  );
                                 },
                                 leading: CircleAvatar(
                                   backgroundImage: (otherUserSnapshot?[0]

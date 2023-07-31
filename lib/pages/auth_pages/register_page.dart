@@ -122,7 +122,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
         await addUserDetails(user, credential.user?.uid ?? '');
       } on FirebaseAuthException catch (e) {
-        Navigator.pop(context);
+        Navigator.of(context, rootNavigator: true)
+            .popUntil((route) => route.isFirst);
         return showDialogPopup(e.code);
       }
     }

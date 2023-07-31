@@ -13,10 +13,15 @@ class CreateOrUpdateChatRoom {
   Uuid uuid = const Uuid();
 
   Future<ChatRoomModel?> getChatRoomModel(UserModel targetUser) async {
+    final uidList = [currentUser?.uid, targetUser.uid];
+    uidList.sort();
+    
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("chatrooms")
-        .where("participants.${currentUser?.uid}", isEqualTo: true)
-        .where("participants.${targetUser.uid}", isEqualTo: true)
+
+        // .where("participants.${currentUser?.uid}", isEqualTo: true)
+        // .where("participants.${targetUser.uid}", isEqualTo: true)
+        .where("participants", isEqualTo: uidList)
         .get();
 
     if (snapshot.docs.isNotEmpty) {
@@ -31,11 +36,9 @@ class CreateOrUpdateChatRoom {
       // create a new chatroom
       ChatRoomModel newChatRoom = ChatRoomModel(
         chatRoomId: uuid.v1(),
+        dateTime: DateTime.now(),
         lastMessage: "",
-        participants: [
-          currentUser?.uid as String,
-          targetUser.uid.toString(),
-        ],
+        participants: uidList,
       );
 
       await FirebaseFirestore.instance

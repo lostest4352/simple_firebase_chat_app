@@ -3,9 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
+import '../../firebase_helpers/chatroom_create_or_update.dart';
+import '../../models/chatroom_model.dart';
 import '../../models/user_model.dart';
 
 class SearchPage extends StatefulWidget {
@@ -80,8 +83,8 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: TextFormField(
           onTapOutside: (event) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           controller: searchController,
           decoration: const InputDecoration(
             hintText: 'Search the users',
@@ -101,6 +104,7 @@ class _SearchPageState extends State<SearchPage> {
             );
           }
 
+          // TODO Use different alluserSnapshot for chatroompage
           final otherUserSnapshot = snapshot.data?.docs.where((docs) {
             return docs["uid"] != currentUser?.uid;
           }).toList();
@@ -131,10 +135,8 @@ class _SearchPageState extends State<SearchPage> {
                             padding: const EdgeInsets.only(right: 8),
                             child: ElevatedButton(
                               onPressed: () async {
-                                
-
                                 // if (!mounted) return;
-                                
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -147,7 +149,8 @@ class _SearchPageState extends State<SearchPage> {
                                     },
                                   ),
                                 );
-                                debugPrint("list exists: ${selectedUidList.value.toString()}");
+                                debugPrint(
+                                    "list exists: ${selectedUidList.value.toString()}");
                               },
                               child: const Text('Create group'),
                             ),
@@ -167,6 +170,36 @@ class _SearchPageState extends State<SearchPage> {
                   itemCount: otherUserSnapshot?.length,
                   itemBuilder: (context, index) {
                     return ListTile(
+                      onTap: () async {
+                        
+                        Map<String, dynamic> userDataFromFirebase =
+                            otherUserSnapshot?[index].data()
+                                as Map<String, dynamic>;
+
+                        // After above function seperates each user with index the data is set to UserModel
+                        UserModel targetUser =
+                            UserModel.fromMap(userDataFromFirebase);
+
+                        // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users. If we do it outside onTap, the chatroom of all visible users will be created
+                        CreateOrUpdateChatRoom createOrUpdateChatRoom =
+                            CreateOrUpdateChatRoom();
+                        Future<ChatRoomModel?> getChatRoomModel =
+                            createOrUpdateChatRoom.getChatRoomModel(targetUser);
+                        ChatRoomModel? chatRoomModel = await getChatRoomModel;
+                        if (!mounted) return;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ChatRoomPage(
+                                chatroom: chatRoomModel as ChatRoomModel,
+                                currentUser: currentUser as User,
+                                targetUser: targetUser,
+                              );
+                            },
+                          ),
+                        );
+                      },
                       leading: CircleAvatar(
                         backgroundImage: (otherUserSnapshot?[index]
                                     ["profilePicture"] !=

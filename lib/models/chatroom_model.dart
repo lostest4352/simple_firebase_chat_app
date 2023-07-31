@@ -11,7 +11,7 @@ class ChatRoomModel {
     this.chatRoomId,
     required this.participants,
     this.lastMessage,
-    this.dateTime,
+     this.dateTime,
   });
 
 

@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/main.dart';
-import 'package:simple_firebase1/firebase_helpers/chatroom_create_or_update.dart';
-import 'package:simple_firebase1/models/chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
 import 'package:simple_firebase1/provider/user_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,23 +25,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Stream<QuerySnapshot> chatroomSnapshot = FirebaseFirestore.instance
-        .collection("chatrooms")
-        // .orderBy("dateTime", descending: true)
-        .snapshots();
+      .collection("chatrooms")
+      .orderBy("dateTime", descending: true)
+      .snapshots();
 
-    Stream<QuerySnapshot> allUserSnapshot = FirebaseFirestore.instance
-        .collection("users")
-        .orderBy("username")
-        .snapshots();
+  Stream<QuerySnapshot> get allUserSnapshot => FirebaseFirestore.instance
+      .collection("users")
+      .where("uid", isNotEqualTo: currentUser?.uid)
+      .snapshots();
 
   UserModel? get userModel => context.watch<UserProvider?>()?.getUser;
 
   @override
   Widget build(BuildContext context) {
-    
     debugPrint(userModel?.username);
-
-    
 
     // Code when stream is used instead of provider
     // Stream<QuerySnapshot> currentUserSnapshot = FirebaseFirestore.instance
@@ -114,145 +108,243 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Center(
               child: StreamBuilder(
-                stream: allUserSnapshot,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.active) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (!snapshot.hasData) {
-                    return const Text('Loading..');
-                  }
-                  // QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
+                  stream: chatroomSnapshot,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                  // if (userSnapshot.docs.isEmpty) {
-                  //   return const Center(
-                  //     child: CircularProgressIndicator(),
-                  //   );
-                  // }
+                    //
+                    final thisChatroomSnapshot =
+                        snapshot.data?.docs.where((docs) {
+                      // First store the list in a variable and filter the contents from it
+                      List participants = docs["participants"];
+                      return participants.contains(currentUser?.uid);
+                    }).toList();
 
-                  // This code excludes current user from the snapshot. The listview works without it and no issues outside console but we get unhandled exception in the console if we don't exclude it here
-                  final otherUserSnapshot = snapshot.data?.docs.where((docs) {
-                    return docs["uid"] != currentUser?.uid;
-                  }).toList();
-
-                  return ListView.builder(
-                    itemCount: otherUserSnapshot?.length,
-                    // itemCount: thesnap.length,
-
-                    itemBuilder: (context, index) {
-                      // Get map data from snapshot as per its index and convert to format suitable for UserModel
-                      Map<String, dynamic> userDataFromFirebase =
-                          otherUserSnapshot?[index].data()
-                              as Map<String, dynamic>;
-
-                      // After above function seperates each user with index the data is set to UserModel
-                      UserModel targetUser =
-                          UserModel.fromMap(userDataFromFirebase);
-
-                      // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
-                      CreateOrUpdateChatRoom createOrUpdateChatRoom =
-                          CreateOrUpdateChatRoom();
-                      Future<ChatRoomModel?> getChatRoomModel =
-                          createOrUpdateChatRoom.getChatRoomModel(targetUser);
-
-                      // Without this streambuilder, last message on homepage isnt shown instantly. It has no other function
-                      return StreamBuilder(
-                        stream: chatroomSnapshot,
+                    return StreamBuilder(
+                        stream: allUserSnapshot,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState !=
-                              ConnectionState.active) {
-                            return const Center();
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
-                          if (!snapshot.hasData) {
-                            return const Text('Loading..');
-                          }
 
-                          return FutureBuilder(
-                            future: getChatRoomModel,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState !=
-                                  ConnectionState.done) {
-                                // return const Text("Loading..");
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
+                          return ListView.builder(
+                            itemCount: thisChatroomSnapshot?.length,
+                            itemBuilder: (context, index) {
+                              // Date time code using intl
+                              DateTime? date =
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      thisChatroomSnapshot?[index]["dateTime"]);
 
-                              // Old message: If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
-                              // Error now handled by excluding current user uid before listview.builder
-                              if (!snapshot.hasData) {
-                                // return const Text('Loading..');
-                                return const Center();
-                              }
+                              String? formattedDate =
+                                  DateFormat.yMMMMd().format(date);
 
-                              DateTime? date = snapshot.data?.dateTime;
+                              //
+                              List userUidsFromChatroom =
+                                  thisChatroomSnapshot?[index]["participants"];
 
-                              String? formattedDate = (date != null)
-                                  ? DateFormat.jmv().format(date)
-                                  : '';
+                              final otherUserSnapshot =
+                                  snapshot.data?.docs.where((docs) {
+                                return userUidsFromChatroom
+                                    .contains(docs["uid"]);
+                              }).toList();
+
+                              
 
                               return ListTile(
                                 onTap: () async {
-                                  ChatRoomModel? chatRoomModel =
-                                      await getChatRoomModel;
+                                  // TODO: get only one user. Using index instead of 0 is a mistake
 
-                                  //  debugPrint(chatRoomModel?.lastMessage
-                                  //     .toString());
-
-                                  if (!mounted) return;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return ChatRoomPage(
-                                          chatroom:
-                                              chatRoomModel as ChatRoomModel,
-                                          currentUser: currentUser as User,
-                                          targetUser: targetUser,
-                                        );
-                                      },
-                                    ),
-                                  );
+                                  // if (!mounted) return;
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) {
+                                  //       return ChatRoomPage(
+                                  //         chatroom:
+                                  //             chatRoomModel as ChatRoomModel,
+                                  //         currentUser: currentUser as User,
+                                  //         targetUser: targetUser,
+                                  //       );
+                                  //     },
+                                  //   ),
+                                  // );
                                 },
                                 leading: CircleAvatar(
-                                  backgroundImage:
-                                      // You can also just use targetUser.profilePicture here. But used the below for consistency
-                                      otherUserSnapshot?[index]
-                                                  ['profilePicture'] !=
-                                              null
-                                          ? CachedNetworkImageProvider(
-                                              otherUserSnapshot?[index]
-                                                      ['profilePicture'] ??
-                                                  '')
-                                          : null,
-                                  child: (otherUserSnapshot?[index]
-                                              ['profilePicture'] ==
+                                  backgroundImage: (otherUserSnapshot?[0]
+                                              ["profilePicture"] !=
                                           null)
+                                      ? CachedNetworkImageProvider(
+                                          otherUserSnapshot?[0]
+                                                  ["profilePicture"] ??
+                                              "",
+                                        )
+                                      : null,
+                                  child: otherUserSnapshot?[0]
+                                              ["profilePicture"] ==
+                                          null
                                       ? const Icon(Icons.person)
                                       : null,
                                 ),
-                                title: Text(
-                                  otherUserSnapshot?[index]['username'],
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  snapshot.data?.lastMessage ?? "",
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                title: Text(otherUserSnapshot?[0]["username"]),
+                                subtitle: Text(thisChatroomSnapshot?[index]
+                                    ["lastMessage"]),
                                 trailing: Text(formattedDate),
                               );
                             },
                           );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
+                        });
+                  }),
             ),
           ),
+          // Expanded(
+          //   child: Center(
+          //     child: StreamBuilder(
+          //       stream: allUserSnapshot,
+          //       builder: (context, snapshot) {
+          //         if (snapshot.connectionState != ConnectionState.active) {
+          //           return const Center(
+          //             child: CircularProgressIndicator(),
+          //           );
+          //         }
+          //         if (!snapshot.hasData) {
+          //           return const Text('Loading..');
+          //         }
+          //         // QuerySnapshot userSnapshot = snapshot.data as QuerySnapshot;
+
+          //         // if (userSnapshot.docs.isEmpty) {
+          //         //   return const Center(
+          //         //     child: CircularProgressIndicator(),
+          //         //   );
+          //         // }
+
+          //         // This code excludes current user from the snapshot. The listview works without it and no issues outside console but we get unhandled exception in the console if we don't exclude it here
+          //         final otherUserSnapshot = snapshot.data?.docs.where((docs) {
+          //           return docs["uid"] != currentUser?.uid;
+          //         }).toList();
+
+          //         return ListView.builder(
+          //           itemCount: otherUserSnapshot?.length,
+          //           // itemCount: thesnap.length,
+
+          //           itemBuilder: (context, index) {
+          //             // Get map data from snapshot as per its index and convert to format suitable for UserModel
+          //             Map<String, dynamic> userDataFromFirebase =
+          //                 otherUserSnapshot?[index].data()
+          //                     as Map<String, dynamic>;
+
+          //             // After above function seperates each user with index the data is set to UserModel
+          //             UserModel targetUser =
+          //                 UserModel.fromMap(userDataFromFirebase);
+
+          //             // This sends the data to CreateOrUpdateChatRoom to create/modify a chatroom between two users
+          //             CreateOrUpdateChatRoom createOrUpdateChatRoom =
+          //                 CreateOrUpdateChatRoom();
+          //             Future<ChatRoomModel?> getChatRoomModel =
+          //                 createOrUpdateChatRoom.getChatRoomModel(targetUser);
+
+          //             // Without this streambuilder, last message on homepage isnt shown instantly. It has no other function
+          //             return StreamBuilder(
+          //               stream: chatroomSnapshot,
+          //               builder: (context, snapshot) {
+          //                 if (snapshot.connectionState !=
+          //                     ConnectionState.active) {
+          //                   return const Center();
+          //                 }
+          //                 if (!snapshot.hasData) {
+          //                   return const Text('Loading..');
+          //                 }
+
+          //                 return FutureBuilder(
+          //                   future: getChatRoomModel,
+          //                   builder: (context, snapshot) {
+          //                     if (snapshot.connectionState !=
+          //                         ConnectionState.done) {
+          //                       // return const Text("Loading..");
+          //                       return const Center(
+          //                         child: CircularProgressIndicator(),
+          //                       );
+          //                     }
+
+          //                     // Old message: If used loading here, there'll be empty placeholder with loading in the listview. Since you cannot make a chatroom with yourself, no chatroom created and doesn't show in the home page listview. But there's error in console
+          //                     // Error now handled by excluding current user uid before listview.builder
+          //                     if (!snapshot.hasData) {
+          //                       // return const Text('Loading..');
+          //                       return const Center();
+          //                     }
+
+          //                     DateTime? date = snapshot.data?.dateTime;
+
+          //                     String? formattedDate = (date != null)
+          //                         ? DateFormat.jmv().format(date)
+          //                         : '';
+
+          //                     return ListTile(
+          //                       onTap: () async {
+          //                         ChatRoomModel? chatRoomModel =
+          //                             await getChatRoomModel;
+
+          //                         //  debugPrint(chatRoomModel?.lastMessage
+          //                         //     .toString());
+
+          //                         if (!mounted) return;
+          //                         Navigator.push(
+          //                           context,
+          //                           MaterialPageRoute(
+          //                             builder: (context) {
+          //                               return ChatRoomPage(
+          //                                 chatroom:
+          //                                     chatRoomModel as ChatRoomModel,
+          //                                 currentUser: currentUser as User,
+          //                                 targetUser: targetUser,
+          //                               );
+          //                             },
+          //                           ),
+          //                         );
+          //                       },
+          //                       leading: CircleAvatar(
+          //                         backgroundImage:
+          //                             // You can also just use targetUser.profilePicture here. But used the below for consistency
+          //                             otherUserSnapshot?[index]
+          //                                         ['profilePicture'] !=
+          //                                     null
+          //                                 ? CachedNetworkImageProvider(
+          //                                     otherUserSnapshot?[index]
+          //                                             ['profilePicture'] ??
+          //                                         '')
+          //                                 : null,
+          //                         child: (otherUserSnapshot?[index]
+          //                                     ['profilePicture'] ==
+          //                                 null)
+          //                             ? const Icon(Icons.person)
+          //                             : null,
+          //                       ),
+          //                       title: Text(
+          //                         otherUserSnapshot?[index]['username'],
+          //                         overflow: TextOverflow.ellipsis,
+          //                       ),
+          //                       subtitle: Text(
+          //                         snapshot.data?.lastMessage ?? "",
+          //                         overflow: TextOverflow.ellipsis,
+          //                       ),
+          //                       trailing: Text(formattedDate),
+          //                     );
+          //                   },
+          //                 );
+          //               },
+          //             );
+          //           },
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
           const SizedBox(
             height: 5,
           ),

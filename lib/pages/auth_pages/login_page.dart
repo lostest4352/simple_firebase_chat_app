@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       // Navigator.pop(context);
       // Navigator.popUntil(context, (route) => route.isFirst);
-      
+
       Navigator.of(context, rootNavigator: true)
           .popUntil((route) => route.isFirst);
 
@@ -81,7 +81,8 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      Navigator.of(context, rootNavigator: true)
+          .popUntil((route) => route.isFirst);
       return showDialog(
         context: context,
         builder: (context) {

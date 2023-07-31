@@ -10,8 +10,9 @@ import 'package:simple_firebase1/provider/user_provider.dart';
 import '../../firebase_helpers/chatroom_create_or_update.dart';
 import '../../models/chatroom_model.dart';
 import 'chat_room_page.dart';
+import 'group_chat_list_page.dart';
 
-enum ButtonItem { settings, logout }
+// enum ButtonItem { settings, logout }
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -168,6 +169,7 @@ class _HomePageState extends State<HomePage> {
 
                               return ListTile(
                                 onTap: () async {
+                                  // TODO: Add circular progress until page is reached to avoid 2 pages being opened
                                   // Only one data for a listtile so its always 0
                                   Map<String, dynamic> userDataFromFirebase =
                                       otherUserSnapshot?[0].data()

@@ -37,6 +37,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     super.dispose();
   }
 
+  Stream<QuerySnapshot> get chatRoomStream => FirebaseFirestore.instance
+      .collection("chatrooms")
+      .doc(widget.chatroom.chatRoomId)
+      .collection("messages")
+      .orderBy("createdOn", descending: true)
+      .snapshots();
+
   void sendMessage() async {
     String message = messageController.text.trim();
     messageController.clear();
@@ -72,14 +79,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> chatRoomStream = FirebaseFirestore.instance
-        .collection("chatrooms")
-        .doc(widget.chatroom.chatRoomId)
-        .collection("messages")
-        .orderBy("createdOn", descending: true)
-        .snapshots();
-
-    
+    debugPrint("route name: ${ModalRoute.of(context)?.settings.name}");
 
     return SafeArea(
       child: Scaffold(

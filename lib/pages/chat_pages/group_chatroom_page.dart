@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
+import 'package:simple_firebase1/provider_notifiers/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';

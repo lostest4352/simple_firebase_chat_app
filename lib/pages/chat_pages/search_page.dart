@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/pages/chat_pages/chat_room_page.dart';
 import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
+import 'package:simple_firebase1/provider_notifiers/button_selection_notifier.dart';
+import 'package:simple_firebase1/provider_notifiers/user_provider.dart';
 
 import '../../firebase_helpers/chatroom_create_or_update.dart';
 import '../../models/chatroom_model.dart';
@@ -27,46 +28,8 @@ class _SearchPageState extends State<SearchPage> {
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
-  ValueNotifier<List<bool>> buttonsClicked = ValueNotifier([]);
-
-  ValueNotifier<List> selectedUidList = ValueNotifier([]);
-
-  // Make a list of username. will need to update them in codes around. use update instead of set
-  ValueNotifier<List> selectedUserList = ValueNotifier([]);
-
-  void changeButtonState(int index, String uid) {
-    // List.from needed to update the valuenotifier values when it comes to list
-    buttonsClicked.value = List.from(buttonsClicked.value);
-    buttonsClicked.value[index] = !buttonsClicked.value[index];
-
-    // Add your own data by default since you need to be in the chatroom yourself. Depending on the situation, add currentUser uid above, remove empty "" value above
-    if (!selectedUidList.value.contains(currentUser?.uid)) {
-      // selectedUidList.value.add(currentUser?.uid ?? "");
-      selectedUidList.value = List.from(selectedUidList.value)
-        ..add(currentUser?.uid ?? "");
-    }
-
-    if (buttonsClicked.value[index]) {
-      // selectedUidList.value.add(uid);
-      selectedUidList.value = List.from(selectedUidList.value)..add(uid);
-    } else {
-      // selectedUidList.value.remove(uid);
-      selectedUidList.value = List.from(selectedUidList.value)..remove(uid);
-    }
-    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    // buttonsClicked.notifyListeners();
-    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-    // selectedUidList.notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    // When provider is used, dont use these two dispose
-    buttonsClicked.dispose();
-    selectedUidList.dispose();
-    super.dispose();
-  }
+  final ButtonSelectionNotifier buttonSelectionNotifier =
+      ButtonSelectionNotifier();
 
   Stream<QuerySnapshot> get usersSnapshot => FirebaseFirestore.instance
       .collection("users")
@@ -104,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
             );
           }
 
-          // TODO Use different alluserSnapshot for chatroompage
+          //
           final otherUserSnapshot = snapshot.data?.docs.where((docs) {
             return docs["uid"] != currentUser?.uid;
           }).toList();
@@ -116,9 +79,9 @@ class _SearchPageState extends State<SearchPage> {
               ),
               Card(
                 child: ListenableBuilder(
-                  listenable: selectedUidList,
+                  listenable: buttonSelectionNotifier,
                   builder: (context, child) {
-                    if (selectedUidList.value.length < 2) {
+                    if (buttonSelectionNotifier.selectedUidList.length < 2) {
                       return const ListTile(
                         title: Text("Select users to add to group"),
                       );
@@ -128,15 +91,13 @@ class _SearchPageState extends State<SearchPage> {
                           Expanded(
                             child: ListTile(
                               title: Text(
-                                  "${(selectedUidList.value.length - 1).toString()} users selected"),
+                                  "${(buttonSelectionNotifier.selectedUidList.length - 1).toString()} users selected"),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ElevatedButton(
-                              onPressed: () async {
-                                // if (!mounted) return;
-
+                              onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -144,13 +105,15 @@ class _SearchPageState extends State<SearchPage> {
                                       return GroupCreatePage(
                                         // groupChatroom: groupChatroomModel,
                                         currentUser: currentUser as User,
-                                        selectedUidList: selectedUidList.value,
+                                        selectedUidList: buttonSelectionNotifier
+                                            .selectedUidList,
                                       );
                                     },
                                   ),
                                 );
+
                                 debugPrint(
-                                    "list exists: ${selectedUidList.value.toString()}");
+                                    "list exists: ${buttonSelectionNotifier.selectedUidList.toString()}");
                               },
                               child: const Text('Create group'),
                             ),
@@ -171,7 +134,6 @@ class _SearchPageState extends State<SearchPage> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       onTap: () async {
-                        
                         Map<String, dynamic> userDataFromFirebase =
                             otherUserSnapshot?[index].data()
                                 as Map<String, dynamic>;
@@ -216,24 +178,27 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       title: Text(otherUserSnapshot?[index]["username"] ?? ""),
                       trailing: ListenableBuilder(
-                        listenable: buttonsClicked,
+                        listenable: buttonSelectionNotifier,
                         builder: (context, child) {
-                          if (buttonsClicked.value.isEmpty &&
+                          if (buttonSelectionNotifier.buttonsClicked.isEmpty &&
                               otherUserSnapshot != null) {
-                            buttonsClicked.value =
+                            buttonSelectionNotifier.buttonsClicked =
                                 List.filled(otherUserSnapshot.length, false);
                           }
                           return IconButton(
                             onPressed: () {
                               // buttonsClicked.value[index] = !buttonsClicked.value[index];
                               // buttonsClicked.notifyListeners();
-                              changeButtonState(index,
+                              buttonSelectionNotifier.changeButtonState(index,
                                   otherUserSnapshot?[index]["uid"] ?? "");
-                              debugPrint(selectedUidList.value.toString());
+                              debugPrint(buttonSelectionNotifier.buttonsClicked
+                                  .toString());
                             },
-                            icon: buttonsClicked.value[index] == false
-                                ? const Icon(Icons.check_box_outline_blank)
-                                : const Icon(Icons.check_box),
+                            icon:
+                                buttonSelectionNotifier.buttonsClicked[index] ==
+                                        false
+                                    ? const Icon(Icons.check_box_outline_blank)
+                                    : const Icon(Icons.check_box),
                           );
                         },
                       ),

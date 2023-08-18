@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
+import 'package:simple_firebase1/provider_notifiers/user_provider.dart';
 
 import '../../firebase_helpers/chatroom_create_or_update.dart';
 import '../../models/chatroom_model.dart';

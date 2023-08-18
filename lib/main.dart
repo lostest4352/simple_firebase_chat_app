@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_firebase1/firebase_options.dart';
 import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
-import 'package:simple_firebase1/provider/user_provider.dart';
+import 'package:simple_firebase1/provider_notifiers/user_provider.dart';
 
 void main() async {
   if (Platform.isAndroid) {

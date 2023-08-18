@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/provider/chat_provider.dart';
-
-// enum ChatMode {
-//   adding,
-//   editing,
-// }
+import 'package:simple_firebase1/unused/chat_provider.dart';
 
 class ChatTextField extends StatefulWidget {
-  // final ChatMode chatMode;
   final String? initialValue;
-
   const ChatTextField({
     super.key,
-
-    // required this.chatMode,
-
     this.initialValue,
   });
 

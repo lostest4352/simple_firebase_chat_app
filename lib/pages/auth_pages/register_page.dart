@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/components/items_text_fields.dart';
+import 'package:simple_firebase1/widgets/items_text_fields.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
 import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
@@ -122,6 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         await addUserDetails(user, credential.user?.uid ?? '');
       } on FirebaseAuthException catch (e) {
+        if (!mounted) return;
         Navigator.of(context, rootNavigator: true)
             .popUntil((route) => route.isFirst);
         return showDialogPopup(e.code);

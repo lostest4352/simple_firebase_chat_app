@@ -4,7 +4,7 @@ import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
 import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
 import 'package:simple_firebase1/pages/auth_pages/register_page.dart';
 
-import '../../components/items_text_fields.dart';
+import '../../widgets/items_text_fields.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({

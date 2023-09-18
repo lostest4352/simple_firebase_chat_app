@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/pages/chat_pages/group_chatroom_page.dart';
+import 'package:simple_firebase1/pages/chat_pages/group_chat_pages/group_chatroom_page.dart';
 
 //
 enum ButtonItem { settings, logout }

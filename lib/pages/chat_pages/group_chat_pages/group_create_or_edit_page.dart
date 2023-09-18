@@ -11,8 +11,8 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 
-import '../../firebase_helpers/group_chatroom_create_or_update.dart';
-import '../../models/user_model.dart';
+import 'group_chat_helper/group_chatroom_create_or_update.dart';
+import '../../../models/user_model.dart';
 
 class GroupCreatePage extends StatefulWidget {
   // final GroupChatroomModel groupChatroom;

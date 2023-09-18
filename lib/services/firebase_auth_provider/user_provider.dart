@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 
-import '../firebase_helpers/auth_methods.dart';
+import 'auth_methods.dart';
 
 class UserProvider with ChangeNotifier {
   UserModel? _userModel;

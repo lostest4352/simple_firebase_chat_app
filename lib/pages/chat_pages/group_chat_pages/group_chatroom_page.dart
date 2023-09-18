@@ -5,14 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/pages/chat_pages/group_create_or_edit_page.dart';
-import 'package:simple_firebase1/provider_notifiers/user_provider.dart';
+import 'package:simple_firebase1/pages/chat_pages/group_chat_pages/group_create_or_edit_page.dart';
+import 'package:simple_firebase1/services/firebase_auth_provider/user_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:simple_firebase1/models/group_chatroom_model.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 
-import '../../models/message_model.dart';
+import '../../../models/message_model.dart';
 
 class GroupChatroomPage extends StatefulWidget {
   final GroupChatroomModel groupChatroom;

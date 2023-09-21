@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_firebase1/models/user_model.dart';
 import 'package:simple_firebase1/services/firebase_auth_provider/user_provider.dart';
 
-import 'regular_chat_helper/chatroom_create_or_update.dart';
+import '../create_update_helpers/chatroom_create_or_update.dart';
 import '../../../models/chatroom_model.dart';
 import 'chat_room_page.dart';
 import '../group_chat_pages/group_chat_list_page.dart';

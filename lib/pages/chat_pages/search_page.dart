@@ -8,7 +8,7 @@ import 'package:simple_firebase1/pages/chat_pages/group_chat_pages/group_create_
 import 'package:simple_firebase1/services/widget_notifiers/button_selection_notifier.dart';
 import 'package:simple_firebase1/services/firebase_auth_provider/user_provider.dart';
 
-import 'regular_chat_pages/regular_chat_helper/chatroom_create_or_update.dart';
+import 'create_update_helpers/chatroom_create_or_update.dart';
 import '../../models/chatroom_model.dart';
 import '../../models/user_model.dart';
 

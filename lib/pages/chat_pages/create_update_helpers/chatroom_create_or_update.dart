@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../models/chatroom_model.dart';
-import '../../../../models/user_model.dart';
+import '../../../models/chatroom_model.dart';
+import '../../../models/user_model.dart';
 
 class CreateOrUpdateChatRoom {
   final currentUser = FirebaseAuth.instance.currentUser;

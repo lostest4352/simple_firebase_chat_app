@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:simple_firebase1/models/group_chatroom_model.dart';
+import 'package:simple_firebase_chat_app/models/group_chatroom_model.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateOrUpdateGroupChatroom {

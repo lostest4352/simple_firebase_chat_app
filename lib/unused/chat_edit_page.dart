@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/unused/chat_provider.dart';
+import 'package:simple_firebase_chat_app/unused/chat_provider.dart';
 
 class EditPage extends StatefulWidget {
   final int index;

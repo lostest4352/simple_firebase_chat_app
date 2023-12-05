@@ -1,11 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/pages/chat_pages/group_chat_pages/group_chat_list_page.dart';
-import 'package:simple_firebase1/pages/chat_pages/regular_chat_pages/home_page.dart';
-import 'package:simple_firebase1/pages/chat_pages/search_page.dart';
-import 'package:simple_firebase1/pages/chat_pages/user_profile_page.dart';
-import 'package:simple_firebase1/widgets/keep_pages_alive.dart';
+import 'package:simple_firebase_chat_app/pages/chat_pages/group_chat_pages/group_chat_list_page.dart';
+import 'package:simple_firebase_chat_app/pages/chat_pages/regular_chat_pages/home_page.dart';
+import 'package:simple_firebase_chat_app/pages/chat_pages/search_page.dart';
+import 'package:simple_firebase_chat_app/pages/chat_pages/user_profile_page.dart';
+import 'package:simple_firebase_chat_app/widgets/keep_pages_alive.dart';
 
 import '../../services/firebase_auth_provider/user_provider.dart';
 

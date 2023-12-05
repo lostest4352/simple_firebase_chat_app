@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:simple_firebase1/models/chatroom_model.dart';
-import 'package:simple_firebase1/models/message_model.dart';
-import 'package:simple_firebase1/models/user_model.dart';
+import 'package:simple_firebase_chat_app/models/chatroom_model.dart';
+import 'package:simple_firebase_chat_app/models/message_model.dart';
+import 'package:simple_firebase_chat_app/models/user_model.dart';
 
 class ChatRoomPage extends StatefulWidget {
   final ChatRoomModel chatroom;

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:simple_firebase1/models/group_chatroom_model.dart';
+import 'package:simple_firebase_chat_app/models/group_chatroom_model.dart';
 
 import '../create_update_helpers/group_chatroom_create_or_update.dart';
 import '../../../models/user_model.dart';

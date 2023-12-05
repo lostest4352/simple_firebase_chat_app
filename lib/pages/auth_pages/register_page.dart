@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/widgets/items_text_fields.dart';
-import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
-import 'package:simple_firebase1/pages/auth_pages/login_page.dart';
+import 'package:simple_firebase_chat_app/widgets/items_text_fields.dart';
+import 'package:simple_firebase_chat_app/models/user_model.dart';
+import 'package:simple_firebase_chat_app/pages/auth_pages/auth_page.dart';
+import 'package:simple_firebase_chat_app/pages/auth_pages/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({

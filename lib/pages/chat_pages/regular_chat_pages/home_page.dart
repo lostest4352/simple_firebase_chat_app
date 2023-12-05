@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/models/user_model.dart';
-import 'package:simple_firebase1/services/firebase_auth_provider/user_provider.dart';
+import 'package:simple_firebase_chat_app/models/user_model.dart';
+import 'package:simple_firebase_chat_app/services/firebase_auth_provider/user_provider.dart';
 
 import '../create_update_helpers/chatroom_create_or_update.dart';
 import '../../../models/chatroom_model.dart';

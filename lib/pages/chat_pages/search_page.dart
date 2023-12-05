@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_firebase1/pages/chat_pages/regular_chat_pages/chat_room_page.dart';
-import 'package:simple_firebase1/pages/chat_pages/group_chat_pages/group_create_or_edit_page.dart';
-import 'package:simple_firebase1/services/widget_notifiers/button_selection_notifier.dart';
-import 'package:simple_firebase1/services/firebase_auth_provider/user_provider.dart';
+import 'package:simple_firebase_chat_app/pages/chat_pages/regular_chat_pages/chat_room_page.dart';
+import 'package:simple_firebase_chat_app/pages/chat_pages/group_chat_pages/group_create_or_edit_page.dart';
+import 'package:simple_firebase_chat_app/services/widget_notifiers/button_selection_notifier.dart';
+import 'package:simple_firebase_chat_app/services/firebase_auth_provider/user_provider.dart';
 
 import 'create_update_helpers/chatroom_create_or_update.dart';
 import '../../models/chatroom_model.dart';

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_firebase1/pages/auth_pages/auth_page.dart';
-import 'package:simple_firebase1/pages/auth_pages/forgot_password.dart';
-import 'package:simple_firebase1/pages/auth_pages/register_page.dart';
+import 'package:simple_firebase_chat_app/pages/auth_pages/auth_page.dart';
+import 'package:simple_firebase_chat_app/pages/auth_pages/forgot_password.dart';
+import 'package:simple_firebase_chat_app/pages/auth_pages/register_page.dart';
 
 import '../../widgets/items_text_fields.dart';
 

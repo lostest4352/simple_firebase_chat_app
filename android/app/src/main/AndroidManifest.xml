@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.simple_firebase_chat_app">
    <application
-        android:label="simple_firebase_chat_app"
+        android:label="SF Chat"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

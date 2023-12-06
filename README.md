@@ -1,5 +1,5 @@
 # simple_firebase_chat_app
 
-A new Flutter project.
-
+SF Chat: Simple Firebase Chat
+A simple chat app made with flutter using firebase as database, storage and auth.
 
